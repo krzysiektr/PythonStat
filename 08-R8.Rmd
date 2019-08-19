@@ -1,0 +1,639 @@
+# Porównanie zmiennych niezależnych {#R8}
+
+---
+
+## Porównanie średnich {#R81}
+
+**Test t-Studenta / Test t-Welcha**. Do porównania dwóch średnich tj. do zweryfikowania hipotezy $H_0:\mu_1=\mu_2$ najczęsciej proponowany jest test t-Studenta Wymaga on spełnienia dwóch warunków: normalność rozkładu oraz jednorodności wariancji. Statystyka klasycznego testu dla dwóch średnich: $(\bar{x}_1-\bar{x}_2)/\sqrt{d_1+d_2}$ ma rozkład t-Studenta ze stopniami swobody $df=n_1+n_2-2$.
+Jeśli wariancje w próbkach nie są równe to zalecane jest stosowanie poprawki Welcha [@welch2016] która polega na modyfikacji stopni swobody:
+\begin{equation}
+df_{\mathrm{Welch}}=\frac{(d_1+d_2)^2}{\frac{d_1}{n_1-1}+\frac{d_2}{n_2-1}}
+(\#eq:df01)
+\end{equation}
+gdzie: $s_k^2$ to wariancja, $n_k$ to liczebność próby dla $k=1,2$ oraz $d_k=s^2_k/n_k$.
+
+Dzięki funkcji [`pingouin.ttest`](https://pingouin-stats.org/generated/pingouin.ttest.html#pingouin.ttest) jest dostępna klasyczna wersja testu t-Studenta oraz z poprawką Welcha.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import pingouin as pg
+
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101)
+
+print(pg.ttest(x,y, correction=True)[['T','dof','CI95%','p-val']])
+```
+
+
+
+**Anova / Welch-Anova**. Klasyczna analiza wariancji - inaczej ANOVA to rozwinięcie testu t-Studenta dla więcej niż dwóch zmiennych niezależnych. Inaczej mówiąc w przypadku porównania średnich z dwóch grup wyniki z obu procedur są tożsame. Funkcja [`pingouin.anova`](https://pingouin-stats.org/generated/pingouin.anova.html#pingouin.anova) realizuje jedno lub dwuczynnikową analizę wariancji z interakcją. Natomiast do funkcji [`pingouin.welch_anova`](https://pingouin-stats.org/generated/pingouin.welch_anova.html#pingouin.welch_anova) jest zaimplementowana metoda Welcha dla jednej zmiennej grupującej.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+
+y = np.concatenate((stats.norm.rvs(0, 1, size=20, random_state=2305),
+                    stats.norm.rvs(1.5, 2, size=20, random_state=4101),
+                    stats.norm.rvs(1.5, 2, size=20, random_state=4026)))
+g = np.repeat(np.linspace(1,3,3), [20,20,20], axis=0)
+
+print(pg.welch_anova(dv='y', between='g', data=pd.DataFrame({'y':y,'g':g})))
+```
+
+**Dalsza analiza**. Po odrzuceniu hipotezy zerowej w analizie wariancji stosujemy testy do porównań wielokrotnych. Jednym z bardziej popularnych tzw. testów po fakcie dla grup niezależnych jest procedura Tukeya lub seria testów t-Studenta z odpowiednią korektą p-wartości. Są one zaimplementowane odpowiednio do funkcji
+[`pingouin.pairwise_tukey`](https://pingouin-stats.org/generated/pingouin.pairwise_tukey.html#pingouin.pairwise_tukey) oraz [`pingouin.pairwise_ttests`](https://pingouin-stats.org/generated/pingouin.pairwise_ttests.html#pingouin.pairwise_ttests). Natomiast w warunkach heteroskedastyczności można wykonać serię testów t-Welcha z odpowiednią korektą p-wartości lub test Gamesa-Howella. Są one dostępne odpowiednio w funkcji [`pingouin.pairwise_ttests`](https://pingouin-stats.org/generated/pingouin.pairwise_ttests.html#pingouin.pairwise_ttests) oraz [`pingouin.pairwise_gameshowell`](https://pingouin-stats.org/generated/pingouin.pairwise_gameshowell.html#pingouin.pairwise_gameshowell). Wiele ciekawych rozwiązań np. test Tamhane T2 zostało zaimplementowanych do pakietu [`scikit-posthocs`](https://scikit-posthocs.readthedocs.io/en/latest/) który bazuje na bibliotece [`PMCMRplus`](https://cran.r-project.org/web/packages/PMCMRplus/vignettes/QuickReferenceGuide.html)/[`PMCMR`](https://cran.r-project.org/web/packages/PMCMR/vignettes/PMCMR.pdf) dla programu R.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+
+y = np.concatenate((stats.norm.rvs(0, 1, size=20, random_state=2305),
+                    stats.norm.rvs(1.5, 2, size=20, random_state=4101),
+                    stats.norm.rvs(1.5, 2, size=20, random_state=4026)))
+g = np.repeat(np.linspace(1,3,3), [20,20,20], axis=0)
+
+print(pg.pairwise_gameshowell(dv='y', between='g',
+                           data=pd.DataFrame({'y':y,'g':g})))
+```
+
+## Porównanie rang {#R82}
+
+**Test Manna-Whitneya**. Przy założeniu, że dwa badane rozkłady mają ten sam kształt (takie same wariancje, skośność itp.) można zweryfikować hipotezę zerową o postaci $H_{0}:\;F(x)=G(y+\Delta)$ w której parametr $\Delta$ określa przesunięcie dystrybuanty $G(y)$ względem dystrybuanty $F(x)$ [@med2018]. Inaczej mówiąc rozmieszczenie rozkładów $F(x)$ i $G(y)$ różni się w zależności od $\Delta$. Parametr przesunięcia można oszacować za pomocą estymatorora Hodgesa-Lehmanna:
+\begin{equation}
+\hat{\Delta}=\mbox{mediana}\{x_i-y_j\;:\;i=1,\;\dots n_1\;;\;j=1,\;\dots n_2\}
+(\#eq:mw01)
+\end{equation}
+
+Warto zaznaczyć, że parametr $\Delta$ w funkcji [`scipy.stats.mannwhitneyu`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html#scipy.stats.mannwhitneyu) oraz [`pingouin.mwu`](https://pingouin-stats.org/generated/pingouin.mwu.html#pingouin.mwu) ma stałą wartość równą zero. Zatem rozważana hipoteza zerowa ma postać:
+\begin{equation}
+H_{0}:\;\Delta=0\quad\textrm{vs.}\quad H_{1}:\;\Delta\neq 0
+(\#eq:mw02a)
+\end{equation}
+Równoważnym zapisem może być:
+\begin{equation}
+H_{0}:\;F(x)=G(y)\quad\textrm{vs.}\quad H_{1}:\;F(x)\neq G(y)
+(\#eq:mw02b)
+\end{equation}
+
+Statystyka testowa:
+\begin{equation}
+Z=\frac{|W-\frac{n_1n_2}{2}|-0,5}{\sqrt{\frac{n_1n_2(n_1+n_2+1)}{12}-\frac{n_1n_2\sum_{i=1}^{c}(t^3-t)}{12(n_1+n_2)(n_1+n_2-1)}}}
+(\#eq:mw03)
+\end{equation}
+gdzie: $c$ to liczba grup pomiarów wiązanych, $t_i$ to liczba pomiarów wiązanych w $i$-tej grupie pomiarów wiązanych.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import pingouin as pg
+import numpy as np
+
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101)
+
+hl = np.median(x[:, None] - y)
+df = pg.mwu(x,y)
+df['LH-median'] = hl
+print(df)
+```
+**Test Brunera-Munzela**. Dobrą alternatywną dla testu sumy rang Wilcoxona w warunakch heteroskedastyczności może być test Brunera-Munzela [@bm2000] dostępny dzięki funkcji [`scipy.stats.brunnermunzel`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.brunnermunzel.html#scipy.stats.brunnermunzel). Wersja permutacyjna tego testu [@neub2007] jest zalecana dla przypadku małolicznych próbek o nierównych liczebnościach. W tym teście
+hipoteza zerowa dla równości stochastycznej ma postać:
+\begin{equation}
+H_0:\;p=0,5\quad\textrm{vs.}\quad H_{1}:\;p\neq 0,5
+(\#eq:mw04)
+\end{equation}
+gdzie $p$ określa prawdopodobieństwo tego, że obserwacje w grupie pierwszej są zazwyczaj mniejsze niż w grupie drugiej.
+
+Wynika z tego, że prawdopodobieństwo zdarzenia przeciwnego (obserwacje w grupie pierwszej $x$ są zazwyczaj większe niż w grupie drugiej $y$) jest także równe $0,5$. Zatem w hipotezie zerowej zakładamy, że wartości w obu próbkach mają porównywalne wartości tzn. wartości z pierwszej próbki nie mają tendencji do mniejszych/większych wartości niż w próbce drugiej. Estymację tego prawdopodobieństwa można dokonać w dwojaki sposób:
+\begin{equation}
+\hat{p}=P(x<y)+0,5\cdot P(x=y)\quad\mbox{lub} \quad \hat{p}=\frac{\bar{r}_2-(n_2+1)\cdot 0,5}{n_1}
+(\#eq:mw05)
+\end{equation}
+gdzie $\bar{r}_2$ to średnia ranga dla drugiej zmiennej a rangi są liczone na podstawie próbki zbiorczej.
+
+Warto dodać, że na podstawie estymatora prawdopodobieństwa $\hat{p}$ można obliczyć statystykę testu sumy rang Wilcoxona na podstawie wzoru:
+\begin{equation}
+W=(1-\hat{p})n_1n_2
+(\#eq:mw06)
+\end{equation}
+
+Statystyka testu Brunera-Munzela:
+\begin{equation}
+BM=\frac{n_1n_2(\bar{r}_1-\bar{r}_2)}{(n_1+n_2)\sqrt{n_1s_1^2+n_2s_2^2}}
+(\#eq:mw07)
+\end{equation}
+ma rozkład t-Studenta ze stopniami swobody według formuły:
+\begin{equation}
+df_{\mathrm{Satterthwaite}}=\frac{(d_1+d_2)^2}{\frac{d_1}{n_1-1}+\frac{d_2}{n_2-1}}
+(\#eq:mw08)
+\end{equation}
+gdzie $d_k=n_k\cdot s^2_k$ to iloczyn liczebności próby $n_k$ oraz wariancji $s_k^2$ dla każdej $k$-tej grupy.
+
+Wariancja jest zdefiniowana w następujący sposób:
+\begin{equation}
+s_k^2=\frac{1}{n_k-1}\sum_{i=1}^{n_k}\left(r_{ki}-w_{ki}-\bar{r}_k+\frac{n_k+1}{2}\right)^2
+(\#eq:mw09)
+\end{equation}
+gdzie: $\bar{r}_k$ oznacza średnią rangę $k$-tej grupy z próbki zbiorczej, $r_k$ to rangi dla $k$-tej grupy z próbki zbiorczej, $w_k$ to rangi dla $k$-tej grupy.
+
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import warnings
+warnings.filterwarnings("ignore")
+import scipy.stats as stats
+import PyNonpar
+from PyNonpar import *
+    
+x = stats.norm.rvs(0, 1, size=20, random_state=2305).tolist()
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101).tolist()
+
+res = PyNonpar.twosample.brunner_munzel_test(x,y)
+print("BM= %.4f, df= %.4f, pvalue= %.4f" % (res[1],res[2],res[3]))
+```
+
+**Test Kruskala-Wallisa**. Nieparametrycznym odpowiednikiem analizy wariancji jest test Kruskala-Walisa jako rozszerzenie testu sumy rang Wilcoxona na kilka grup. W tej metodzie zakładamy, że próbki pochodzą z tego samego rozkładu o dowolnym kształcie. Oznacza to, że rozkład w grupach nie musi być normalny ale w dalszym ciągu zakładamy homoskedastyczność wariancji. 
+Dokładny rozkład statystyki Kruskala-Wallisa można przybliżać za pomocą metod permutacyjnych lub takich dystrybuant jak: chi-kwadrat, F-Snedecora oraz beta [@kw2013].
+
+Statystyka testowa:
+\begin{equation}
+\chi^2_{KW}=\left(1-\frac{\sum_{i=1}^{c}(t_i^3-t_i)}{n^3-n}\right)^{-1}\left[\frac{12}{n(n+1)}\left(\sum_{j=1}^{k}\frac{R_j^2}{n_j}\right)-3(n+1)\right]
+(\#eq:mw10)
+\end{equation}
+gdzie: $n$ to liczebność z wszystkich $k$ grup, $n_j$ to liczebność w $j$-tej grupie, $R_j$ to suma rang w $j$-tej grupie, $c$ to liczba grup pomiarów wiązanych, $t_i$ to liczba pomiarów wiązanych w $i$-tej grupie pomiarów wiązanych.
+
+Poniżej implementacja wersji permutacyjnej testu Kruskala-Wallisa:
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+
+y = np.concatenate((stats.expon.rvs(0, 1, size=20, random_state=2305),
+                    stats.expon.rvs(0.5, 1, size=20, random_state=4101),
+                    stats.expon.rvs(1, 1, size=20, random_state=4026)))
+g = np.repeat(np.linspace(1,3,3), [20,20,20], axis=0)
+
+kw = pg.kruskal(dv='y', between='g', data=pd.DataFrame({'y':y,'g':g}))
+
+H = kw["H"][0]
+B = 1000
+h = [list(pg.kruskal(dv='y', between='g',\
+          data=pd.DataFrame({'y':y,'g':np.random.choice(g,size=60)}))["H"])[0]\
+          for i in range(B)]
+perm = np.greater(h,[H]).mean()
+kw["p-perm"] = perm
+print(kw)
+```
+**ANOVA-rank**. Warto zauważyć, że problem heterogeniczności wariancji można uwzględnić za pomocą testu Brunner-Dette-Munk [@BDM1997] w którym można także testować interakcję w dwuczynnikowej analizie wariancji. Jednak ta metoda nie jest dostępna w pakietach [`scipy.stats`](https://docs.scipy.org/doc/scipy/reference/stats.html) oraz [`pingouin`](https://pingouin-stats.org/index.html). Alternatywą może być zastosowanie procedury wykorzystującej rozkład F-Snedecora która polega na porangowaniu danych i zastosowaniu klasycznej metody ANOVA. Innym rozwiązaniem może być wykorzystanie ważonej metody najmniejszych kwadratów lub odpornych błędów standardowych z wykorzystaniem funkcji [`statsmodels.stats.anova.anova_lm`](https://www.statsmodels.org/stable/generated/statsmodels.stats.anova.anova_lm.html#statsmodels.stats.anova.anova_lm).
+```{r engine='python',engine.path='python3',python.reticulate=FALSE,message=FALSE,warning=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+
+y = np.concatenate((stats.expon.rvs(0, 1, size=20, random_state=2305),
+                    stats.expon.rvs(0.5, 1, size=20, random_state=4101),
+                    stats.expon.rvs(1, 1, size=20, random_state=4026)))
+r = stats.rankdata(y)
+g = np.repeat(np.linspace(1,3,3), [20,20,20], axis=0)
+d = pd.DataFrame({"y":y,"g":g,"r":r})
+print(pg.anova(dv='r', between='g', data=d))
+```
+**Dalsza analiza**. Po odrzuceniu hipotezy zerowej w teście Kruskala-Wallisa można dokonać bardziej szczególowej analizy czyli przeprowadzić porównania wielokrotne. Popularnym rozwiązaniem jest zastosowanie serii testów sumy rang Wilcoxona. Ta metoda jest dostępna dzięki funkcji [`pingouin.pairwise_ttests`](https://pingouin-stats.org/generated/pingouin.pairwise_ttests.html#pingouin.pairwise_ttests) z zaznaczeniem opcji `parametric=False`. Jednak szerszy zestaw testów post hoc dla grup niezależnych znajdziemy w pakiecie [`scikit-posthocs`](https://scikit-posthocs.readthedocs.io/en/latest/intro/). Poniżej przykład testu Conovera.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE,message=FALSE,warning=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+from scikit_posthocs import posthoc_conover
+
+y = np.concatenate((stats.expon.rvs(0, 1, size=20, random_state=2305),
+                    stats.expon.rvs(0.5, 1, size=20, random_state=4101),
+                    stats.expon.rvs(1, 1, size=20, random_state=4026)))
+r = stats.rankdata(y)
+g = np.repeat(np.linspace(1,3,3), [20,20,20], axis=0)
+d = pd.DataFrame({"y":y,"g":g,"r":r})
+print(posthoc_conover(d, val_col='y', group_col='g', p_adjust='holm'))
+```
+  
+## Porównanie wariancji {#R83}
+
+**Test Z-diff / Test Z-ratio**. Jeśli chcemy porównać dwie wariancje to rozważamy hipotezy statystyczne o postaci:
+\begin{equation}
+H_0:\;\sigma_1^2=\sigma_2^2\quad\mbox{vs.}\quad H_1:\;\sigma_1^2\neq\sigma_2^2
+(\#eq:v01)
+\end{equation}
+Zauważmy, że powyższą hipotezę statystyczną można sprowadzić do zapisu:
+\begin{equation}
+H_{0}:\;\sigma^2_1/\sigma^2_2=1\quad\textrm{vs.}\quad H_{1}:\;\sigma^2_1/\sigma^2_2\neq1
+(\#eq:v02)
+\end{equation}
+Statystyka testowa:
+\begin{equation}
+Z_{ratio}=\frac{(s^2_1/s^2_2)-1}{SE_{ratio}}
+(\#eq:v03)
+\end{equation}
+gdzie: $SE_{ratio}=\frac{1}{s_2^{2}}\sqrt{SE_1^2+r_0^2\cdot SE_2^2}$ to błąd standardowy ilorazu dwóch wariancji oraz $SE=\sqrt{s^2/n}$ to błąd standardowy wariancji $s^2$ dla przekształconej zmiennej $(x_i-\bar{x})^2$, $r_0^2$ to iloraz wariancji podniesiony do drugiej potęgi.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+
+x = stats.norm.rvs(0, 1.5, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101)
+  
+z1 = (x-np.mean(x))**2
+z2 = (y-np.mean(y))**2
+ratV = np.var(x,ddof=1)/np.var(y,ddof=1)
+SE = np.sqrt(np.var(z1,ddof=1)/len(x)+ratV**2*np.var(z2,ddof=1)/len(y))/np.var(y,ddof=1)
+conf = [stats.norm.ppf(i,ratV,SE) for i in [0.025,0.975]]
+h0 = 1
+p = stats.norm.cdf(h0,ratV,SE)
+
+print("iloraz wariancji:",ratV,", błąd:",SE)
+print("95% przedział ufności:",conf)
+print("\nH0: rVar = %.0f vs. H1: rVar != %.0f" % (h0,h0))
+print("p-wartość:",2*min(p,1-p))
+```
+  
+Równoważnym zapisem powyższych hipotez statystycznych \@ref(eq:v01) oraz \@ref(eq:v02) będzie zapis:
+\begin{equation}
+H_{0}:\;\sigma^2_1-\sigma^2_2=0\quad\textrm{vs.}\quad H_{1}:\;\sigma^2_1-\sigma^2_2\neq0
+(\#eq:v04)
+\end{equation}
+Statystyka testowa:
+\begin{equation}
+Z_{diff}=\frac{(s^2_1-s^2_2)-0}{SE_{diff}}
+(\#eq:v05)
+\end{equation}
+
+gdzie: $SE_{diff}=\sqrt{SE_{1}^2+\rho^2\cdot SE_{2}^2}$ to błąd standardowy różnicy dwóch wariancji oraz $SE=\sqrt{s^2/n}$ to błąd standardowy wariancji $s^2$ dla przekształconej zmiennej $(x_i-\bar{x})^2$, $\rho^2$ to opcjonalny parametr do osłabienia/wzmocnienia udziału drugiej wariancji.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+
+x = stats.norm.rvs(0, 1.5, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101)
+
+z1 = (x-np.mean(x))**2
+z2 = (y-np.mean(y))**2
+difV = np.var(x,ddof=1)-np.var(y,ddof=1)
+SE = np.sqrt(np.var(z1,ddof=1)/len(x)+1*np.var(z2,ddof=1)/len(y))
+conf = [stats.norm.ppf(i,difV,SE) for i in [0.025,0.975]]
+h0 = 0
+p = stats.norm.cdf(h0,difV,SE)
+
+print("różnica wariancji:",difV,", błąd:",SE)
+print("95% przedział ufności:",conf)
+print("\nH0: dVar = %.0f vs. H1: dVar != %.0f" % (h0,h0))
+print("p-wartość:",2*min(p,1-p))
+```
+
+**Test Bartletta / Test Levene**. Badanie równości wariancji można wykonać również za pomocą testu Fligner-Killen lub testu Levene które w przeciwieństwie do testu Bartletta są mało wrażliwe na odchylenia od rozkładu normalnego w próbkach. Przeważnie są one stosowane do badania równości kilku wariancji ale nic nie stoi na przeszkodzie aby wykorzystać je do porównania dwóch wariancji na podstawie hipotezy \@ref(eq:v01). Dodajmy, że test Levene i Fligner-Killeen mogą występować w trzech wariantach tzn. za parametr lokalizacji można przyjąć średnią, średnią uciętą lub medianę. Taki wybór oferują funkcje [`scipy.stats.levene`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.levene.html#scipy.stats.levene) oraz [`scipy.stats.fligner`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.fligner.html#scipy.stats.fligner). Natomiast funkcja [`pingouin.homoscedasticity`](https://pingouin-stats.org/generated/pingouin.homoscedasticity.html#pingouin.homoscedasticity) jako parametr lokalizacji stosuje medianę. Jeśli zmienne mają rozkład normalny to podawany jest wynik testu Bartletta.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+import pingouin as pg
+
+x = stats.norm.rvs(0, 1.5, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101)
+
+print(stats.levene(x,y))
+print(stats.fligner(x,y))
+print(stats.bartlett(x,y))
+print(pg.homoscedasticity(x,y))
+```
+
+## Porównanie rozkładów {#R84}
+
+**Test normalności Andersona-Darlinga**. Założenie normalności zmiennych to jedno z głównych założeń w klasycznej statystyce. W związku z tym zostało opracowanych wiele metod porównywania dystrybuanty empirycznej z rozkładem normalnym. Jednym z bardziej popularnych rozwiązań jest test Shapiro-Wilka który wymaga aby liczebność próby nie przekraczała 5000 elementów. Inne metody jak np. test Jarque-Bera, D'Agostino-Pearsona czy Andersona-Darlinga nie mają tego ograniczenia. Dodajmy jeszcze, że wysoka moc testu może być dobrym uzasadnieniem wyboru konkretnej metody [@biecek2013]. Przykładowo test normalności Andersona-Darlinga może być ciekawą alternatywą dla testu Shapiro-Wilka w przypadku wielomodalności lub występowania grubych ogonów [@biecek2017, str. 244-246].
+  
+Statystyka testu Andersona-Darlinga ma postać:
+\begin{equation}
+AD = -n-\frac{1}{n}\sum_{i=1}^n(2i-1)\big(\ln(z_i)+\ln(1-z_{n+1-i})\big)
+(\#eq:v06)
+\end{equation}
+gdzie: $z_i$ to wartości wyznaczone na podstawie dystrybuanty rozkładu normalnego $\Phi(x_i,\bar{x},s)$ dla posortowanych rosnąco elementów próby $x_i$.
+
+W przypadku badania normalności o nieznanych parametrach $\mu$ oraz $\sigma$ jest stosowana poprawka:
+\begin{equation}
+A1=AD\left(1+\frac{0,75}{n}+\frac{2,25}{n^2}\right)
+(\#eq:v07)
+\end{equation}
+
+Weryfikację hipotezy zerowej można wykonać w oparciu o otrzymaną p-wartość która jest uzależniona od wartości statystyki testu \@ref(eq:v07).
+
+* jeżeli $A1 < 0,2$ to:
+
+\begin{equation}
+p-value=1-\exp(-13,436+101,14\,A1-223,73\,A1^2)
+(\#eq:v08a)
+\end{equation}
+
+* jeżeli $0,2\leq A1<0,34$ to:
+
+\begin{equation}
+p-value=1-\exp(-8,318+42,796\,A1-59,938\,A1^2)
+(\#eq:v08b)
+\end{equation}
+
+* jeżeli $0,34\leq A1 < 0,6$ to:
+
+\begin{equation}
+p-value=\exp(0,9177-4,279\,A1-1,38\,A1^2)
+(\#eq:v08c)
+\end{equation}
+
+* jeżeli $A1\geq 0,6$ to:
+
+\begin{equation}
+p-value= \exp(1,2937-5,709\,A1+0,0186\,A1^2)
+(\#eq:v08d)
+\end{equation}
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE,echo=-(1:2)}
+import warnings
+warnings.filterwarnings("ignore")
+import scipy.stats as stats
+from statsmodels.stats.diagnostic import normal_ad
+  
+x = stats.norm.rvs(0, 1.5, size=20, random_state=2305)
+ad = normal_ad(x)
+print('AD = %.4f, p-value = %.4f' % (ad[0],ad[1]))
+```
+
+W stosunkowo prosty sposób można wygenerować wartości krytyczne na podstawie wzoru:
+
+\begin{equation}
+A_{crit}=a\left(1-\frac{b}{n}-\frac{d}{n^2}\right)
+(\#eq:v09)
+\end{equation}
+gdzie $n$ to liczebności próby oraz $a$, $b$ i $d$ to parametry które zależą od poziomu istotności $\alpha$:
+\begin{equation}
+\begin{array}{c|llllll}
+  \alpha & 0.005 & 0.01 & 0.025 & 0.05 & 0.10 & 0.20\\
+  \hline\hline
+  a & 1.1578 & 1.0348 & 0.8728 & 0.7514 & 0.6305 & 0.5091\\
+  b & 1.063 & 1.013 & 0.881 & 0.795 & 0.750 & 0.756\\
+  d & 1.34 & 0.93 & 0.94 & 0.89 & 0.80 & 0.39
+ \end{array}
+(\#eq:v10)
+\end{equation}
+Poniżej przykład wygenerowania różnych wartości krytycznych testu normalności Andersona-Darlinga.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+
+def q(alpha=0.05,n=10):
+    if alpha == 0.005:\
+    return 1.1578*(1-1.063/n-1.34/n**2)
+    elif alpha == 0.01:\
+    return 1.0348*(1-1.013/n-0.93/n**2)
+    elif alpha == 0.025:\
+    return 0.8728*(1-0.881/n-0.94/n**2)
+    elif alpha==0.05:\
+    return 0.7514*(1-0.795/n-0.89/n**2)
+    elif alpha == 0.1:\
+    return 0.6305*(1-0.750/n-0.80/n**2)
+    elif alpha == 0.2:\
+    return 0.5091*(1-0.756/n-0.39/n**2)
+
+n = [20,50,100,150,300,900,1500]
+q0_01  = [q(alpha=0.01, n=i) for i in n]
+q0_025 = [q(alpha=0.025,n=i) for i in n]
+q0_05  = [q(alpha=0.05, n=i) for i in n]
+q0_1   = [q(alpha=0.1,  n=i) for i in n]
+print(pd.DataFrame({'1%':q0_01,'2.5%':q0_025,'5%':q0_05,'10%':q0_1},index=n))
+```  
+
+Poniżej wygenerujemy w sposób symulacyjny wartości krytyczne dla $n=20$:
+```{r engine='python',engine.path='python3',python.reticulate=FALSE,echo=-(1:2)}
+import warnings
+warnings.filterwarnings("ignore")
+from statsmodels.stats.diagnostic import normal_ad
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+  
+res = [normal_ad(stats.norm.rvs(0, 1.5, size=20))[0] for i in range(10000)]
+q = np.percentile(res,[99,97.5,95,90])
+print(pd.DataFrame({'1%':q[0],'2.5%':q[1],'5%':q[2],'10%':q[3]},index=['20']))
+```
+
+**Test zgodności Andersona-Darlinga**. Oprócz rozkładu normalnego dystrybuantę empiryczną można porównywać również z innymi dystrybuantami teoretycznymi. Do badania zgodności z rozkładami ciągłymi można wykorzystać test Kołmogorowa który został zaimplementowany do funkcji [`scipy.stats.kstest`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kstest.html#scipy.stats.kstest). Alternatywą do tego rozwiązania jest test Andersona-Darlinga dostępny dzięki funkcji [`scipy.stats.anderson`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson.html#scipy.stats.anderson). W tej implementacji zamiast p-wartości są podawane wartości krytyczne $A_{crit}$ które określają granicę prawostronnego obszaru odrzucenia. Inaczej mówiąc jeśli $AD>A_{crit}$ to hipotezę zerową o zadanej dystrybuancie należy odrzucić. Dodajmy jeszcze, że wartości krytyczne zależą od liczebności próby $n$, poziomu istotności $\alpha$ oraz roważanego rozkładu. W zaimplementowanej funkcji można założyć rozkład np. normalny, wykładniczy, logistyczny, gumbela.
+
+W przypadku rozkładu normalnego wartości krytyczne są obliczane za pomocą wzoru:
+\begin{equation}
+A_{crit}=k(\alpha)/\left(1 + \frac{4}{n} - \frac{25}{n^2}\right)
+(\#eq:v010)
+\end{equation}
+gdzie wartość współczynnika $k(\alpha)$ jest uzależniona od tego czy znane są parametry rozkładu. Poniżej wykaz współczynników dla różnych wariantów.
+\begin{equation}
+\begin{array}{c|c|lllll}
+  \mbox{wariant} & \alpha & 0.15 & 0.10 & 0.05 & 0.025 & 0.01\\
+  \hline\hline
+  N(\mu,\sigma) & k(\alpha) & 1.610 & 1.993 & 2.492 & 3.070 & 3.857\\
+  N(?,?) & k(\alpha) & 0.576 & 0.656 & 0.787 & 0.918 & 1.092
+ \end{array}
+(\#eq:v011)
+\end{equation}
+
+Wartości krytyczne dla dwóch pozostałych rozkładów np. wykładniczegi oraz logistycznego obliczamy za pomocą wzoru:
+\begin{equation}
+A_{crit}=k(\alpha)/ \left(1 + \frac{v}{n}\right)
+(\#eq:v011)
+\end{equation}
+gdzie odpowiednie współczynniki $k(\alpha)$ dla danej liczebności próby $n$ są przedstawione poniżej:
+\begin{equation}
+\begin{array}{c|l|c|llll}
+  \mbox{wariant} & v & \alpha & 0.10 & 0.05 & 0.025 & 0.01\\
+  \hline\hline
+  Expon & 0.6 & k(\alpha) & 1.065 & 1.325 & 1.587 & 1.934\\
+  Logist & 0.25 & k(\alpha) & 0.56 & 0.657 & 0.765 & 0.901
+ \end{array}
+(\#eq:v012)
+\end{equation}
+  
+Poniżej przykład jak wygenerować tablicę z wartościami krytycznymi dla rozkładu normalnego, wykładniczego i logistycznego przy założonym $\alpha=0,05$ oraz różnych liczebności próby $n$. Dodajmy jeszcze, że funkcja podaje wartości krytyczne dla przypadku gdy parametry rozkładu nie są znane i trzeba je oszacować.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+import pandas as pd
+  
+n = [10,20,30,50,70,100,150,300]
+nor = [stats.anderson(stats.norm.rvs(size=i), dist='norm')[1][2] for i in n]
+exp = [stats.anderson(stats.norm.rvs(size=i), dist='expon')[1][2] for i in n]
+logis = [stats.anderson(stats.norm.rvs(size=i), dist='logistic')[1][2] for i in n]
+gumbel = [stats.anderson(stats.norm.rvs(size=i), dist='gumbel')[1][2] for i in n]
+print(pd.DataFrame({'nor_0.05':nor,'exp_0.05':exp,
+                    'logis_0.05':logis,'gumbel_0.05':gumbel},index=n))
+```
+
+Poniżej przykład wywołania funkcji [`scipy.stats.anderson`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson.html#scipy.stats.anderson) w celu zbadania zgodności rozkładu empirycznego z rozkładem normalnym.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import pandas as pd
+
+x = stats.norm.rvs(0, 1.5, size=20, random_state=2305)
+
+ad = stats.anderson(x, dist='norm')
+print(pd.DataFrame({'20':ad[1]},index=ad[2]/100).T)
+print('\nad: %.4f'% (ad[0]))
+```
+Otrzymana wartość statystyki testu Andersona-Darlinga nie przekracza wartości krytycznej nawet dla $\alpha=0.15$ więc brak jest podstaw do odrzucenia hipotezy zerowej. Warto dodać, że w tym teście można zweryfikować hipotezę zerową w oparciu o p-wartość wyznaczoną w sposób analityczny [@adgof] lub symulacyjny. Jedna z propozycji [@ad2004] została zaimplementowana do pakietu [`ADGofTest`](https://rdrr.io/rforge/ADGofTest/) dla środowiska R.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+
+x = stats.norm.rvs(0, 1.5, size=20, random_state=2305)
+  
+A = stats.anderson(x,dist='norm')
+ad = [stats.anderson(np.random.choice(x,size=len(x),replace=True), dist='norm')[0] \
+      for i in range(1000)]
+print('AD: %.4f, p-value: %.4f' % (A[0], np.mean(np.greater(ad,[A[0]]))))
+```
+  
+**Test zgodności Cressie-Read**. Badanie zgodności rozkładu empirycznego z założonym rozkładem teoretycznym (ciągłym lub dyskretnym) o zdefiniowanych parametrach można wykonać za pomocą testu chi-kwadrat lub jego uogólnionej wersji tzn. testu Cressie-Reada. Do tego celu można wykorzystać odpowiednio funkcje [`scipy.stats.chisquare`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chisquare.html) oraz [`scipy.stats.power_divergence`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.power_divergence.html) w których argumentami są wartości empiryczne `f_obs=fi` oraz teoretyczne `f_exp=ei`.
+Jeśli w teście Cressie-Reada ustalimy, że parametr `lambda` będzie równy `"1"` lub przypiszemy mu nazwę `"pearson"` to zostanie wykonany test chi-kwadrat.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+import pandas as pd
+
+x = stats.poisson.rvs(1.5, size=80, random_state=2305)
+    
+def goodfitPois(x): 
+    t = pd.Series(x).value_counts(sort=False)
+    fi = t.values
+    xi = list(t.index)
+    pi = [stats.poisson.pmf(i,np.mean(x)) for i in xi]
+    pi.append(1-sum(pi))
+    ei = np.asarray(pi) * len(x)
+    e = ei[-1]+ei[-2]
+    ei = ei[:-2]
+    ei = list(ei)
+    ei.append(e)
+    return stats.power_divergence(fi, ei, ddof=1, lambda_=2/3)
+  
+print(goodfitPois(x))
+```
+
+**Test Andersona-Darlinga dla k prób**. Test Kołmogorowa-Smirnowa (funkcja [`scipy.stats.ks_2samp`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ks_2samp.html#scipy.stats.ks_2samp)) to częsty wybór do weryfikacji hipotezy zerowej w której zakładamy, że dwie dystrybuanty są takie same.
+Inaczej mówiąc badamy czy dwie zmienne losowe pochodzą z tego samego ciągłego rozkładu o takich samych parametrach. Gdy porównujemy dwie próbki warto zwrócić uwagę także na test Eppsa-Singletona który jest zaimplementowany do funkcji [`scipy.stats.epps_singleton_2samp`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.epps_singleton_2samp.html). Ta metoda charakteryzuje się między innymi tym, że ma większą moc niż test Kołmogorowa-Smirnowa oraz może porównywać także rozkłady dyskretne.
+Alternatytwnym rozwiązaniem jest test Andersona-Darlinga (funkcja [`scipy.stats.anderson_ksamp`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson_ksamp.html#scipy.stats.anderson_ksamp)) który można stosować dla dwóch lub większej liczby próbek z rozkładu ciągłego. Dodatkowo po odrzuceniu hipotezy zerowej można sprawdzić które zmienne różnią się między sobą za pomocą testów post hoc – porównania wielokrotne.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE,message=FALSE,warning=FALSE}
+import scipy.stats as stats
+import numpy as np
+import pandas as pd
+from scikit_posthocs import posthoc_anderson
+
+x1 = stats.expon.rvs(0, 1, size=20, random_state=2305)
+x2 = stats.expon.rvs(0.5, 1, size=20, random_state=4101)
+x3 = stats.expon.rvs(1, 1, size=20, random_state=4026)
+g = np.repeat(np.linspace(1,3,3), [20,20,20], axis=0)
+d = pd.DataFrame({"y":np.concatenate((x1,x2,x3)),"g":g})
+adk = stats.anderson_ksamp([x1,x2,x3])
+
+print('ad = %.4f, p-wartość = %.4f' % (adk[0],adk[2]),'\n')
+print(posthoc_anderson(d,val_col='y',group_col='g'))
+```
+
+## Moc testu {#R85}
+
+**Test t-Studenta**. Standardowy rozkład t-Studenta ma swój ogólniejszy odpowiednik tzn. niecentralny rozkład t-Studenta z dodatkowym parametrem ncp -- non-centrality parameter. Dla $ncp = 0$ niecentralny rozkład t-Studenta jest tożsamy z centralnym rozkładem t-Studenta -- takie szczególne przypadki mają także rozkłady chi-kwadrat oraz F-Snedecora. Rozkłady niecentralne są często wykorzystywane do obliczania mocy testów np. funkcja
+[`pingouin.power_ttest`](https://pingouin-stats.org/generated/pingouin.power_ttest.html#pingouin.power_ttest) oblicza moc testu t-Studenta dla dwóch niezależnych prób (test dwustronny) według wzoru:
+\begin{equation}
+\mbox{moc}=P(T\leq t_{crit},df,ncp)
+(\#eq:moc01)
+\end{equation}
+gdzie: $t_{crit}$ to kwantyl rzędu $1-\alpha/2$ z rozkładu t-Studenta o stopniach swobody $df=2n-2$ oraz $ncp=|d|\cdot\sqrt{\frac{n}{2}}$ to non-centrality parameter.
+
+Wielkość efektu $d$ można obliczyć na podstawie wzoru:
+\begin{equation}
+d=t_{val}\cdot \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}.
+(\#eq:moc00)
+\end{equation}
+gdzie: $t_{val}$ to statystyka testu t-Studenta dla dwóch niezależnych prób, $n_1$ oraz $n_2$ to liczenbość  odpowiednio dla pierwszej i drugiej próby.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+import pingouin as pg
+  
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101)
+
+tval, n1, n2 = stats.ttest_ind(x,y)[0], len(x), len(y)
+d = pg.compute_effsize_from_t(tval, nx=n1, ny=n2, eftype='cohen')
+power = pg.power_ttest(d=d, n=len(x), contrast='two-samples')
+print("Efekt: %.4f, Moc: %.4f" % (d, power))
+```
+
+**ANOVA**. Moc testu dla klasycznej wersji jednoczynnikowej ANOVY można obliczyć za pomocą nie centralnego rozkładu F-Snedecora czyli z dodatkowym parametrem $ncp$:
+\begin{equation}
+\mbox{moc}=P(F\geq F_{crit},df_1,\, df_2,\, ncp)
+(\#eq:moc04)
+\end{equation}
+gdzie: $F_{crit}$ to kwantyl rzędu $1-\alpha$ z rozkładu F-Snedecora o stopniach swobody $df1=k-1$, $df2=n-3$ oraz $npc=f^2 N$ to non-centrality parameter.
+
+Wielkość efektu $f$ można obliczyć według formuły:
+\begin{equation}
+f=\sqrt{\frac{\sum_{i=1}^{k}p_i(\mu_i-\mu)^2}{\sigma^2}}=\sqrt{\frac{SS_{betveen}}{MS_{residuals}\cdot N}}
+(\#eq:moc02)
+\end{equation}
+gdzie: $p_i=n_i/N$, $n_i$ to liczba obserwacji w $i$-tej grupie, $N$ to suma wszystkich obserwacji, $\mu_i$ to średnia w $i$-tej grupie, $\mu$ to ogólna średnia, $\sigma^2$ to wariancja błędu w obrębie grupy ($MS_{residuals}$ - mean squares for resuduals).
+
+Metoda zaimplementowana do funkcji [`pingouin.power_anova`](https://pingouin-stats.org/generated/pingouin.power_anova.html#pingouin.power_anova) bazuje na obliczeniu wielkości efektu $f$ według wzoru:
+\begin{equation}
+f=\sqrt{\frac{\eta^2}{1-\eta^2}}
+(\#eq:moc05)
+\end{equation}
+gdzie: $\eta^2$ to wielkość efektu dla jednoczynnikowej analizy wariancji która jest tożsama z współczynnikiem determinacji $R^2$ dla regresji liniowej.
+\begin{equation}
+\eta^2=\frac{df_1\cdot F}{df_1\cdot F+df_2}\quad\mbox{lub} \quad \eta^2= \frac{SS_{between}}{SS_{residuals}+SS_{betveen}}
+(\#eq:moc03)
+\end{equation}
+gdzie: $SS_{between}$ to suma kwadratów dla czynnika, $SS_{total}$ to suma kwadratów dla czynnika oraz reszt.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE,message=FALSE,warning=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+
+y = np.concatenate((stats.expon.rvs(0, 1, size=20, random_state=2305),
+                    stats.expon.rvs(0.5, 1, size=20, random_state=4101),
+                    stats.expon.rvs(1, 1, size=20, random_state=4026)))
+g = np.repeat(np.linspace(1,3,3), [20,20,20], axis=0)
+d = pd.DataFrame({"y":y,"g":g})
+eta2 = pg.anova(dv='y', between='g', data=d)['np2']
+f = np.sqrt(eta2/(1-eta2))
+power = pg.power_anova(eta=eta2, k=3, n=20)[0]
+print("Efekt: %.4f, Moc: %.4f" % (f[0], power))
+```
+  
+Jeśli metoda analityczna do obliczenia mocy wybranego testu nie jest dostępne to wygodnym rozwiązaniem może być symulacja komputerowa.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE,message=FALSE,warning=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 2, size=20, random_state=4101)
+z = np.concatenate((x,y))
+g = np.repeat(np.linspace(1,2,2), [20,20], axis=0)
+  
+def pvalA(x,y):
+    nx = len(x)
+    ny = len(y)
+    z = np.concatenate((np.random.choice(x,nx),np.random.choice(y,ny)))
+    g = np.repeat(np.linspace(1,2,2), [nx,ny], axis=0)
+    return pg.welch_anova(dv='z', between='g',data=pd.DataFrame({"z":z,"g":g}))['p-unc'][0]
+
+m = [pvalA(x,y) for i in range(1000)]
+print("Moc: ", np.less(m,[0.05]).mean(), "dla 1000 symulacji testu Welch-Anova")
+```
+

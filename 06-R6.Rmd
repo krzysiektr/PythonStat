@@ -1,0 +1,263 @@
+# Rozkład ujemny dwumianowy {#R6}
+
+---
+
+## Funkcja gęstości {#R61}
+
+Rozkład ujemny dwumianowy (zwany też rozkładem Pascala) został zaimplementowany do funkcji [`scipy.stats.nbinom`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.nbinom.html) i można go przedstawić za pomocą wzoru:
+\begin{equation}
+f(x\;|\;r,p)={x+r-1\choose r-1}p^r(1-p)^x,\quad x=0,1,...,\quad r\in N
+(\#eq:ub01a)
+\end{equation}
+gdzie: $r$ jest liczbą sukcesów, $x$ jest liczbą niepowodzeń tj. liczba zdarzeń poprzedzających $r$ sukcesów, a $p$ jest prawdopodobieństwem niepowodzeń.
+
+Do powyższego wzoru \@ref(eq:ub01a) można zastosować alternatywny zapis współczynnika dwumianu:
+\begin{equation}
+f(x\;|\;r,p)={x+r-1\choose x}p^r(1-p)^x,\quad x=0,1,...,\quad r>0
+(\#eq:ub01b)
+\end{equation}
+dzięki któremu w rozkładzie ujemnym dwumianowym (zwanym też rozkładem Polya) można przyjąć, że parametr $r>0$. Dodatkowo współczynnik dwumianowy można zapisać w oparciu o funkcję gamma:
+\begin{equation}
+f(x\;|\;r,p)=\frac{\Gamma(x+r)}{\Gamma(r)\Gamma(x+1)}p^r(1-p)^x,\quad x=0,1,...,\quad r>0
+(\#eq:ub02)
+\end{equation}
+gdzie: $E(X)=r(1-p)/p$ oraz $V(X)=r(1-p)/p^2$.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+    
+x = stats.nbinom.rvs(n=5.7, p=0.3, size=10000, random_state=2305)
+r = np.mean(x)**2/(np.var(x,ddof=1)-np.mean(x))
+p = np.mean(x)/np.var(x,ddof=1)
+print("MOM: r= %.4f, p= %.4f" % (r,p))
+```
+        
+Jeżeli przyjmiemy, że parametr $r=\phi$ oraz $p=\frac{\phi}{\mu+\phi}$ to mieszanka rozkładu Poissona-Gamma będzie miała postać:
+\begin{equation}
+f(x\;|\;\mu,\phi)
+=\frac{\Gamma(x+\phi)}{\Gamma(\phi)\Gamma(x+1)}\left(\frac{\phi}{\mu+\phi}\right)^{\phi}\left(\frac{\mu}{\mu+\phi}\right)^{x},\quad x=0,1,...,\quad \phi>0
+(\#eq:ub03)
+\end{equation}
+gdzie: $E(X)=\mu$ oraz $V(X)=\mu+\phi^{-1}\mu^2$.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+from scipy.optimize import minimize
+
+def rn(mu, phi, n, rand):
+    r = phi # phi_nb2
+    p = r/(mu+r)
+    return stats.nbinom.rvs(n=r, p=p, size=n, random_state=rand)
+
+x = rn(mu = 1.5, phi = 5, n = 10000, rand = 2305)
+mu = np.mean(x)
+phi = np.mean(x)**2/(np.var(x,ddof=1)-np.mean(x))
+print("MOM: mean= %.4f, phi_NB2= %.4f" % (mu,phi))
+
+def L_nb2(par):
+    phi = par[0]
+    mu = par[1]
+    logLik = -np.sum( stats.nbinom.logpmf(x, n=phi, p=phi/(phi+mu)) )
+    return(logLik)
+
+initParams = [1,1]
+res = minimize(L_nb2, initParams, method= "Nelder-Mead")
+print("MLE: mean= %.4f, phi_NB2= %.4f, logLik= %.2f" % (res.x[1],res.x[0],L_nb2(res.x)))
+```
+
+Gdy do wzoru \@ref(eq:ub03) podstawimy $\phi=\alpha^{-1}$ i dokonamy prostych przekształceń to otrzymamy:
+\begin{equation}
+f(x\;|\;\mu,\alpha)=\frac{\Gamma(x+\alpha^{-1})}{\Gamma(\alpha^{-1})\Gamma(x+1)}\left(\frac{1}{\alpha\mu+1}\right)^{\alpha^{-1}}\left(\frac{\alpha\mu}{\alpha\mu+1}\right)^x
+(\#eq:ub04)
+\end{equation}
+gdzie: $E(X)=\mu$ oraz $V(X)=\mu+\alpha\mu^2$.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import numpy as np
+
+def rn(mu, alpha, n, rand):
+    r = 1/alpha # phi_nb2
+    p = r/(mu+r)
+    return stats.nbinom.rvs(n=r, p=p, size=n, random_state=rand)
+
+x = rn(mu = 1.5, alpha = 9, n = 10000, rand = 2305)
+mu = np.mean(x)
+alpha = (np.var(x,ddof=1)-np.mean(x))/np.mean(x)**2
+print("MOM: mean= %.4f, alpha_NB2= %.4f" % (mu,alpha))
+```
+Po zlogarytmowaniu wyrażenia \@ref(eq:ub04) otrzymamy funkcję logarytmu wiarygodności o postaci:
+\begin{equation}
+L(x\;|\;\mu,\alpha)=\ln\Gamma(x+\alpha^{-1})-\ln\Gamma(\alpha^{-1})-\ln\Gamma(x+1)-\alpha^{-1}\ln(1+\alpha\mu)-x\ln(1+\alpha\mu)+x\ln(\alpha\mu)
+(\#eq:ub05)
+\end{equation}
+  
+## Liniowy model ujemnej dwumianowej regresji {#R62}
+
+Do modelowania zmiennych licznikowych można stosować regresję Poissona jeśli zostało spełnione założenie równości średniej i wariancji. W przypadku wystąpienia zjawiska zawyżonej dyspersji tj. $E(X)\leq V(X)$ nie można prawidłowo wyznaczyć błędów standardowych ocen parametrów. Rozwiązaniem tego problemu może być zastosowanie takich rozkładów które są przeznaczone do modelowania nadmiernie rozproszonych danych. Jedną z wielu propozycji [@pois2016] jest rozkład ujemny dwumianowy z liniową (NB1) lub kwadratową (NB2) zależnością między średnią a wariancją [@pois1998]:
+\begin{equation}
+V(X)=\mu+\alpha\mu^p
+(\#eq:ub06)
+\end{equation}
+
+* model NB1 dla $p=1$:
+\begin{equation}
+E[(y_i-\mu_i)^2]=\phi\mu_i\quad\longrightarrow\quad\phi = E[(y_i-\mu_i)^2/\mu_i]
+(\#eq:ub07)
+\end{equation}
+Estymator parametru $\phi$ po zastosowaniu korekty:
+\begin{equation}
+\hat{\phi}_{\mathrm{NB1}}=\frac{1}{n-k}\sum_{i=1}^{n}\frac{(y_i-\hat{\mu}_i)^2}{\hat{\mu}_i}\quad\mathrm{gdzie}\quad\hat{\alpha}_{\mathrm{NB1}}=\hat{\phi}_{\mathrm{NB1}}-1
+(\#eq:ub08)
+\end{equation}
+
+* model NB2 dla $p=2$:
+\begin{equation}
+E[(y_i-\mu_i)^2-\mu_i]=\alpha\mu_i^2\quad\longrightarrow\quad\alpha = E[\{(y_i-\mu_i)^2-\mu_i\}/\mu_i^2]
+(\#eq:ub09)
+\end{equation}
+Estymator parametru $\alpha$ po zastosowaniu korekty:
+\begin{equation}
+\hat{\alpha}_{\mathrm{NB2}}=\frac{1}{n-k}\sum_{i=1}^{n}\frac{(y_i-\hat{\mu}_i)^2-\hat{\mu}_i}{\hat{\mu}^2_i}\quad\mathrm{gdzie}\quad\hat{\phi}_{\mathrm{NB2}}=1/\hat{\alpha}_{\mathrm{NB2}}
+(\#eq:ub10)
+\end{equation}
+
+W modelu który uwzględnia nadmierną dyspersje (model quasi-Poissona) błędy standardowe są modyfikowane w oparciu o wzór:
+\begin{equation}
+SE_{Q}(\beta)=SE_{Pois}(\beta)\cdot \sqrt{\hat{\phi}_{\mathrm{NB1}}}
+(\#eq:ub011)
+\end{equation}
+Warto podkreślić, że w równaniu \@ref(eq:ub011) jest wykorzystany estymator $\hat{\phi}_{\mathrm{NB1}}$ który jest powszechnie stosowany do szacowania nadmiernej dyspersji w modelu Poissona [@glm1989].
+Dodajmy jeszcze, że estymator dyspersji \@ref(eq:ub08) można zapisać w alternatywny sposób:
+\begin{equation}
+\hat{\phi}_{\mathrm{NB1}}=\frac{\chi^2_P}{n-k}
+(\#eq:ub012)
+\end{equation}
+gdzie: $\chi^2_{P}$ to suma kwadratów reszt Pearsona która jest często stosowana do oceny dobroci dopasowania modelu. Reszty Pearsona wyznaczamy na bazie regresji Poissona za pomocą wzoru:
+\begin{equation}
+r_{i}^P=\frac{y_i-\hat{u}_i}{\sqrt{\hat{u}_i}}
+(\#eq:ub013)
+\end{equation}
+
+Wykorzystanie funkcji [`statsmodels.discrete.discrete_model.NegativeBinomial`](https://www.statsmodels.org/dev/generated/statsmodels.discrete.discrete_model.NegativeBinomial.html#statsmodels.discrete.discrete_model.NegativeBinomial) umożliwia oszacowanie modelu NB1 lub NB2 (opcja domyślna) oraz parametru $\alpha$. Zastosowanie liniowego modelu ujemnej dwumianowej regresji zostanie zaprezentowane na przykładzie zestawu danych [`nb_data`](https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/).
+      
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import pandas as pd
+import statsmodels.api as sm
+import patsy
+                  
+df = pd.read_stata('https://stats.idre.ucla.edu/stat/stata/dae/nb_data.dta')
+df['prog'].replace([1.0,2.0,3.0],['General','Academic','Vocational'],inplace=True)
+model = 'daysabs ~ math + C(prog, Treatment(reference="General"))'
+y, x = patsy.dmatrices(model, df, return_type='dataframe')
+x.columns = ['Intercept', 'Academic', 'Vocational','math']
+    
+nb = sm.NegativeBinomial(y,x,loglike_method='nb2').fit(disp=0)
+a = nb.params.values[4]
+print(nb.summary())
+print("\nphi: ",round(1/a, 8), ", sqrt_phi: ", round((1/a)**0.5, 8))
+```
+
+Za pomocą wybranej pomocniczej regresji liniowej:
+\begin{equation}
+w_i =\hat{\alpha}_{\,\mathrm{NB1}}+\epsilon_i
+(\#eq:ub014)
+\end{equation}
+\begin{equation}
+w_i=\hat{\alpha}_{\,\mathrm{NB2}}\,\hat{u}_i+\epsilon_i
+(\#eq:ub015)
+\end{equation}
+można weryfikować hipotezy statystyczne:
+\begin{equation}
+H_0:\;\alpha_{\,\mathrm{NB1}}=0\quad\mathrm{vs}\quad H_1:\;\alpha_{\,\mathrm{NB1}}\neq0
+(\#eq:ub016)
+\end{equation}
+\begin{equation}
+H_0:\;\alpha_{\,\mathrm{NB2}}=0\quad\mathrm{vs}\quad H_1:\;\alpha_{\,\mathrm{NB2}}\neq0
+(\#eq:ub017)
+\end{equation}
+Warto podkreślić, że $\phi_{\,\mathrm{NB1}}=\alpha_{\,\mathrm{NB1}}+1$ więc hipotezę \@ref(eq:ub016) można przedstawić jako:
+\begin{equation}
+H_0:\;\phi_{\,\mathrm{NB1}}=1\quad\mathrm{vs}\quad H_1:\;\phi_{\,\mathrm{NB1}}\neq1
+(\#eq:ub018)
+\end{equation}
+Dodatkowo wyniki uzyskane za pomocą regresji \@ref(eq:ub014) są tożsame wynikami uzyskanymi na podstawie wzorów:
+\begin{equation}
+\hat{\alpha}_{\mathrm{NB1}}=E(w_i)\quad\mathrm{oraz}\quad SE_{\hat{\alpha}_{1NB}}=\sqrt{V(w_i)/n}
+(\#eq:ub019)
+\end{equation}
+gdzie:
+\begin{equation}
+w_i=\frac{(y_i-\hat{u}_i)^2-y_i}{\hat{u}_i}
+(\#eq:ub020)
+\end{equation}
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import warnings
+warnings.filterwarnings("ignore")
+
+import pandas as pd
+import statsmodels.api as sm
+import patsy
+  
+df = pd.read_stata('https://stats.idre.ucla.edu/stat/stata/dae/nb_data.dta')
+df['prog'].replace([1.0,2.0,3.0],['General','Academic','Vocational'],inplace=True)
+model = 'daysabs ~ math + C(prog, Treatment(reference="General"))'
+y, x = patsy.dmatrices(model, df, return_type='dataframe')
+x.columns = ['Intercept', 'Academic', 'Vocational','math']
+      
+yp = sm.Poisson(y,x).fit(disp=0).predict()
+w = ((y['daysabs']-yp)**2-y['daysabs'])/yp
+n1 = sm.OLS(w,yp*0+1).fit(use_t=1) # regresja OLS dla alpha_NB1
+n1.model.data.xnames = ['alpha_NB1']
+n2 = sm.OLS(w,yp).fit(use_t=1)     # regresja OLS dla alpha_NB2
+n2.model.data.xnames = ['alpha_NB2']
+print(n1.summary().tables[1])
+print("phi_NB1: ",n1.params.values[0]+1,'\n')
+print(n2.summary().tables[1])
+print("phi_NB2: ",1/n2.params.values[0])
+```
+Funkcja [`statsmodels.genmod.families.family.NegativeBinomial`](https://www.statsmodels.org/stable/generated/statsmodels.genmod.families.family.NegativeBinomial.html) umożliwia estymację modelu NB2 dla ustalonej wartości $\alpha$. Warto zwrócić uwagę, że za pomocą tej funkcji możemy w sposób symulacyjny dobrać odpowienik parametr $\alpha$. Dodajmy jeszcze, że do modelowania danych licznikowych można wykorzystać złożony rozkład Poissona–gamma który jest szczególnym przypadkiem rozkładu Tweedie:
+\begin{equation}
+E(X) = \mu \quad\mathrm{oraz}\quad Var(X) = \phi\mu^p
+(\#eq:ub021)
+\end{equation}
+W zależności od wartości parametru kształtu $p$ można otrzymać
+kilka znanych rozkładów jako szczególne przypadki dystrybucji Tweedie:
+
+- $p = 0$ - rozkład normalny,
+
+- $0 < p < 1$ - rozkład nie jest zdefiniowany,
+
+- $p = 1$ - rozkład Poissona,
+
+- $1 <p <2$ - rozkład Poissona–gamma,
+
+- $p = 2$ - rozkład gamma,
+
+- $2 <p <3$ - dodatnie rozkłady stabilne,
+
+- $p = 3$ - odwrotny rozkład Gaussa / rozkład Walda,
+
+- $p> 3$ - dodatnie rozkłady stabilne,
+
+- $p =\infty$ - ekstremalne stabilne rozkłady.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import pandas as pd
+import statsmodels.formula.api as smf
+import statsmodels.api as sm
+
+df = pd.read_stata('https://stats.idre.ucla.edu/stat/stata/dae/nb_data.dta')
+df['prog'].replace([1.0,2.0,3.0],['General','Academic','Vocational'],inplace=True)
+model = 'daysabs ~ math + C(prog, Treatment(reference="General"))'
+B = 100
+X = np.linspace(1.0001,1.9999,B)
+n = [smf.glm(model, data=df,\
+     family = sm.families.Tweedie(link = sm.families.links.log, var_power=i)).fit() for i in X]
+res = [n[i].deviance for i in range(B)]
+sol = n[np.argmin(res)]
+sol.model.data.xnames = ['Inercept','Academic','Vocational','math']
+print(sol.summary())
+print("\np: ",X[np.argmin(res)])
+```
+

@@ -1,0 +1,101 @@
+--- 
+title: "Statystyka w języku Python"
+author: "Krzysztof Trajkowski"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+fontfamily: mathpazo
+bibliography: [book.bib]
+biblio-style: apalike   
+urlcolor: blue
+linkcolor: red
+citecolor: red
+link-citations: yes
+indent: true
+always_allow_html: yes
+lang: pl
+lof: False
+lot: False
+description: "Zbiór zastosowań języka Python w statystyce."
+---
+
+# Statystyki rozkładu {#R1}
+
+---
+
+## Rozkład dyskretny {#R11}
+
+Funkcja rozkładu prawdopodobieństwa $f(x)$ przedstawia dowolny rozkład dyskretny gdy:
+\begin{equation}
+0\leq f(x_i)\leq1\quad\textrm{oraz}\quad \sum_{i=1}^{n}f(x_i)=1\quad\textrm{dla}\quad i=1,2,3,\dots,n
+(\#eq:prob01)
+\end{equation}
+
+Statystyki dla tego rodzaju rozkładów można obliczyć za pomocą wzorów:
+
+\begin{align}
+E(x)=\sum_{i=1}^{n}x_i\cdot f(x_i) \quad\longrightarrow\quad
+&
+\textrm{średnia} (\#eq:Ed)\\[2.5pt]
+V(x)=\sum_{i=1}^{n}f(x_i)\cdot \big[x_i-E(x)\big]^2 \quad\longrightarrow\quad
+&
+\textrm{wariancja} (\#eq:Vd)\\[2.5pt]
+SK(x)=\frac{1}{D(x)^3}\sum_{i=1}^{n}f(x_i)\cdot \big[x_i-E(x)\big]^3 \quad\longrightarrow\quad
+&
+\textrm{skośność} (\#eq:Sd)\\[2.5pt]
+KU(x)=\frac{1}{D(x)^4}\sum_{i=1}^{n}f(x_i)\cdot \big[x_i-E(x)\big]^4-3 \quad\longrightarrow\quad
+&
+\textrm{kurtoza} (\#eq:Kd)
+\end{align}
+
+Przykładowo, dla rozkładu prawdopodobieństwa (rozkład Poissona) danego wzorem $f(x)=\frac{\lambda^x\exp(-\lambda)}{x!}$ gdzie $x!=\Gamma(x+1)$ można wyprowadzić następujące wzory: $E(x)= \lambda$, $V(x)=\lambda$, $SK(x)=\lambda^{-1/2}$, $KU(x)=\lambda^{-1}$.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+import pandas as pd
+
+mu, var, sk, ku = stats.poisson.stats(mu=3,loc=0, moments='mvsk')
+df = pd.DataFrame({'średnia' :[mu], 'wariancja' :[var],\
+                   'skośność':[sk.round(4)], 'kurtoza':[ku.round(4)]})
+print(df)
+```
+
+## Rozkład ciągły {#R12}
+
+Funkcja rozkładu prawdopodobieństwa $f(x)$ przedstawia dowolny rozkład ciągły gdy:
+\begin{equation}
+0\leq f(x_i)\leq1\quad\textrm{oraz}\quad \int_{-\infty}^{+\infty}f(x)\;dx=1
+(\#eq:prob02)
+\end{equation}
+
+Statystyki dla tego rodzaju rozkładów można obliczyć za pomocą wzorów:
+
+\begin{align}
+E(x)=\int_{-\infty}^{\infty}x\cdot f(x)\; dx \quad\longrightarrow\quad
+&
+\textrm{średnia} (\#eq:Ec)\\[2.5pt]
+V(x)=\int_{-\infty}^{\infty} f(x)\cdot\big[x-E(x)\big]^2\; dx \quad\longrightarrow\quad
+&
+\textrm{wariancja} (\#eq:Vc)\\[2.5pt]
+SK(x)=\frac{1}{D(x)^3}\int_{-\infty}^{\infty} f(x)\cdot\big[x-E(x)\big]^3\; dx \quad\longrightarrow\quad
+&
+\textrm{skośność} (\#eq:Sc)\\[2.5pt]
+KU(x)=\frac{1}{D(x)^4}\int_{-\infty}^{\infty}  f(x)\cdot\big[x-E(x)\big]^4\; dx-3 \quad\longrightarrow\quad
+&
+\textrm{kurtoza} (\#eq:Kc)
+\end{align}
+
+Warto zauważyć, że parametry danego rozkładu mogą odpowiadać pewnej kombinacji średniej i wariancj. W przypadku rozkładu gamma (patrz rozdział \@ref(R3)) będziemy mieli: $E(x)=a\cdot s$, $V(x)=a\cdot s^2$, $SK(x)=\sqrt{4/a}$, $KU(x)=6/a$. Wynika z tego, że $a=E(x)^2/V(x)$ oraz $s=V(x)/E(x)$ to odpowiednio parametr kształtu oraz skali.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+
+v = stats.gamma.rvs(a=1.3,loc=0,scale=1.36,size=150,random_state=2305)
+fit = stats.gamma.fit(v,floc=0)
+mu,var,sk,ku = stats.gamma.stats(a=fit[0],loc=fit[1],scale=fit[2], moments='mvsk')
+
+print("MLE:\na= %.4f, loc= %.4f, s= %.4f" % (fit[0],fit[1],fit[2]))
+print("\nśrednia= %.2f, wariancja= %.2f, skośność= %.2f, kurtoza= %.2f" % (mu,var,sk,ku))
+print("\nMOM:\nśrednia^2/wariancja: a= %.2f, wariancja/średnia: s= %.2f" % (mu**2/var, var/mu))
+```
+Ciekawym przypadkiem jest rozkład normalny (patrz rozdział \@ref(R2)) ponieważ średnia oraz odchylenie standardowe czyli pierwiastek kwadratowy z wariancji są jednocześnie parametrami tego rozkładu.
+Dodajmy, że nie każdy rozkład prawdopodobieństwa musi mieć te statystyki określone.
+Przykładem może być rozkład Cauchy'ego który nie ma zdefiniowanej średniej, wariancji, skośności oraz kurtozy.

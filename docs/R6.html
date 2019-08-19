@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Rozdział 6 Rozkład ujemny dwumianowy | Statystyka w języku Python</title>
+  <meta name="description" content="Zbiór zastosowań języka Python w statystyce." />
+  <meta name="generator" content="bookdown 0.10 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Rozdział 6 Rozkład ujemny dwumianowy | Statystyka w języku Python" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Rozdział 6 Rozkład ujemny dwumianowy | Statystyka w języku Python" />
+  
+  <meta name="twitter:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+<meta name="author" content="Krzysztof Trajkowski" />
+
+
+<meta name="date" content="2019-08-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="R5.html">
+<link rel="next" href="R7.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Statystyka w języku Python </a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Statystyki rozkładu</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#R11"><i class="fa fa-check"></i><b>1.1</b> Rozkład dyskretny</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#R12"><i class="fa fa-check"></i><b>1.2</b> Rozkład ciągły</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="R2.html"><a href="R2.html"><i class="fa fa-check"></i><b>2</b> Rozkład normalny</a><ul>
+<li class="chapter" data-level="2.1" data-path="R2.html"><a href="R2.html#R21"><i class="fa fa-check"></i><b>2.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="2.2" data-path="R2.html"><a href="R2.html#R22"><i class="fa fa-check"></i><b>2.2</b> Liniowy model regresji</a></li>
+<li class="chapter" data-level="2.3" data-path="R2.html"><a href="R2.html#R23"><i class="fa fa-check"></i><b>2.3</b> Nieliniowy model regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="R3.html"><a href="R3.html"><i class="fa fa-check"></i><b>3</b> Rozkład gamma</a><ul>
+<li class="chapter" data-level="3.1" data-path="R3.html"><a href="R3.html#R31"><i class="fa fa-check"></i><b>3.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="3.2" data-path="R3.html"><a href="R3.html#R32"><i class="fa fa-check"></i><b>3.2</b> Liniowy model gamma regresji</a></li>
+<li class="chapter" data-level="3.3" data-path="R3.html"><a href="R3.html#R33"><i class="fa fa-check"></i><b>3.3</b> Nieliniowy model gamma regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="R4.html"><a href="R4.html"><i class="fa fa-check"></i><b>4</b> Rozkład beta</a><ul>
+<li class="chapter" data-level="4.1" data-path="R4.html"><a href="R4.html#R41"><i class="fa fa-check"></i><b>4.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="4.2" data-path="R4.html"><a href="R4.html#R42"><i class="fa fa-check"></i><b>4.2</b> Liniowy model beta regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="R5.html"><a href="R5.html"><i class="fa fa-check"></i><b>5</b> Rozkład beta dwumianowy</a><ul>
+<li class="chapter" data-level="5.1" data-path="R5.html"><a href="R5.html#R51"><i class="fa fa-check"></i><b>5.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="5.2" data-path="R5.html"><a href="R5.html#R52"><i class="fa fa-check"></i><b>5.2</b> Liniowy model beta dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="R6.html"><a href="R6.html"><i class="fa fa-check"></i><b>6</b> Rozkład ujemny dwumianowy</a><ul>
+<li class="chapter" data-level="6.1" data-path="R6.html"><a href="R6.html#R61"><i class="fa fa-check"></i><b>6.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="6.2" data-path="R6.html"><a href="R6.html#R62"><i class="fa fa-check"></i><b>6.2</b> Liniowy model ujemnej dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="R7.html"><a href="R7.html"><i class="fa fa-check"></i><b>7</b> Błąd standardowy estymatora</a><ul>
+<li class="chapter" data-level="7.1" data-path="R7.html"><a href="R7.html#R71"><i class="fa fa-check"></i><b>7.1</b> Średnia</a></li>
+<li class="chapter" data-level="7.2" data-path="R7.html"><a href="R7.html#R72"><i class="fa fa-check"></i><b>7.2</b> Proporcja</a></li>
+<li class="chapter" data-level="7.3" data-path="R7.html"><a href="R7.html#R73"><i class="fa fa-check"></i><b>7.3</b> Mediana</a></li>
+<li class="chapter" data-level="7.4" data-path="R7.html"><a href="R7.html#R74"><i class="fa fa-check"></i><b>7.4</b> Wariancja</a></li>
+<li class="chapter" data-level="7.5" data-path="R7.html"><a href="R7.html#R75"><i class="fa fa-check"></i><b>7.5</b> Średnia ucięta</a></li>
+<li class="chapter" data-level="7.6" data-path="R7.html"><a href="R7.html#R76"><i class="fa fa-check"></i><b>7.6</b> Skośność</a></li>
+<li class="chapter" data-level="7.7" data-path="R7.html"><a href="R7.html#R77"><i class="fa fa-check"></i><b>7.7</b> Kurtoza</a></li>
+<li class="chapter" data-level="7.8" data-path="R7.html"><a href="R7.html#R78"><i class="fa fa-check"></i><b>7.8</b> Bootstrap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="R8.html"><a href="R8.html"><i class="fa fa-check"></i><b>8</b> Porównanie zmiennych niezależnych</a><ul>
+<li class="chapter" data-level="8.1" data-path="R8.html"><a href="R8.html#R81"><i class="fa fa-check"></i><b>8.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="8.2" data-path="R8.html"><a href="R8.html#R82"><i class="fa fa-check"></i><b>8.2</b> Porównanie rang</a></li>
+<li class="chapter" data-level="8.3" data-path="R8.html"><a href="R8.html#R83"><i class="fa fa-check"></i><b>8.3</b> Porównanie wariancji</a></li>
+<li class="chapter" data-level="8.4" data-path="R8.html"><a href="R8.html#R84"><i class="fa fa-check"></i><b>8.4</b> Porównanie rozkładów</a></li>
+<li class="chapter" data-level="8.5" data-path="R8.html"><a href="R8.html#R85"><i class="fa fa-check"></i><b>8.5</b> Moc testu</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="R9.html"><a href="R9.html"><i class="fa fa-check"></i><b>9</b> Porównanie zmiennych zależnych</a><ul>
+<li class="chapter" data-level="9.1" data-path="R9.html"><a href="R9.html#R91"><i class="fa fa-check"></i><b>9.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="9.2" data-path="R9.html"><a href="R9.html#R93"><i class="fa fa-check"></i><b>9.2</b> Porównanie rang</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="bibliografia.html"><a href="bibliografia.html"><i class="fa fa-check"></i>Bibliografia</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statystyka w języku Python</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="R6" class="section level1">
+<h1><span class="header-section-number">Rozdział 6</span> Rozkład ujemny dwumianowy</h1>
+<hr />
+<div id="R61" class="section level2">
+<h2><span class="header-section-number">6.1</span> Funkcja gęstości</h2>
+<p>Rozkład ujemny dwumianowy (zwany też rozkładem Pascala) został zaimplementowany do funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.nbinom.html"><code>scipy.stats.nbinom</code></a> i można go przedstawić za pomocą wzoru:
+<span class="math display" id="eq:ub01a">\[\begin{equation}
+f(x\;|\;r,p)={x+r-1\choose r-1}p^r(1-p)^x,\quad x=0,1,...,\quad r\in N
+\tag{6.1}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(r\)</span> jest liczbą sukcesów, <span class="math inline">\(x\)</span> jest liczbą niepowodzeń tj. liczba zdarzeń poprzedzających <span class="math inline">\(r\)</span> sukcesów, a <span class="math inline">\(p\)</span> jest prawdopodobieństwem niepowodzeń.</p>
+<p>Do powyższego wzoru <a href="R6.html#eq:ub01a">(6.1)</a> można zastosować alternatywny zapis współczynnika dwumianu:
+<span class="math display" id="eq:ub01b">\[\begin{equation}
+f(x\;|\;r,p)={x+r-1\choose x}p^r(1-p)^x,\quad x=0,1,...,\quad r&gt;0
+\tag{6.2}
+\end{equation}\]</span>
+dzięki któremu w rozkładzie ujemnym dwumianowym (zwanym też rozkładem Polya) można przyjąć, że parametr <span class="math inline">\(r&gt;0\)</span>. Dodatkowo współczynnik dwumianowy można zapisać w oparciu o funkcję gamma:
+<span class="math display" id="eq:ub02">\[\begin{equation}
+f(x\;|\;r,p)=\frac{\Gamma(x+r)}{\Gamma(r)\Gamma(x+1)}p^r(1-p)^x,\quad x=0,1,...,\quad r&gt;0
+\tag{6.3}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(E(X)=r(1-p)/p\)</span> oraz <span class="math inline">\(V(X)=r(1-p)/p^2\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+    
+x <span class="op">=</span> stats.nbinom.rvs(n<span class="op">=</span><span class="fl">5.7</span>, p<span class="op">=</span><span class="fl">0.3</span>, size<span class="op">=</span><span class="dv">10000</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+r <span class="op">=</span> np.mean(x)<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(np.var(x,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">-</span>np.mean(x))
+p <span class="op">=</span> np.mean(x)<span class="op">/</span>np.var(x,ddof<span class="op">=</span><span class="dv">1</span>)
+<span class="bu">print</span>(<span class="st">&quot;MOM: r= </span><span class="sc">%.4f</span><span class="st">, p= </span><span class="sc">%.4f</span><span class="st">&quot;</span> <span class="op">%</span> (r,p))</code></pre>
+<pre><code>## MOM: r= 5.5556, p= 0.2948</code></pre>
+<p>Jeżeli przyjmiemy, że parametr <span class="math inline">\(r=\phi\)</span> oraz <span class="math inline">\(p=\frac{\phi}{\mu+\phi}\)</span> to mieszanka rozkładu Poissona-Gamma będzie miała postać:
+<span class="math display" id="eq:ub03">\[\begin{equation}
+f(x\;|\;\mu,\phi)
+=\frac{\Gamma(x+\phi)}{\Gamma(\phi)\Gamma(x+1)}\left(\frac{\phi}{\mu+\phi}\right)^{\phi}\left(\frac{\mu}{\mu+\phi}\right)^{x},\quad x=0,1,...,\quad \phi&gt;0
+\tag{6.4}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(E(X)=\mu\)</span> oraz <span class="math inline">\(V(X)=\mu+\phi^{-1}\mu^2\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">from</span> scipy.optimize <span class="im">import</span> minimize
+
+<span class="kw">def</span> rn(mu, phi, n, rand):
+    r <span class="op">=</span> phi <span class="co"># phi_nb2</span>
+    p <span class="op">=</span> r<span class="op">/</span>(mu<span class="op">+</span>r)
+    <span class="cf">return</span> stats.nbinom.rvs(n<span class="op">=</span>r, p<span class="op">=</span>p, size<span class="op">=</span>n, random_state<span class="op">=</span>rand)
+
+x <span class="op">=</span> rn(mu <span class="op">=</span> <span class="fl">1.5</span>, phi <span class="op">=</span> <span class="dv">5</span>, n <span class="op">=</span> <span class="dv">10000</span>, rand <span class="op">=</span> <span class="dv">2305</span>)
+mu <span class="op">=</span> np.mean(x)
+phi <span class="op">=</span> np.mean(x)<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(np.var(x,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">-</span>np.mean(x))
+<span class="bu">print</span>(<span class="st">&quot;MOM: mean= </span><span class="sc">%.4f</span><span class="st">, phi_NB2= </span><span class="sc">%.4f</span><span class="st">&quot;</span> <span class="op">%</span> (mu,phi))
+
+<span class="kw">def</span> L_nb2(par):
+    phi <span class="op">=</span> par[<span class="dv">0</span>]
+    mu <span class="op">=</span> par[<span class="dv">1</span>]
+    logLik <span class="op">=</span> <span class="op">-</span>np.<span class="bu">sum</span>( stats.nbinom.logpmf(x, n<span class="op">=</span>phi, p<span class="op">=</span>phi<span class="op">/</span>(phi<span class="op">+</span>mu)) )
+    <span class="cf">return</span>(logLik)
+
+initParams <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">1</span>]
+res <span class="op">=</span> minimize(L_nb2, initParams, method<span class="op">=</span> <span class="st">&quot;Nelder-Mead&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;MLE: mean= </span><span class="sc">%.4f</span><span class="st">, phi_NB2= </span><span class="sc">%.4f</span><span class="st">, logLik= </span><span class="sc">%.2f</span><span class="st">&quot;</span> <span class="op">%</span> (res.x[<span class="dv">1</span>],res.x[<span class="dv">0</span>],L_nb2(res.x)))</code></pre>
+<pre><code>## MOM: mean= 1.5083, phi_NB2= 5.1984
+## MLE: mean= 1.5083, phi_NB2= 5.1768, logLik= 16106.60</code></pre>
+<p>Gdy do wzoru <a href="R6.html#eq:ub03">(6.4)</a> podstawimy <span class="math inline">\(\phi=\alpha^{-1}\)</span> i dokonamy prostych przekształceń to otrzymamy:
+<span class="math display" id="eq:ub04">\[\begin{equation}
+f(x\;|\;\mu,\alpha)=\frac{\Gamma(x+\alpha^{-1})}{\Gamma(\alpha^{-1})\Gamma(x+1)}\left(\frac{1}{\alpha\mu+1}\right)^{\alpha^{-1}}\left(\frac{\alpha\mu}{\alpha\mu+1}\right)^x
+\tag{6.5}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(E(X)=\mu\)</span> oraz <span class="math inline">\(V(X)=\mu+\alpha\mu^2\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+<span class="kw">def</span> rn(mu, alpha, n, rand):
+    r <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>alpha <span class="co"># phi_nb2</span>
+    p <span class="op">=</span> r<span class="op">/</span>(mu<span class="op">+</span>r)
+    <span class="cf">return</span> stats.nbinom.rvs(n<span class="op">=</span>r, p<span class="op">=</span>p, size<span class="op">=</span>n, random_state<span class="op">=</span>rand)
+
+x <span class="op">=</span> rn(mu <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="dv">9</span>, n <span class="op">=</span> <span class="dv">10000</span>, rand <span class="op">=</span> <span class="dv">2305</span>)
+mu <span class="op">=</span> np.mean(x)
+alpha <span class="op">=</span> (np.var(x,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">-</span>np.mean(x))<span class="op">/</span>np.mean(x)<span class="op">**</span><span class="dv">2</span>
+<span class="bu">print</span>(<span class="st">&quot;MOM: mean= </span><span class="sc">%.4f</span><span class="st">, alpha_NB2= </span><span class="sc">%.4f</span><span class="st">&quot;</span> <span class="op">%</span> (mu,alpha))</code></pre>
+<pre><code>## MOM: mean= 1.5355, alpha_NB2= 9.1284</code></pre>
+<p>Po zlogarytmowaniu wyrażenia <a href="R6.html#eq:ub04">(6.5)</a> otrzymamy funkcję logarytmu wiarygodności o postaci:
+<span class="math display" id="eq:ub05">\[\begin{equation}
+L(x\;|\;\mu,\alpha)=\ln\Gamma(x+\alpha^{-1})-\ln\Gamma(\alpha^{-1})-\ln\Gamma(x+1)-\alpha^{-1}\ln(1+\alpha\mu)-x\ln(1+\alpha\mu)+x\ln(\alpha\mu)
+\tag{6.6}
+\end{equation}\]</span></p>
+</div>
+<div id="R62" class="section level2">
+<h2><span class="header-section-number">6.2</span> Liniowy model ujemnej dwumianowej regresji</h2>
+<p>Do modelowania zmiennych licznikowych można stosować regresję Poissona jeśli zostało spełnione założenie równości średniej i wariancji. W przypadku wystąpienia zjawiska zawyżonej dyspersji tj. <span class="math inline">\(E(X)\leq V(X)\)</span> nie można prawidłowo wyznaczyć błędów standardowych ocen parametrów. Rozwiązaniem tego problemu może być zastosowanie takich rozkładów które są przeznaczone do modelowania nadmiernie rozproszonych danych. Jedną z wielu propozycji <span class="citation">(Coly i in. <a href="#ref-pois2016">2016</a>)</span> jest rozkład ujemny dwumianowy z liniową (NB1) lub kwadratową (NB2) zależnością między średnią a wariancją <span class="citation">(Cameron i Trivedi <a href="#ref-pois1998">1998</a>)</span>:
+<span class="math display" id="eq:ub06">\[\begin{equation}
+V(X)=\mu+\alpha\mu^p
+\tag{6.7}
+\end{equation}\]</span></p>
+<ul>
+<li><p>model NB1 dla <span class="math inline">\(p=1\)</span>:
+<span class="math display" id="eq:ub07">\[\begin{equation}
+E[(y_i-\mu_i)^2]=\phi\mu_i\quad\longrightarrow\quad\phi = E[(y_i-\mu_i)^2/\mu_i]
+\tag{6.8}
+\end{equation}\]</span>
+Estymator parametru <span class="math inline">\(\phi\)</span> po zastosowaniu korekty:
+<span class="math display" id="eq:ub08">\[\begin{equation}
+\hat{\phi}_{\mathrm{NB1}}=\frac{1}{n-k}\sum_{i=1}^{n}\frac{(y_i-\hat{\mu}_i)^2}{\hat{\mu}_i}\quad\mathrm{gdzie}\quad\hat{\alpha}_{\mathrm{NB1}}=\hat{\phi}_{\mathrm{NB1}}-1
+\tag{6.9}
+\end{equation}\]</span></p></li>
+<li><p>model NB2 dla <span class="math inline">\(p=2\)</span>:
+<span class="math display" id="eq:ub09">\[\begin{equation}
+E[(y_i-\mu_i)^2-\mu_i]=\alpha\mu_i^2\quad\longrightarrow\quad\alpha = E[\{(y_i-\mu_i)^2-\mu_i\}/\mu_i^2]
+\tag{6.10}
+\end{equation}\]</span>
+Estymator parametru <span class="math inline">\(\alpha\)</span> po zastosowaniu korekty:
+<span class="math display" id="eq:ub10">\[\begin{equation}
+\hat{\alpha}_{\mathrm{NB2}}=\frac{1}{n-k}\sum_{i=1}^{n}\frac{(y_i-\hat{\mu}_i)^2-\hat{\mu}_i}{\hat{\mu}^2_i}\quad\mathrm{gdzie}\quad\hat{\phi}_{\mathrm{NB2}}=1/\hat{\alpha}_{\mathrm{NB2}}
+\tag{6.11}
+\end{equation}\]</span></p></li>
+</ul>
+<p>W modelu który uwzględnia nadmierną dyspersje (model quasi-Poissona) błędy standardowe są modyfikowane w oparciu o wzór:
+<span class="math display" id="eq:ub011">\[\begin{equation}
+SE_{Q}(\beta)=SE_{Pois}(\beta)\cdot \sqrt{\hat{\phi}_{\mathrm{NB1}}}
+\tag{6.12}
+\end{equation}\]</span>
+Warto podkreślić, że w równaniu <a href="R6.html#eq:ub011">(6.12)</a> jest wykorzystany estymator <span class="math inline">\(\hat{\phi}_{\mathrm{NB1}}\)</span> który jest powszechnie stosowany do szacowania nadmiernej dyspersji w modelu Poissona <span class="citation">(McCullagh i Nelder <a href="#ref-glm1989">1989</a>)</span>.
+Dodajmy jeszcze, że estymator dyspersji <a href="R6.html#eq:ub08">(6.9)</a> można zapisać w alternatywny sposób:
+<span class="math display" id="eq:ub012">\[\begin{equation}
+\hat{\phi}_{\mathrm{NB1}}=\frac{\chi^2_P}{n-k}
+\tag{6.13}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(\chi^2_{P}\)</span> to suma kwadratów reszt Pearsona która jest często stosowana do oceny dobroci dopasowania modelu. Reszty Pearsona wyznaczamy na bazie regresji Poissona za pomocą wzoru:
+<span class="math display" id="eq:ub013">\[\begin{equation}
+r_{i}^P=\frac{y_i-\hat{u}_i}{\sqrt{\hat{u}_i}}
+\tag{6.14}
+\end{equation}\]</span></p>
+<p>Wykorzystanie funkcji <a href="https://www.statsmodels.org/dev/generated/statsmodels.discrete.discrete_model.NegativeBinomial.html#statsmodels.discrete.discrete_model.NegativeBinomial"><code>statsmodels.discrete.discrete_model.NegativeBinomial</code></a> umożliwia oszacowanie modelu NB1 lub NB2 (opcja domyślna) oraz parametru <span class="math inline">\(\alpha\)</span>. Zastosowanie liniowego modelu ujemnej dwumianowej regresji zostanie zaprezentowane na przykładzie zestawu danych <a href="https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/"><code>nb_data</code></a>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> statsmodels.api <span class="im">as</span> sm
+<span class="im">import</span> patsy
+                  
+df <span class="op">=</span> pd.read_stata(<span class="st">&#39;https://stats.idre.ucla.edu/stat/stata/dae/nb_data.dta&#39;</span>)
+df[<span class="st">&#39;prog&#39;</span>].replace([<span class="fl">1.0</span>,<span class="fl">2.0</span>,<span class="fl">3.0</span>],[<span class="st">&#39;General&#39;</span>,<span class="st">&#39;Academic&#39;</span>,<span class="st">&#39;Vocational&#39;</span>],inplace<span class="op">=</span><span class="va">True</span>)
+model <span class="op">=</span> <span class="st">&#39;daysabs ~ math + C(prog, Treatment(reference=&quot;General&quot;))&#39;</span>
+y, x <span class="op">=</span> patsy.dmatrices(model, df, return_type<span class="op">=</span><span class="st">&#39;dataframe&#39;</span>)
+x.columns <span class="op">=</span> [<span class="st">&#39;Intercept&#39;</span>, <span class="st">&#39;Academic&#39;</span>, <span class="st">&#39;Vocational&#39;</span>,<span class="st">&#39;math&#39;</span>]
+    
+nb <span class="op">=</span> sm.NegativeBinomial(y,x,loglike_method<span class="op">=</span><span class="st">&#39;nb2&#39;</span>).fit(disp<span class="op">=</span><span class="dv">0</span>)
+a <span class="op">=</span> nb.params.values[<span class="dv">4</span>]
+<span class="bu">print</span>(nb.summary())
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">phi: &quot;</span>,<span class="bu">round</span>(<span class="dv">1</span><span class="op">/</span>a, <span class="dv">8</span>), <span class="st">&quot;, sqrt_phi: &quot;</span>, <span class="bu">round</span>((<span class="dv">1</span><span class="op">/</span>a)<span class="op">**</span><span class="fl">0.5</span>, <span class="dv">8</span>))</code></pre>
+<pre><code>##                      NegativeBinomial Regression Results                      
+## ==============================================================================
+## Dep. Variable:                daysabs   No. Observations:                  314
+## Model:               NegativeBinomial   Df Residuals:                      310
+## Method:                           MLE   Df Model:                            3
+## Date:                Mon, 19 Aug 2019   Pseudo R-squ.:                 0.03441
+## Time:                        19:17:04   Log-Likelihood:                -865.63
+## converged:                       True   LL-Null:                       -896.47
+## Covariance Type:            nonrobust   LLR p-value:                 2.563e-13
+## ==============================================================================
+##                  coef    std err          z      P&gt;|z|      [0.025      0.975]
+## ------------------------------------------------------------------------------
+## Intercept      2.6153      0.196     13.319      0.000       2.230       3.000
+## Academic      -0.4408      0.183     -2.414      0.016      -0.799      -0.083
+## Vocational    -1.2787      0.202     -6.331      0.000      -1.675      -0.883
+## math          -0.0060      0.003     -2.390      0.017      -0.011      -0.001
+## alpha          0.9683      0.100      9.729      0.000       0.773       1.163
+## ==============================================================================
+## 
+## phi:  1.03271369 , sqrt_phi:  1.01622522</code></pre>
+<p>Za pomocą wybranej pomocniczej regresji liniowej:
+<span class="math display" id="eq:ub014">\[\begin{equation}
+w_i =\hat{\alpha}_{\,\mathrm{NB1}}+\epsilon_i
+\tag{6.15}
+\end{equation}\]</span>
+<span class="math display" id="eq:ub015">\[\begin{equation}
+w_i=\hat{\alpha}_{\,\mathrm{NB2}}\,\hat{u}_i+\epsilon_i
+\tag{6.16}
+\end{equation}\]</span>
+można weryfikować hipotezy statystyczne:
+<span class="math display" id="eq:ub016">\[\begin{equation}
+H_0:\;\alpha_{\,\mathrm{NB1}}=0\quad\mathrm{vs}\quad H_1:\;\alpha_{\,\mathrm{NB1}}\neq0
+\tag{6.17}
+\end{equation}\]</span>
+<span class="math display" id="eq:ub017">\[\begin{equation}
+H_0:\;\alpha_{\,\mathrm{NB2}}=0\quad\mathrm{vs}\quad H_1:\;\alpha_{\,\mathrm{NB2}}\neq0
+\tag{6.18}
+\end{equation}\]</span>
+Warto podkreślić, że <span class="math inline">\(\phi_{\,\mathrm{NB1}}=\alpha_{\,\mathrm{NB1}}+1\)</span> więc hipotezę <a href="R6.html#eq:ub016">(6.17)</a> można przedstawić jako:
+<span class="math display" id="eq:ub018">\[\begin{equation}
+H_0:\;\phi_{\,\mathrm{NB1}}=1\quad\mathrm{vs}\quad H_1:\;\phi_{\,\mathrm{NB1}}\neq1
+\tag{6.19}
+\end{equation}\]</span>
+Dodatkowo wyniki uzyskane za pomocą regresji <a href="R6.html#eq:ub014">(6.15)</a> są tożsame wynikami uzyskanymi na podstawie wzorów:
+<span class="math display" id="eq:ub019">\[\begin{equation}
+\hat{\alpha}_{\mathrm{NB1}}=E(w_i)\quad\mathrm{oraz}\quad SE_{\hat{\alpha}_{1NB}}=\sqrt{V(w_i)/n}
+\tag{6.20}
+\end{equation}\]</span>
+gdzie:
+<span class="math display" id="eq:ub020">\[\begin{equation}
+w_i=\frac{(y_i-\hat{u}_i)^2-y_i}{\hat{u}_i}
+\tag{6.21}
+\end{equation}\]</span></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> warnings
+warnings.filterwarnings(<span class="st">&quot;ignore&quot;</span>)
+
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> statsmodels.api <span class="im">as</span> sm
+<span class="im">import</span> patsy
+  
+df <span class="op">=</span> pd.read_stata(<span class="st">&#39;https://stats.idre.ucla.edu/stat/stata/dae/nb_data.dta&#39;</span>)
+df[<span class="st">&#39;prog&#39;</span>].replace([<span class="fl">1.0</span>,<span class="fl">2.0</span>,<span class="fl">3.0</span>],[<span class="st">&#39;General&#39;</span>,<span class="st">&#39;Academic&#39;</span>,<span class="st">&#39;Vocational&#39;</span>],inplace<span class="op">=</span><span class="va">True</span>)
+model <span class="op">=</span> <span class="st">&#39;daysabs ~ math + C(prog, Treatment(reference=&quot;General&quot;))&#39;</span>
+y, x <span class="op">=</span> patsy.dmatrices(model, df, return_type<span class="op">=</span><span class="st">&#39;dataframe&#39;</span>)
+x.columns <span class="op">=</span> [<span class="st">&#39;Intercept&#39;</span>, <span class="st">&#39;Academic&#39;</span>, <span class="st">&#39;Vocational&#39;</span>,<span class="st">&#39;math&#39;</span>]
+      
+yp <span class="op">=</span> sm.Poisson(y,x).fit(disp<span class="op">=</span><span class="dv">0</span>).predict()
+w <span class="op">=</span> ((y[<span class="st">&#39;daysabs&#39;</span>]<span class="op">-</span>yp)<span class="op">**</span><span class="dv">2</span><span class="op">-</span>y[<span class="st">&#39;daysabs&#39;</span>])<span class="op">/</span>yp
+n1 <span class="op">=</span> sm.OLS(w,yp<span class="op">*</span><span class="dv">0</span><span class="op">+</span><span class="dv">1</span>).fit(use_t<span class="op">=</span><span class="dv">1</span>) <span class="co"># regresja OLS dla alpha_NB1</span>
+n1.model.data.xnames <span class="op">=</span> [<span class="st">&#39;alpha_NB1&#39;</span>]
+n2 <span class="op">=</span> sm.OLS(w,yp).fit(use_t<span class="op">=</span><span class="dv">1</span>)     <span class="co"># regresja OLS dla alpha_NB2</span>
+n2.model.data.xnames <span class="op">=</span> [<span class="st">&#39;alpha_NB2&#39;</span>]
+<span class="bu">print</span>(n1.summary().tables[<span class="dv">1</span>])
+<span class="bu">print</span>(<span class="st">&quot;phi_NB1: &quot;</span>,n1.params.values[<span class="dv">0</span>]<span class="op">+</span><span class="dv">1</span>,<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)
+<span class="bu">print</span>(n2.summary().tables[<span class="dv">1</span>])
+<span class="bu">print</span>(<span class="st">&quot;phi_NB2: &quot;</span>,<span class="dv">1</span><span class="op">/</span>n2.params.values[<span class="dv">0</span>])</code></pre>
+<pre><code>## ==============================================================================
+##                  coef    std err          t      P&gt;|t|      [0.025      0.975]
+## ------------------------------------------------------------------------------
+## alpha_NB1      5.5105      0.768      7.178      0.000       4.000       7.021
+## ==============================================================================
+## phi_NB1:  6.51052636765949 
+## 
+## ==============================================================================
+##                  coef    std err          t      P&gt;|t|      [0.025      0.975]
+## ------------------------------------------------------------------------------
+## alpha_NB2      0.7986      0.117      6.835      0.000       0.569       1.028
+## ==============================================================================
+## phi_NB2:  1.2522191233195814</code></pre>
+<p>Funkcja <a href="https://www.statsmodels.org/stable/generated/statsmodels.genmod.families.family.NegativeBinomial.html"><code>statsmodels.genmod.families.family.NegativeBinomial</code></a> umożliwia estymację modelu NB2 dla ustalonej wartości <span class="math inline">\(\alpha\)</span>. Warto zwrócić uwagę, że za pomocą tej funkcji możemy w sposób symulacyjny dobrać odpowienik parametr <span class="math inline">\(\alpha\)</span>. Dodajmy jeszcze, że do modelowania danych licznikowych można wykorzystać złożony rozkład Poissona–gamma który jest szczególnym przypadkiem rozkładu Tweedie:
+<span class="math display" id="eq:ub021">\[\begin{equation}
+E(X) = \mu \quad\mathrm{oraz}\quad Var(X) = \phi\mu^p
+\tag{6.22}
+\end{equation}\]</span>
+W zależności od wartości parametru kształtu <span class="math inline">\(p\)</span> można otrzymać
+kilka znanych rozkładów jako szczególne przypadki dystrybucji Tweedie:</p>
+<ul>
+<li><p><span class="math inline">\(p = 0\)</span> - rozkład normalny,</p></li>
+<li><p><span class="math inline">\(0 &lt; p &lt; 1\)</span> - rozkład nie jest zdefiniowany,</p></li>
+<li><p><span class="math inline">\(p = 1\)</span> - rozkład Poissona,</p></li>
+<li><p><span class="math inline">\(1 &lt;p &lt;2\)</span> - rozkład Poissona–gamma,</p></li>
+<li><p><span class="math inline">\(p = 2\)</span> - rozkład gamma,</p></li>
+<li><p><span class="math inline">\(2 &lt;p &lt;3\)</span> - dodatnie rozkłady stabilne,</p></li>
+<li><p><span class="math inline">\(p = 3\)</span> - odwrotny rozkład Gaussa / rozkład Walda,</p></li>
+<li><p><span class="math inline">\(p&gt; 3\)</span> - dodatnie rozkłady stabilne,</p></li>
+<li><p><span class="math inline">\(p =\infty\)</span> - ekstremalne stabilne rozkłady.</p></li>
+</ul>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf
+<span class="im">import</span> statsmodels.api <span class="im">as</span> sm
+
+df <span class="op">=</span> pd.read_stata(<span class="st">&#39;https://stats.idre.ucla.edu/stat/stata/dae/nb_data.dta&#39;</span>)
+df[<span class="st">&#39;prog&#39;</span>].replace([<span class="fl">1.0</span>,<span class="fl">2.0</span>,<span class="fl">3.0</span>],[<span class="st">&#39;General&#39;</span>,<span class="st">&#39;Academic&#39;</span>,<span class="st">&#39;Vocational&#39;</span>],inplace<span class="op">=</span><span class="va">True</span>)
+model <span class="op">=</span> <span class="st">&#39;daysabs ~ math + C(prog, Treatment(reference=&quot;General&quot;))&#39;</span>
+B <span class="op">=</span> <span class="dv">100</span>
+X <span class="op">=</span> np.linspace(<span class="fl">1.0001</span>,<span class="fl">1.9999</span>,B)
+n <span class="op">=</span> [smf.glm(model, data<span class="op">=</span>df,<span class="op">\</span>
+     family <span class="op">=</span> sm.families.Tweedie(link <span class="op">=</span> sm.families.links.log, var_power<span class="op">=</span>i)).fit() <span class="cf">for</span> i <span class="kw">in</span> X]
+res <span class="op">=</span> [n[i].deviance <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(B)]
+sol <span class="op">=</span> n[np.argmin(res)]
+sol.model.data.xnames <span class="op">=</span> [<span class="st">&#39;Inercept&#39;</span>,<span class="st">&#39;Academic&#39;</span>,<span class="st">&#39;Vocational&#39;</span>,<span class="st">&#39;math&#39;</span>]
+<span class="bu">print</span>(sol.summary())
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">p: &quot;</span>,X[np.argmin(res)])</code></pre>
+<pre><code>##                  Generalized Linear Model Regression Results                  
+## ==============================================================================
+## Dep. Variable:                daysabs   No. Observations:                  314
+## Model:                            GLM   Df Residuals:                      310
+## Model Family:                 Tweedie   Df Model:                            3
+## Link Function:                    log   Scale:                          2.3160
+## Method:                          IRLS   Log-Likelihood:                    nan
+## Date:                Mon, 19 Aug 2019   Deviance:                       902.82
+## Time:                        19:17:09   Pearson chi2:                     718.
+## No. Iterations:                    10                                         
+## Covariance Type:            nonrobust                                         
+## ==============================================================================
+##                  coef    std err          z      P&gt;|z|      [0.025      0.975]
+## ------------------------------------------------------------------------------
+## Inercept       2.6258      0.192     13.699      0.000       2.250       3.001
+## Academic      -0.4410      0.178     -2.484      0.013      -0.789      -0.093
+## Vocational    -1.2779      0.203     -6.305      0.000      -1.675      -0.881
+## math          -0.0062      0.003     -2.423      0.015      -0.011      -0.001
+## ==============================================================================
+## 
+## p:  1.6363363636363637</code></pre>
+
+</div>
+</div>
+<h3>Bibliografia</h3>
+<div id="refs" class="references">
+<div id="ref-pois1998">
+<p>Cameron, A.C., i P.K. Trivedi. 1998. <em>Regression Analysis of Count Data 2nd Edition</em>. Cambridge University Press. <a href="https://assets.cambridge.org/97805216/32010/frontmatter/9780521632010_frontmatter.pdf">https://assets.cambridge.org/97805216/32010/frontmatter/9780521632010_frontmatter.pdf</a>.</p>
+</div>
+<div id="ref-pois2016">
+<p>Coly, Sylvain, Anne-Franoise Yao, David Abrial, i Myriam Charras-Garrido. 2016. „Distributions to model overdispersed count data”. <em>Journal de la Societe Francaise de Statistique</em> 157 (2). Societe Francaise de Statistique: 39–64. <a href="http://journal-sfds.fr/article/view/556">http://journal-sfds.fr/article/view/556</a>.</p>
+</div>
+<div id="ref-glm1989">
+<p>McCullagh, P., i J.A. Nelder. 1989. <em>Generalized Linear Models, Second Edition</em>. Chapman and Hall/CRC Monographs on Statistics and Applied Probability Series. Chapman &amp; Hall. <a href="https://www.amazon.com/Generalized-Chapman-Monographs-Statistics-Probability/dp/0412317605">https://www.amazon.com/Generalized-Chapman-Monographs-Statistics-Probability/dp/0412317605</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="R5.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="R7.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["PythonStat.pdf", "PythonStat.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

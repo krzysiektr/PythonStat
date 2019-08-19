@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Rozdział 8 Porównanie zmiennych niezależnych | Statystyka w języku Python</title>
+  <meta name="description" content="Zbiór zastosowań języka Python w statystyce." />
+  <meta name="generator" content="bookdown 0.10 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Rozdział 8 Porównanie zmiennych niezależnych | Statystyka w języku Python" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Rozdział 8 Porównanie zmiennych niezależnych | Statystyka w języku Python" />
+  
+  <meta name="twitter:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+<meta name="author" content="Krzysztof Trajkowski" />
+
+
+<meta name="date" content="2019-08-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="R7.html">
+<link rel="next" href="R9.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Statystyka w języku Python </a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Statystyki rozkładu</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#R11"><i class="fa fa-check"></i><b>1.1</b> Rozkład dyskretny</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#R12"><i class="fa fa-check"></i><b>1.2</b> Rozkład ciągły</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="R2.html"><a href="R2.html"><i class="fa fa-check"></i><b>2</b> Rozkład normalny</a><ul>
+<li class="chapter" data-level="2.1" data-path="R2.html"><a href="R2.html#R21"><i class="fa fa-check"></i><b>2.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="2.2" data-path="R2.html"><a href="R2.html#R22"><i class="fa fa-check"></i><b>2.2</b> Liniowy model regresji</a></li>
+<li class="chapter" data-level="2.3" data-path="R2.html"><a href="R2.html#R23"><i class="fa fa-check"></i><b>2.3</b> Nieliniowy model regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="R3.html"><a href="R3.html"><i class="fa fa-check"></i><b>3</b> Rozkład gamma</a><ul>
+<li class="chapter" data-level="3.1" data-path="R3.html"><a href="R3.html#R31"><i class="fa fa-check"></i><b>3.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="3.2" data-path="R3.html"><a href="R3.html#R32"><i class="fa fa-check"></i><b>3.2</b> Liniowy model gamma regresji</a></li>
+<li class="chapter" data-level="3.3" data-path="R3.html"><a href="R3.html#R33"><i class="fa fa-check"></i><b>3.3</b> Nieliniowy model gamma regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="R4.html"><a href="R4.html"><i class="fa fa-check"></i><b>4</b> Rozkład beta</a><ul>
+<li class="chapter" data-level="4.1" data-path="R4.html"><a href="R4.html#R41"><i class="fa fa-check"></i><b>4.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="4.2" data-path="R4.html"><a href="R4.html#R42"><i class="fa fa-check"></i><b>4.2</b> Liniowy model beta regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="R5.html"><a href="R5.html"><i class="fa fa-check"></i><b>5</b> Rozkład beta dwumianowy</a><ul>
+<li class="chapter" data-level="5.1" data-path="R5.html"><a href="R5.html#R51"><i class="fa fa-check"></i><b>5.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="5.2" data-path="R5.html"><a href="R5.html#R52"><i class="fa fa-check"></i><b>5.2</b> Liniowy model beta dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="R6.html"><a href="R6.html"><i class="fa fa-check"></i><b>6</b> Rozkład ujemny dwumianowy</a><ul>
+<li class="chapter" data-level="6.1" data-path="R6.html"><a href="R6.html#R61"><i class="fa fa-check"></i><b>6.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="6.2" data-path="R6.html"><a href="R6.html#R62"><i class="fa fa-check"></i><b>6.2</b> Liniowy model ujemnej dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="R7.html"><a href="R7.html"><i class="fa fa-check"></i><b>7</b> Błąd standardowy estymatora</a><ul>
+<li class="chapter" data-level="7.1" data-path="R7.html"><a href="R7.html#R71"><i class="fa fa-check"></i><b>7.1</b> Średnia</a></li>
+<li class="chapter" data-level="7.2" data-path="R7.html"><a href="R7.html#R72"><i class="fa fa-check"></i><b>7.2</b> Proporcja</a></li>
+<li class="chapter" data-level="7.3" data-path="R7.html"><a href="R7.html#R73"><i class="fa fa-check"></i><b>7.3</b> Mediana</a></li>
+<li class="chapter" data-level="7.4" data-path="R7.html"><a href="R7.html#R74"><i class="fa fa-check"></i><b>7.4</b> Wariancja</a></li>
+<li class="chapter" data-level="7.5" data-path="R7.html"><a href="R7.html#R75"><i class="fa fa-check"></i><b>7.5</b> Średnia ucięta</a></li>
+<li class="chapter" data-level="7.6" data-path="R7.html"><a href="R7.html#R76"><i class="fa fa-check"></i><b>7.6</b> Skośność</a></li>
+<li class="chapter" data-level="7.7" data-path="R7.html"><a href="R7.html#R77"><i class="fa fa-check"></i><b>7.7</b> Kurtoza</a></li>
+<li class="chapter" data-level="7.8" data-path="R7.html"><a href="R7.html#R78"><i class="fa fa-check"></i><b>7.8</b> Bootstrap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="R8.html"><a href="R8.html"><i class="fa fa-check"></i><b>8</b> Porównanie zmiennych niezależnych</a><ul>
+<li class="chapter" data-level="8.1" data-path="R8.html"><a href="R8.html#R81"><i class="fa fa-check"></i><b>8.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="8.2" data-path="R8.html"><a href="R8.html#R82"><i class="fa fa-check"></i><b>8.2</b> Porównanie rang</a></li>
+<li class="chapter" data-level="8.3" data-path="R8.html"><a href="R8.html#R83"><i class="fa fa-check"></i><b>8.3</b> Porównanie wariancji</a></li>
+<li class="chapter" data-level="8.4" data-path="R8.html"><a href="R8.html#R84"><i class="fa fa-check"></i><b>8.4</b> Porównanie rozkładów</a></li>
+<li class="chapter" data-level="8.5" data-path="R8.html"><a href="R8.html#R85"><i class="fa fa-check"></i><b>8.5</b> Moc testu</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="R9.html"><a href="R9.html"><i class="fa fa-check"></i><b>9</b> Porównanie zmiennych zależnych</a><ul>
+<li class="chapter" data-level="9.1" data-path="R9.html"><a href="R9.html#R91"><i class="fa fa-check"></i><b>9.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="9.2" data-path="R9.html"><a href="R9.html#R93"><i class="fa fa-check"></i><b>9.2</b> Porównanie rang</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="bibliografia.html"><a href="bibliografia.html"><i class="fa fa-check"></i>Bibliografia</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statystyka w języku Python</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="R8" class="section level1">
+<h1><span class="header-section-number">Rozdział 8</span> Porównanie zmiennych niezależnych</h1>
+<hr />
+<div id="R81" class="section level2">
+<h2><span class="header-section-number">8.1</span> Porównanie średnich</h2>
+<p><strong>Test t-Studenta / Test t-Welcha</strong>. Do porównania dwóch średnich tj. do zweryfikowania hipotezy <span class="math inline">\(H_0:\mu_1=\mu_2\)</span> najczęsciej proponowany jest test t-Studenta Wymaga on spełnienia dwóch warunków: normalność rozkładu oraz jednorodności wariancji. Statystyka klasycznego testu dla dwóch średnich: <span class="math inline">\((\bar{x}_1-\bar{x}_2)/\sqrt{d_1+d_2}\)</span> ma rozkład t-Studenta ze stopniami swobody <span class="math inline">\(df=n_1+n_2-2\)</span>.
+Jeśli wariancje w próbkach nie są równe to zalecane jest stosowanie poprawki Welcha <span class="citation">(Derrick i White <a href="#ref-welch2016">2016</a>)</span> która polega na modyfikacji stopni swobody:
+<span class="math display" id="eq:df01">\[\begin{equation}
+df_{\mathrm{Welch}}=\frac{(d_1+d_2)^2}{\frac{d_1}{n_1-1}+\frac{d_2}{n_2-1}}
+\tag{8.1}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(s_k^2\)</span> to wariancja, <span class="math inline">\(n_k\)</span> to liczebność próby dla <span class="math inline">\(k=1,2\)</span> oraz <span class="math inline">\(d_k=s^2_k/n_k\)</span>.</p>
+<p>Dzięki funkcji <a href="https://pingouin-stats.org/generated/pingouin.ttest.html#pingouin.ttest"><code>pingouin.ttest</code></a> jest dostępna klasyczna wersja testu t-Studenta oraz z poprawką Welcha.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+
+<span class="bu">print</span>(pg.ttest(x,y, correction<span class="op">=</span><span class="va">True</span>)[[<span class="st">&#39;T&#39;</span>,<span class="st">&#39;dof&#39;</span>,<span class="st">&#39;CI95%&#39;</span>,<span class="st">&#39;p-val&#39;</span>]])</code></pre>
+<pre><code>##             T    dof           CI95%     p-val
+## T-test -3.448  23.26  [-2.95, -0.74]  0.002164</code></pre>
+<p><strong>Anova / Welch-Anova</strong>. Klasyczna analiza wariancji - inaczej ANOVA to rozwinięcie testu t-Studenta dla więcej niż dwóch zmiennych niezależnych. Inaczej mówiąc w przypadku porównania średnich z dwóch grup wyniki z obu procedur są tożsame. Funkcja <a href="https://pingouin-stats.org/generated/pingouin.anova.html#pingouin.anova"><code>pingouin.anova</code></a> realizuje jedno lub dwuczynnikową analizę wariancji z interakcją. Natomiast do funkcji <a href="https://pingouin-stats.org/generated/pingouin.welch_anova.html#pingouin.welch_anova"><code>pingouin.welch_anova</code></a> jest zaimplementowana metoda Welcha dla jednej zmiennej grupującej.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+y <span class="op">=</span> np.concatenate((stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+
+<span class="bu">print</span>(pg.welch_anova(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, between<span class="op">=</span><span class="st">&#39;g&#39;</span>, data<span class="op">=</span>pd.DataFrame({<span class="st">&#39;y&#39;</span>:y,<span class="st">&#39;g&#39;</span>:g})))</code></pre>
+<pre><code>##   Source  ddof1   ddof2      F     p-unc
+## 0      g      2  30.937  6.448  0.004562</code></pre>
+<p><strong>Dalsza analiza</strong>. Po odrzuceniu hipotezy zerowej w analizie wariancji stosujemy testy do porównań wielokrotnych. Jednym z bardziej popularnych tzw. testów po fakcie dla grup niezależnych jest procedura Tukeya lub seria testów t-Studenta z odpowiednią korektą p-wartości. Są one zaimplementowane odpowiednio do funkcji
+<a href="https://pingouin-stats.org/generated/pingouin.pairwise_tukey.html#pingouin.pairwise_tukey"><code>pingouin.pairwise_tukey</code></a> oraz <a href="https://pingouin-stats.org/generated/pingouin.pairwise_ttests.html#pingouin.pairwise_ttests"><code>pingouin.pairwise_ttests</code></a>. Natomiast w warunkach heteroskedastyczności można wykonać serię testów t-Welcha z odpowiednią korektą p-wartości lub test Gamesa-Howella. Są one dostępne odpowiednio w funkcji <a href="https://pingouin-stats.org/generated/pingouin.pairwise_ttests.html#pingouin.pairwise_ttests"><code>pingouin.pairwise_ttests</code></a> oraz <a href="https://pingouin-stats.org/generated/pingouin.pairwise_gameshowell.html#pingouin.pairwise_gameshowell"><code>pingouin.pairwise_gameshowell</code></a>. Wiele ciekawych rozwiązań np. test Tamhane T2 zostało zaimplementowanych do pakietu <a href="https://scikit-posthocs.readthedocs.io/en/latest/"><code>scikit-posthocs</code></a> który bazuje na bibliotece <a href="https://cran.r-project.org/web/packages/PMCMRplus/vignettes/QuickReferenceGuide.html"><code>PMCMRplus</code></a>/<a href="https://cran.r-project.org/web/packages/PMCMR/vignettes/PMCMR.pdf"><code>PMCMR</code></a> dla programu R.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+y <span class="op">=</span> np.concatenate((stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+
+<span class="bu">print</span>(pg.pairwise_gameshowell(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, between<span class="op">=</span><span class="st">&#39;g&#39;</span>,
+                           data<span class="op">=</span>pd.DataFrame({<span class="st">&#39;y&#39;</span>:y,<span class="st">&#39;g&#39;</span>:g})))</code></pre>
+<pre><code>##      A    B  mean(A)  mean(B)   diff  ...      T      df      pval  efsize  eftype
+## 0  1.0  2.0    0.155    2.001 -1.846  ... -3.448  23.261  0.002070  -1.069  hedges
+## 1  1.0  3.0    0.155    0.857 -0.702  ... -1.539  25.039  0.275781  -0.477  hedges
+## 2  2.0  3.0    2.001    0.857  1.143  ...  1.730  36.818  0.196416   0.536  hedges
+## 
+## [3 rows x 12 columns]</code></pre>
+</div>
+<div id="R82" class="section level2">
+<h2><span class="header-section-number">8.2</span> Porównanie rang</h2>
+<p><strong>Test Manna-Whitneya</strong>. Przy założeniu, że dwa badane rozkłady mają ten sam kształt (takie same wariancje, skośność itp.) można zweryfikować hipotezę zerową o postaci <span class="math inline">\(H_{0}:\;F(x)=G(y+\Delta)\)</span> w której parametr <span class="math inline">\(\Delta\)</span> określa przesunięcie dystrybuanty <span class="math inline">\(G(y)\)</span> względem dystrybuanty <span class="math inline">\(F(x)\)</span> <span class="citation">(Divine i in. <a href="#ref-med2018">2018</a>)</span>. Inaczej mówiąc rozmieszczenie rozkładów <span class="math inline">\(F(x)\)</span> i <span class="math inline">\(G(y)\)</span> różni się w zależności od <span class="math inline">\(\Delta\)</span>. Parametr przesunięcia można oszacować za pomocą estymatorora Hodgesa-Lehmanna:
+<span class="math display" id="eq:mw01">\[\begin{equation}
+\hat{\Delta}=\mbox{mediana}\{x_i-y_j\;:\;i=1,\;\dots n_1\;;\;j=1,\;\dots n_2\}
+\tag{8.2}
+\end{equation}\]</span></p>
+<p>Warto zaznaczyć, że parametr <span class="math inline">\(\Delta\)</span> w funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html#scipy.stats.mannwhitneyu"><code>scipy.stats.mannwhitneyu</code></a> oraz <a href="https://pingouin-stats.org/generated/pingouin.mwu.html#pingouin.mwu"><code>pingouin.mwu</code></a> ma stałą wartość równą zero. Zatem rozważana hipoteza zerowa ma postać:
+<span class="math display" id="eq:mw02a">\[\begin{equation}
+H_{0}:\;\Delta=0\quad\textrm{vs.}\quad H_{1}:\;\Delta\neq 0
+\tag{8.3}
+\end{equation}\]</span>
+Równoważnym zapisem może być:
+<span class="math display" id="eq:mw02b">\[\begin{equation}
+H_{0}:\;F(x)=G(y)\quad\textrm{vs.}\quad H_{1}:\;F(x)\neq G(y)
+\tag{8.4}
+\end{equation}\]</span></p>
+<p>Statystyka testowa:
+<span class="math display" id="eq:mw03">\[\begin{equation}
+Z=\frac{|W-\frac{n_1n_2}{2}|-0,5}{\sqrt{\frac{n_1n_2(n_1+n_2+1)}{12}-\frac{n_1n_2\sum_{i=1}^{c}(t^3-t)}{12(n_1+n_2)(n_1+n_2-1)}}}
+\tag{8.5}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(c\)</span> to liczba grup pomiarów wiązanych, <span class="math inline">\(t_i\)</span> to liczba pomiarów wiązanych w <span class="math inline">\(i\)</span>-tej grupie pomiarów wiązanych.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+
+hl <span class="op">=</span> np.median(x[:, <span class="va">None</span>] <span class="op">-</span> y)
+df <span class="op">=</span> pg.mwu(x,y)
+df[<span class="st">&#39;LH-median&#39;</span>] <span class="op">=</span> hl
+<span class="bu">print</span>(df)</code></pre>
+<pre><code>##      U-val     p-val   RBC  CLES  LH-median
+## MWU   96.0  0.005115  0.52  0.76  -2.003235</code></pre>
+<p><strong>Test Brunera-Munzela</strong>. Dobrą alternatywną dla testu sumy rang Wilcoxona w warunakch heteroskedastyczności może być test Brunera-Munzela <span class="citation">(Brunner i Munzel <a href="#ref-bm2000">2000</a>)</span> dostępny dzięki funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.brunnermunzel.html#scipy.stats.brunnermunzel"><code>scipy.stats.brunnermunzel</code></a>. Wersja permutacyjna tego testu <span class="citation">(Neubert i Brunner <a href="#ref-neub2007">2007</a>)</span> jest zalecana dla przypadku małolicznych próbek o nierównych liczebnościach. W tym teście
+hipoteza zerowa dla równości stochastycznej ma postać:
+<span class="math display" id="eq:mw04">\[\begin{equation}
+H_0:\;p=0,5\quad\textrm{vs.}\quad H_{1}:\;p\neq 0,5
+\tag{8.6}
+\end{equation}\]</span>
+gdzie <span class="math inline">\(p\)</span> określa prawdopodobieństwo tego, że obserwacje w grupie pierwszej są zazwyczaj mniejsze niż w grupie drugiej.</p>
+<p>Wynika z tego, że prawdopodobieństwo zdarzenia przeciwnego (obserwacje w grupie pierwszej <span class="math inline">\(x\)</span> są zazwyczaj większe niż w grupie drugiej <span class="math inline">\(y\)</span>) jest także równe <span class="math inline">\(0,5\)</span>. Zatem w hipotezie zerowej zakładamy, że wartości w obu próbkach mają porównywalne wartości tzn. wartości z pierwszej próbki nie mają tendencji do mniejszych/większych wartości niż w próbce drugiej. Estymację tego prawdopodobieństwa można dokonać w dwojaki sposób:
+<span class="math display" id="eq:mw05">\[\begin{equation}
+\hat{p}=P(x&lt;y)+0,5\cdot P(x=y)\quad\mbox{lub} \quad \hat{p}=\frac{\bar{r}_2-(n_2+1)\cdot 0,5}{n_1}
+\tag{8.7}
+\end{equation}\]</span>
+gdzie <span class="math inline">\(\bar{r}_2\)</span> to średnia ranga dla drugiej zmiennej a rangi są liczone na podstawie próbki zbiorczej.</p>
+<p>Warto dodać, że na podstawie estymatora prawdopodobieństwa <span class="math inline">\(\hat{p}\)</span> można obliczyć statystykę testu sumy rang Wilcoxona na podstawie wzoru:
+<span class="math display" id="eq:mw06">\[\begin{equation}
+W=(1-\hat{p})n_1n_2
+\tag{8.8}
+\end{equation}\]</span></p>
+<p>Statystyka testu Brunera-Munzela:
+<span class="math display" id="eq:mw07">\[\begin{equation}
+BM=\frac{n_1n_2(\bar{r}_1-\bar{r}_2)}{(n_1+n_2)\sqrt{n_1s_1^2+n_2s_2^2}}
+\tag{8.9}
+\end{equation}\]</span>
+ma rozkład t-Studenta ze stopniami swobody według formuły:
+<span class="math display" id="eq:mw08">\[\begin{equation}
+df_{\mathrm{Satterthwaite}}=\frac{(d_1+d_2)^2}{\frac{d_1}{n_1-1}+\frac{d_2}{n_2-1}}
+\tag{8.10}
+\end{equation}\]</span>
+gdzie <span class="math inline">\(d_k=n_k\cdot s^2_k\)</span> to iloczyn liczebności próby <span class="math inline">\(n_k\)</span> oraz wariancji <span class="math inline">\(s_k^2\)</span> dla każdej <span class="math inline">\(k\)</span>-tej grupy.</p>
+<p>Wariancja jest zdefiniowana w następujący sposób:
+<span class="math display" id="eq:mw09">\[\begin{equation}
+s_k^2=\frac{1}{n_k-1}\sum_{i=1}^{n_k}\left(r_{ki}-w_{ki}-\bar{r}_k+\frac{n_k+1}{2}\right)^2
+\tag{8.11}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(\bar{r}_k\)</span> oznacza średnią rangę <span class="math inline">\(k\)</span>-tej grupy z próbki zbiorczej, <span class="math inline">\(r_k\)</span> to rangi dla <span class="math inline">\(k\)</span>-tej grupy z próbki zbiorczej, <span class="math inline">\(w_k\)</span> to rangi dla <span class="math inline">\(k\)</span>-tej grupy.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> warnings
+warnings.filterwarnings(<span class="st">&quot;ignore&quot;</span>)
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> PyNonpar
+<span class="im">from</span> PyNonpar <span class="im">import</span> <span class="op">*</span>
+    
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>).tolist()
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>).tolist()
+
+res <span class="op">=</span> PyNonpar.twosample.brunner_munzel_test(x,y)
+<span class="bu">print</span>(<span class="st">&quot;BM= </span><span class="sc">%.4f</span><span class="st">, df= </span><span class="sc">%.4f</span><span class="st">, pvalue= </span><span class="sc">%.4f</span><span class="st">&quot;</span> <span class="op">%</span> (res[<span class="dv">1</span>],res[<span class="dv">2</span>],res[<span class="dv">3</span>]))</code></pre>
+<pre><code>## BM= 2.9380, df= 20.6352, pvalue= 0.0080</code></pre>
+<p><strong>Test Kruskala-Wallisa</strong>. Nieparametrycznym odpowiednikiem analizy wariancji jest test Kruskala-Walisa jako rozszerzenie testu sumy rang Wilcoxona na kilka grup. W tej metodzie zakładamy, że próbki pochodzą z tego samego rozkładu o dowolnym kształcie. Oznacza to, że rozkład w grupach nie musi być normalny ale w dalszym ciągu zakładamy homoskedastyczność wariancji.
+Dokładny rozkład statystyki Kruskala-Wallisa można przybliżać za pomocą metod permutacyjnych lub takich dystrybuant jak: chi-kwadrat, F-Snedecora oraz beta <span class="citation">(Meyer i Seaman <a href="#ref-kw2013">2013</a>)</span>.</p>
+<p>Statystyka testowa:
+<span class="math display" id="eq:mw10">\[\begin{equation}
+\chi^2_{KW}=\left(1-\frac{\sum_{i=1}^{c}(t_i^3-t_i)}{n^3-n}\right)^{-1}\left[\frac{12}{n(n+1)}\left(\sum_{j=1}^{k}\frac{R_j^2}{n_j}\right)-3(n+1)\right]
+\tag{8.12}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(n\)</span> to liczebność z wszystkich <span class="math inline">\(k\)</span> grup, <span class="math inline">\(n_j\)</span> to liczebność w <span class="math inline">\(j\)</span>-tej grupie, <span class="math inline">\(R_j\)</span> to suma rang w <span class="math inline">\(j\)</span>-tej grupie, <span class="math inline">\(c\)</span> to liczba grup pomiarów wiązanych, <span class="math inline">\(t_i\)</span> to liczba pomiarów wiązanych w <span class="math inline">\(i\)</span>-tej grupie pomiarów wiązanych.</p>
+<p>Poniżej implementacja wersji permutacyjnej testu Kruskala-Wallisa:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+y <span class="op">=</span> np.concatenate((stats.expon.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.expon.rvs(<span class="fl">0.5</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.expon.rvs(<span class="dv">1</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+
+kw <span class="op">=</span> pg.kruskal(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, between<span class="op">=</span><span class="st">&#39;g&#39;</span>, data<span class="op">=</span>pd.DataFrame({<span class="st">&#39;y&#39;</span>:y,<span class="st">&#39;g&#39;</span>:g}))
+
+H <span class="op">=</span> kw[<span class="st">&quot;H&quot;</span>][<span class="dv">0</span>]
+B <span class="op">=</span> <span class="dv">1000</span>
+h <span class="op">=</span> [<span class="bu">list</span>(pg.kruskal(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, between<span class="op">=</span><span class="st">&#39;g&#39;</span>,<span class="op">\</span>
+          data<span class="op">=</span>pd.DataFrame({<span class="st">&#39;y&#39;</span>:y,<span class="st">&#39;g&#39;</span>:np.random.choice(g,size<span class="op">=</span><span class="dv">60</span>)}))[<span class="st">&quot;H&quot;</span>])[<span class="dv">0</span>]<span class="op">\</span>
+          <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(B)]
+perm <span class="op">=</span> np.greater(h,[H]).mean()
+kw[<span class="st">&quot;p-perm&quot;</span>] <span class="op">=</span> perm
+<span class="bu">print</span>(kw)</code></pre>
+<pre><code>##         Source  ddof1     H     p-unc  p-perm
+## Kruskal      g      2  7.61  0.022254   0.012</code></pre>
+<p><strong>ANOVA-rank</strong>. Warto zauważyć, że problem heterogeniczności wariancji można uwzględnić za pomocą testu Brunner-Dette-Munk <span class="citation">(Brunner, Dette, i Munk <a href="#ref-BDM1997">1997</a>)</span> w którym można także testować interakcję w dwuczynnikowej analizie wariancji. Jednak ta metoda nie jest dostępna w pakietach <a href="https://docs.scipy.org/doc/scipy/reference/stats.html"><code>scipy.stats</code></a> oraz <a href="https://pingouin-stats.org/index.html"><code>pingouin</code></a>. Alternatywą może być zastosowanie procedury wykorzystującej rozkład F-Snedecora która polega na porangowaniu danych i zastosowaniu klasycznej metody ANOVA. Innym rozwiązaniem może być wykorzystanie ważonej metody najmniejszych kwadratów lub odpornych błędów standardowych z wykorzystaniem funkcji <a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.anova.anova_lm.html#statsmodels.stats.anova.anova_lm"><code>statsmodels.stats.anova.anova_lm</code></a>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+y <span class="op">=</span> np.concatenate((stats.expon.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.expon.rvs(<span class="fl">0.5</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.expon.rvs(<span class="dv">1</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+r <span class="op">=</span> stats.rankdata(y)
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+d <span class="op">=</span> pd.DataFrame({<span class="st">&quot;y&quot;</span>:y,<span class="st">&quot;g&quot;</span>:g,<span class="st">&quot;r&quot;</span>:r})
+<span class="bu">print</span>(pg.anova(dv<span class="op">=</span><span class="st">&#39;r&#39;</span>, between<span class="op">=</span><span class="st">&#39;g&#39;</span>, data<span class="op">=</span>d))</code></pre>
+<pre><code>##   Source  ddof1  ddof2      F     p-unc    np2
+## 0      g      2     57  4.221  0.019527  0.129</code></pre>
+<p><strong>Dalsza analiza</strong>. Po odrzuceniu hipotezy zerowej w teście Kruskala-Wallisa można dokonać bardziej szczególowej analizy czyli przeprowadzić porównania wielokrotne. Popularnym rozwiązaniem jest zastosowanie serii testów sumy rang Wilcoxona. Ta metoda jest dostępna dzięki funkcji <a href="https://pingouin-stats.org/generated/pingouin.pairwise_ttests.html#pingouin.pairwise_ttests"><code>pingouin.pairwise_ttests</code></a> z zaznaczeniem opcji <code>parametric=False</code>. Jednak szerszy zestaw testów post hoc dla grup niezależnych znajdziemy w pakiecie <a href="https://scikit-posthocs.readthedocs.io/en/latest/intro/"><code>scikit-posthocs</code></a>. Poniżej przykład testu Conovera.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+<span class="im">from</span> scikit_posthocs <span class="im">import</span> posthoc_conover
+
+y <span class="op">=</span> np.concatenate((stats.expon.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.expon.rvs(<span class="fl">0.5</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.expon.rvs(<span class="dv">1</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+r <span class="op">=</span> stats.rankdata(y)
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+d <span class="op">=</span> pd.DataFrame({<span class="st">&quot;y&quot;</span>:y,<span class="st">&quot;g&quot;</span>:g,<span class="st">&quot;r&quot;</span>:r})
+<span class="bu">print</span>(posthoc_conover(d, val_col<span class="op">=</span><span class="st">&#39;y&#39;</span>, group_col<span class="op">=</span><span class="st">&#39;g&#39;</span>, p_adjust<span class="op">=</span><span class="st">&#39;holm&#39;</span>))</code></pre>
+<pre><code>##           1.0       2.0       3.0
+## 1.0 -1.000000  0.221096  0.015936
+## 2.0  0.221096 -1.000000  0.221096
+## 3.0  0.015936  0.221096 -1.000000</code></pre>
+</div>
+<div id="R83" class="section level2">
+<h2><span class="header-section-number">8.3</span> Porównanie wariancji</h2>
+<p><strong>Test Z-diff / Test Z-ratio</strong>. Jeśli chcemy porównać dwie wariancje to rozważamy hipotezy statystyczne o postaci:
+<span class="math display" id="eq:v01">\[\begin{equation}
+H_0:\;\sigma_1^2=\sigma_2^2\quad\mbox{vs.}\quad H_1:\;\sigma_1^2\neq\sigma_2^2
+\tag{8.13}
+\end{equation}\]</span>
+Zauważmy, że powyższą hipotezę statystyczną można sprowadzić do zapisu:
+<span class="math display" id="eq:v02">\[\begin{equation}
+H_{0}:\;\sigma^2_1/\sigma^2_2=1\quad\textrm{vs.}\quad H_{1}:\;\sigma^2_1/\sigma^2_2\neq1
+\tag{8.14}
+\end{equation}\]</span>
+Statystyka testowa:
+<span class="math display" id="eq:v03">\[\begin{equation}
+Z_{ratio}=\frac{(s^2_1/s^2_2)-1}{SE_{ratio}}
+\tag{8.15}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(SE_{ratio}=\frac{1}{s_2^{2}}\sqrt{SE_1^2+r_0^2\cdot SE_2^2}\)</span> to błąd standardowy ilorazu dwóch wariancji oraz <span class="math inline">\(SE=\sqrt{s^2/n}\)</span> to błąd standardowy wariancji <span class="math inline">\(s^2\)</span> dla przekształconej zmiennej <span class="math inline">\((x_i-\bar{x})^2\)</span>, <span class="math inline">\(r_0^2\)</span> to iloraz wariancji podniesiony do drugiej potęgi.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+  
+z1 <span class="op">=</span> (x<span class="op">-</span>np.mean(x))<span class="op">**</span><span class="dv">2</span>
+z2 <span class="op">=</span> (y<span class="op">-</span>np.mean(y))<span class="op">**</span><span class="dv">2</span>
+ratV <span class="op">=</span> np.var(x,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">/</span>np.var(y,ddof<span class="op">=</span><span class="dv">1</span>)
+SE <span class="op">=</span> np.sqrt(np.var(z1,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">/</span><span class="bu">len</span>(x)<span class="op">+</span>ratV<span class="op">**</span><span class="dv">2</span><span class="op">*</span>np.var(z2,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">/</span><span class="bu">len</span>(y))<span class="op">/</span>np.var(y,ddof<span class="op">=</span><span class="dv">1</span>)
+conf <span class="op">=</span> [stats.norm.ppf(i,ratV,SE) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>]]
+h0 <span class="op">=</span> <span class="dv">1</span>
+p <span class="op">=</span> stats.norm.cdf(h0,ratV,SE)
+
+<span class="bu">print</span>(<span class="st">&quot;iloraz wariancji:&quot;</span>,ratV,<span class="st">&quot;, błąd:&quot;</span>,SE)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: rVar = %.0f vs. H1: rVar != %.0f&quot;</span> <span class="op">%</span> (h0,h0))
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## iloraz wariancji: 0.2555508988591833 , błąd: 0.0975515172257403
+## 95% przedział ufności: [0.06435343845949357, 0.446748359258873]
+## 
+## H0: rVar = 1 vs. H1: rVar != 1
+## p-wartość: 2.3314683517128287e-14</code></pre>
+<p>Równoważnym zapisem powyższych hipotez statystycznych <a href="R8.html#eq:v01">(8.13)</a> oraz <a href="R8.html#eq:v02">(8.14)</a> będzie zapis:
+<span class="math display" id="eq:v04">\[\begin{equation}
+H_{0}:\;\sigma^2_1-\sigma^2_2=0\quad\textrm{vs.}\quad H_{1}:\;\sigma^2_1-\sigma^2_2\neq0
+\tag{8.16}
+\end{equation}\]</span>
+Statystyka testowa:
+<span class="math display" id="eq:v05">\[\begin{equation}
+Z_{diff}=\frac{(s^2_1-s^2_2)-0}{SE_{diff}}
+\tag{8.17}
+\end{equation}\]</span></p>
+<p>gdzie: <span class="math inline">\(SE_{diff}=\sqrt{SE_{1}^2+\rho^2\cdot SE_{2}^2}\)</span> to błąd standardowy różnicy dwóch wariancji oraz <span class="math inline">\(SE=\sqrt{s^2/n}\)</span> to błąd standardowy wariancji <span class="math inline">\(s^2\)</span> dla przekształconej zmiennej <span class="math inline">\((x_i-\bar{x})^2\)</span>, <span class="math inline">\(\rho^2\)</span> to opcjonalny parametr do osłabienia/wzmocnienia udziału drugiej wariancji.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+
+z1 <span class="op">=</span> (x<span class="op">-</span>np.mean(x))<span class="op">**</span><span class="dv">2</span>
+z2 <span class="op">=</span> (y<span class="op">-</span>np.mean(y))<span class="op">**</span><span class="dv">2</span>
+difV <span class="op">=</span> np.var(x,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">-</span>np.var(y,ddof<span class="op">=</span><span class="dv">1</span>)
+SE <span class="op">=</span> np.sqrt(np.var(z1,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">/</span><span class="bu">len</span>(x)<span class="op">+</span><span class="dv">1</span><span class="op">*</span>np.var(z2,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">/</span><span class="bu">len</span>(y))
+conf <span class="op">=</span> [stats.norm.ppf(i,difV,SE) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>]]
+h0 <span class="op">=</span> <span class="dv">0</span>
+p <span class="op">=</span> stats.norm.cdf(h0,difV,SE)
+
+<span class="bu">print</span>(<span class="st">&quot;różnica wariancji:&quot;</span>,difV,<span class="st">&quot;, błąd:&quot;</span>,SE)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: dVar = %.0f vs. H1: dVar != %.0f&quot;</span> <span class="op">%</span> (h0,h0))
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## różnica wariancji: -3.8307446353496024 , błąd: 1.267036271883883
+## 95% przedział ufności: [-6.314090095347914, -1.347399175351292]
+## 
+## H0: dVar = 0 vs. H1: dVar != 0
+## p-wartość: 0.0024995998590693347</code></pre>
+<p><strong>Test Bartletta / Test Levene</strong>. Badanie równości wariancji można wykonać również za pomocą testu Fligner-Killen lub testu Levene które w przeciwieństwie do testu Bartletta są mało wrażliwe na odchylenia od rozkładu normalnego w próbkach. Przeważnie są one stosowane do badania równości kilku wariancji ale nic nie stoi na przeszkodzie aby wykorzystać je do porównania dwóch wariancji na podstawie hipotezy <a href="R8.html#eq:v01">(8.13)</a>. Dodajmy, że test Levene i Fligner-Killeen mogą występować w trzech wariantach tzn. za parametr lokalizacji można przyjąć średnią, średnią uciętą lub medianę. Taki wybór oferują funkcje <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.levene.html#scipy.stats.levene"><code>scipy.stats.levene</code></a> oraz <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.fligner.html#scipy.stats.fligner"><code>scipy.stats.fligner</code></a>. Natomiast funkcja <a href="https://pingouin-stats.org/generated/pingouin.homoscedasticity.html#pingouin.homoscedasticity"><code>pingouin.homoscedasticity</code></a> jako parametr lokalizacji stosuje medianę. Jeśli zmienne mają rozkład normalny to podawany jest wynik testu Bartletta.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+
+<span class="bu">print</span>(stats.levene(x,y))
+<span class="bu">print</span>(stats.fligner(x,y))
+<span class="bu">print</span>(stats.bartlett(x,y))
+<span class="bu">print</span>(pg.homoscedasticity(x,y))</code></pre>
+<pre><code>## LeveneResult(statistic=8.994663638939507, pvalue=0.0047575161444811925)
+## FlignerResult(statistic=6.954492770953616, pvalue=0.008360900023288296)
+## BartlettResult(statistic=8.019535289470467, pvalue=0.004627544281207727)
+## (False, 0.005)</code></pre>
+</div>
+<div id="R84" class="section level2">
+<h2><span class="header-section-number">8.4</span> Porównanie rozkładów</h2>
+<p><strong>Test normalności Andersona-Darlinga</strong>. Założenie normalności zmiennych to jedno z głównych założeń w klasycznej statystyce. W związku z tym zostało opracowanych wiele metod porównywania dystrybuanty empirycznej z rozkładem normalnym. Jednym z bardziej popularnych rozwiązań jest test Shapiro-Wilka który wymaga aby liczebność próby nie przekraczała 5000 elementów. Inne metody jak np. test Jarque-Bera, D’Agostino-Pearsona czy Andersona-Darlinga nie mają tego ograniczenia. Dodajmy jeszcze, że wysoka moc testu może być dobrym uzasadnieniem wyboru konkretnej metody <span class="citation">(Biecek <a href="#ref-biecek2013">2013</a>)</span>. Przykładowo test normalności Andersona-Darlinga może być ciekawą alternatywą dla testu Shapiro-Wilka w przypadku wielomodalności lub występowania grubych ogonów <span class="citation">(Biecek <a href="#ref-biecek2017">2017</a>, str. 244-246)</span>.</p>
+<p>Statystyka testu Andersona-Darlinga ma postać:
+<span class="math display" id="eq:v06">\[\begin{equation}
+AD = -n-\frac{1}{n}\sum_{i=1}^n(2i-1)\big(\ln(z_i)+\ln(1-z_{n+1-i})\big)
+\tag{8.18}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(z_i\)</span> to wartości wyznaczone na podstawie dystrybuanty rozkładu normalnego <span class="math inline">\(\Phi(x_i,\bar{x},s)\)</span> dla posortowanych rosnąco elementów próby <span class="math inline">\(x_i\)</span>.</p>
+<p>W przypadku badania normalności o nieznanych parametrach <span class="math inline">\(\mu\)</span> oraz <span class="math inline">\(\sigma\)</span> jest stosowana poprawka:
+<span class="math display" id="eq:v07">\[\begin{equation}
+A1=AD\left(1+\frac{0,75}{n}+\frac{2,25}{n^2}\right)
+\tag{8.19}
+\end{equation}\]</span></p>
+<p>Weryfikację hipotezy zerowej można wykonać w oparciu o otrzymaną p-wartość która jest uzależniona od wartości statystyki testu <a href="R8.html#eq:v07">(8.19)</a>.</p>
+<ul>
+<li>jeżeli <span class="math inline">\(A1 &lt; 0,2\)</span> to:</li>
+</ul>
+<p><span class="math display" id="eq:v08a">\[\begin{equation}
+p-value=1-\exp(-13,436+101,14\,A1-223,73\,A1^2)
+\tag{8.20}
+\end{equation}\]</span></p>
+<ul>
+<li>jeżeli <span class="math inline">\(0,2\leq A1&lt;0,34\)</span> to:</li>
+</ul>
+<p><span class="math display" id="eq:v08b">\[\begin{equation}
+p-value=1-\exp(-8,318+42,796\,A1-59,938\,A1^2)
+\tag{8.21}
+\end{equation}\]</span></p>
+<ul>
+<li>jeżeli <span class="math inline">\(0,34\leq A1 &lt; 0,6\)</span> to:</li>
+</ul>
+<p><span class="math display" id="eq:v08c">\[\begin{equation}
+p-value=\exp(0,9177-4,279\,A1-1,38\,A1^2)
+\tag{8.22}
+\end{equation}\]</span></p>
+<ul>
+<li>jeżeli <span class="math inline">\(A1\geq 0,6\)</span> to:</li>
+</ul>
+<p><span class="math display" id="eq:v08d">\[\begin{equation}
+p-value= \exp(1,2937-5,709\,A1+0,0186\,A1^2)
+\tag{8.23}
+\end{equation}\]</span></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">from</span> statsmodels.stats.diagnostic <span class="im">import</span> normal_ad
+  
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+ad <span class="op">=</span> normal_ad(x)
+<span class="bu">print</span>(<span class="st">&#39;AD = </span><span class="sc">%.4f</span><span class="st">, p-value = </span><span class="sc">%.4f</span><span class="st">&#39;</span> <span class="op">%</span> (ad[<span class="dv">0</span>],ad[<span class="dv">1</span>]))</code></pre>
+<pre><code>## AD = 0.2568, p-value = 0.6848</code></pre>
+<p>W stosunkowo prosty sposób można wygenerować wartości krytyczne na podstawie wzoru:</p>
+<p><span class="math display" id="eq:v09">\[\begin{equation}
+A_{crit}=a\left(1-\frac{b}{n}-\frac{d}{n^2}\right)
+\tag{8.24}
+\end{equation}\]</span>
+gdzie <span class="math inline">\(n\)</span> to liczebności próby oraz <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span> i <span class="math inline">\(d\)</span> to parametry które zależą od poziomu istotności <span class="math inline">\(\alpha\)</span>:
+<span class="math display" id="eq:v10">\[\begin{equation}
+\begin{array}{c|llllll}
+  \alpha &amp; 0.005 &amp; 0.01 &amp; 0.025 &amp; 0.05 &amp; 0.10 &amp; 0.20\\
+  \hline\hline
+  a &amp; 1.1578 &amp; 1.0348 &amp; 0.8728 &amp; 0.7514 &amp; 0.6305 &amp; 0.5091\\
+  b &amp; 1.063 &amp; 1.013 &amp; 0.881 &amp; 0.795 &amp; 0.750 &amp; 0.756\\
+  d &amp; 1.34 &amp; 0.93 &amp; 0.94 &amp; 0.89 &amp; 0.80 &amp; 0.39
+ \end{array}
+\tag{8.25}
+\end{equation}\]</span>
+Poniżej przykład wygenerowania różnych wartości krytycznych testu normalności Andersona-Darlinga.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+
+<span class="kw">def</span> q(alpha<span class="op">=</span><span class="fl">0.05</span>,n<span class="op">=</span><span class="dv">10</span>):
+    <span class="cf">if</span> alpha <span class="op">==</span> <span class="fl">0.005</span>:<span class="op">\</span>
+    <span class="cf">return</span> <span class="fl">1.1578</span><span class="op">*</span>(<span class="dv">1</span><span class="fl">-1.063</span><span class="op">/</span>n<span class="fl">-1.34</span><span class="op">/</span>n<span class="op">**</span><span class="dv">2</span>)
+    <span class="cf">elif</span> alpha <span class="op">==</span> <span class="fl">0.01</span>:<span class="op">\</span>
+    <span class="cf">return</span> <span class="fl">1.0348</span><span class="op">*</span>(<span class="dv">1</span><span class="fl">-1.013</span><span class="op">/</span>n<span class="fl">-0.93</span><span class="op">/</span>n<span class="op">**</span><span class="dv">2</span>)
+    <span class="cf">elif</span> alpha <span class="op">==</span> <span class="fl">0.025</span>:<span class="op">\</span>
+    <span class="cf">return</span> <span class="fl">0.8728</span><span class="op">*</span>(<span class="dv">1</span><span class="fl">-0.881</span><span class="op">/</span>n<span class="fl">-0.94</span><span class="op">/</span>n<span class="op">**</span><span class="dv">2</span>)
+    <span class="cf">elif</span> alpha<span class="op">==</span><span class="fl">0.05</span>:<span class="op">\</span>
+    <span class="cf">return</span> <span class="fl">0.7514</span><span class="op">*</span>(<span class="dv">1</span><span class="fl">-0.795</span><span class="op">/</span>n<span class="fl">-0.89</span><span class="op">/</span>n<span class="op">**</span><span class="dv">2</span>)
+    <span class="cf">elif</span> alpha <span class="op">==</span> <span class="fl">0.1</span>:<span class="op">\</span>
+    <span class="cf">return</span> <span class="fl">0.6305</span><span class="op">*</span>(<span class="dv">1</span><span class="fl">-0.750</span><span class="op">/</span>n<span class="fl">-0.80</span><span class="op">/</span>n<span class="op">**</span><span class="dv">2</span>)
+    <span class="cf">elif</span> alpha <span class="op">==</span> <span class="fl">0.2</span>:<span class="op">\</span>
+    <span class="cf">return</span> <span class="fl">0.5091</span><span class="op">*</span>(<span class="dv">1</span><span class="fl">-0.756</span><span class="op">/</span>n<span class="fl">-0.39</span><span class="op">/</span>n<span class="op">**</span><span class="dv">2</span>)
+
+n <span class="op">=</span> [<span class="dv">20</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">150</span>,<span class="dv">300</span>,<span class="dv">900</span>,<span class="dv">1500</span>]
+q0_01  <span class="op">=</span> [q(alpha<span class="op">=</span><span class="fl">0.01</span>, n<span class="op">=</span>i) <span class="cf">for</span> i <span class="kw">in</span> n]
+q0_025 <span class="op">=</span> [q(alpha<span class="op">=</span><span class="fl">0.025</span>,n<span class="op">=</span>i) <span class="cf">for</span> i <span class="kw">in</span> n]
+q0_05  <span class="op">=</span> [q(alpha<span class="op">=</span><span class="fl">0.05</span>, n<span class="op">=</span>i) <span class="cf">for</span> i <span class="kw">in</span> n]
+q0_1   <span class="op">=</span> [q(alpha<span class="op">=</span><span class="fl">0.1</span>,  n<span class="op">=</span>i) <span class="cf">for</span> i <span class="kw">in</span> n]
+<span class="bu">print</span>(pd.DataFrame({<span class="st">&#39;1%&#39;</span>:q0_01,<span class="st">&#39;2.5%&#39;</span>:q0_025,<span class="st">&#39;5%&#39;</span>:q0_05,<span class="st">&#39;10%&#39;</span>:q0_1},index<span class="op">=</span>n))</code></pre>
+<pre><code>##             1%      2.5%        5%       10%
+## 20    0.979981  0.832302  0.719860  0.605595
+## 50    1.013450  0.857093  0.739185  0.620841
+## 100   1.024221  0.865029  0.745359  0.625721
+## 150   1.027769  0.867637  0.747388  0.627325
+## 300   1.031295  0.870228  0.749401  0.628918
+## 900   1.033634  0.871945  0.750735  0.629974
+## 1500  1.034101  0.872287  0.751001  0.630185</code></pre>
+<p>Poniżej wygenerujemy w sposób symulacyjny wartości krytyczne dla <span class="math inline">\(n=20\)</span>:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> statsmodels.stats.diagnostic <span class="im">import</span> normal_ad
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+  
+res <span class="op">=</span> [normal_ad(stats.norm.rvs(<span class="dv">0</span>, <span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">20</span>))[<span class="dv">0</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>)]
+q <span class="op">=</span> np.percentile(res,[<span class="dv">99</span>,<span class="fl">97.5</span>,<span class="dv">95</span>,<span class="dv">90</span>])
+<span class="bu">print</span>(pd.DataFrame({<span class="st">&#39;1%&#39;</span>:q[<span class="dv">0</span>],<span class="st">&#39;2.5%&#39;</span>:q[<span class="dv">1</span>],<span class="st">&#39;5%&#39;</span>:q[<span class="dv">2</span>],<span class="st">&#39;10%&#39;</span>:q[<span class="dv">3</span>]},index<span class="op">=</span>[<span class="st">&#39;20&#39;</span>]))</code></pre>
+<pre><code>##          1%      2.5%        5%       10%
+## 20  0.97439  0.826135  0.711582  0.600183</code></pre>
+<p><strong>Test zgodności Andersona-Darlinga</strong>. Oprócz rozkładu normalnego dystrybuantę empiryczną można porównywać również z innymi dystrybuantami teoretycznymi. Do badania zgodności z rozkładami ciągłymi można wykorzystać test Kołmogorowa który został zaimplementowany do funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kstest.html#scipy.stats.kstest"><code>scipy.stats.kstest</code></a>. Alternatywą do tego rozwiązania jest test Andersona-Darlinga dostępny dzięki funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson.html#scipy.stats.anderson"><code>scipy.stats.anderson</code></a>. W tej implementacji zamiast p-wartości są podawane wartości krytyczne <span class="math inline">\(A_{crit}\)</span> które określają granicę prawostronnego obszaru odrzucenia. Inaczej mówiąc jeśli <span class="math inline">\(AD&gt;A_{crit}\)</span> to hipotezę zerową o zadanej dystrybuancie należy odrzucić. Dodajmy jeszcze, że wartości krytyczne zależą od liczebności próby <span class="math inline">\(n\)</span>, poziomu istotności <span class="math inline">\(\alpha\)</span> oraz roważanego rozkładu. W zaimplementowanej funkcji można założyć rozkład np. normalny, wykładniczy, logistyczny, gumbela.</p>
+<p>W przypadku rozkładu normalnego wartości krytyczne są obliczane za pomocą wzoru:
+<span class="math display" id="eq:v010">\[\begin{equation}
+A_{crit}=k(\alpha)/\left(1 + \frac{4}{n} - \frac{25}{n^2}\right)
+\tag{8.26}
+\end{equation}\]</span>
+gdzie wartość współczynnika <span class="math inline">\(k(\alpha)\)</span> jest uzależniona od tego czy znane są parametry rozkładu. Poniżej wykaz współczynników dla różnych wariantów.
+<span class="math display" id="eq:v011">\[\begin{equation}
+\begin{array}{c|c|lllll}
+  \mbox{wariant} &amp; \alpha &amp; 0.15 &amp; 0.10 &amp; 0.05 &amp; 0.025 &amp; 0.01\\
+  \hline\hline
+  N(\mu,\sigma) &amp; k(\alpha) &amp; 1.610 &amp; 1.993 &amp; 2.492 &amp; 3.070 &amp; 3.857\\
+  N(?,?) &amp; k(\alpha) &amp; 0.576 &amp; 0.656 &amp; 0.787 &amp; 0.918 &amp; 1.092
+ \end{array}
+\tag{8.27}
+\end{equation}\]</span></p>
+<p>Wartości krytyczne dla dwóch pozostałych rozkładów np. wykładniczegi oraz logistycznego obliczamy za pomocą wzoru:
+<span class="math display" id="eq:v011">\[\begin{equation}
+A_{crit}=k(\alpha)/ \left(1 + \frac{v}{n}\right)
+\tag{8.27}
+\end{equation}\]</span>
+gdzie odpowiednie współczynniki <span class="math inline">\(k(\alpha)\)</span> dla danej liczebności próby <span class="math inline">\(n\)</span> są przedstawione poniżej:
+<span class="math display" id="eq:v012">\[\begin{equation}
+\begin{array}{c|l|c|llll}
+  \mbox{wariant} &amp; v &amp; \alpha &amp; 0.10 &amp; 0.05 &amp; 0.025 &amp; 0.01\\
+  \hline\hline
+  Expon &amp; 0.6 &amp; k(\alpha) &amp; 1.065 &amp; 1.325 &amp; 1.587 &amp; 1.934\\
+  Logist &amp; 0.25 &amp; k(\alpha) &amp; 0.56 &amp; 0.657 &amp; 0.765 &amp; 0.901
+ \end{array}
+\tag{8.28}
+\end{equation}\]</span></p>
+<p>Poniżej przykład jak wygenerować tablicę z wartościami krytycznymi dla rozkładu normalnego, wykładniczego i logistycznego przy założonym <span class="math inline">\(\alpha=0,05\)</span> oraz różnych liczebności próby <span class="math inline">\(n\)</span>. Dodajmy jeszcze, że funkcja podaje wartości krytyczne dla przypadku gdy parametry rozkładu nie są znane i trzeba je oszacować.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> pandas <span class="im">as</span> pd
+  
+n <span class="op">=</span> [<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>,<span class="dv">50</span>,<span class="dv">70</span>,<span class="dv">100</span>,<span class="dv">150</span>,<span class="dv">300</span>]
+nor <span class="op">=</span> [stats.anderson(stats.norm.rvs(size<span class="op">=</span>i), dist<span class="op">=</span><span class="st">&#39;norm&#39;</span>)[<span class="dv">1</span>][<span class="dv">2</span>] <span class="cf">for</span> i <span class="kw">in</span> n]
+exp <span class="op">=</span> [stats.anderson(stats.norm.rvs(size<span class="op">=</span>i), dist<span class="op">=</span><span class="st">&#39;expon&#39;</span>)[<span class="dv">1</span>][<span class="dv">2</span>] <span class="cf">for</span> i <span class="kw">in</span> n]
+logis <span class="op">=</span> [stats.anderson(stats.norm.rvs(size<span class="op">=</span>i), dist<span class="op">=</span><span class="st">&#39;logistic&#39;</span>)[<span class="dv">1</span>][<span class="dv">2</span>] <span class="cf">for</span> i <span class="kw">in</span> n]
+gumbel <span class="op">=</span> [stats.anderson(stats.norm.rvs(size<span class="op">=</span>i), dist<span class="op">=</span><span class="st">&#39;gumbel&#39;</span>)[<span class="dv">1</span>][<span class="dv">2</span>] <span class="cf">for</span> i <span class="kw">in</span> n]
+<span class="bu">print</span>(pd.DataFrame({<span class="st">&#39;nor_0.05&#39;</span>:nor,<span class="st">&#39;exp_0.05&#39;</span>:exp,
+                    <span class="st">&#39;logis_0.05&#39;</span>:logis,<span class="st">&#39;gumbel_0.05&#39;</span>:gumbel},index<span class="op">=</span>n))</code></pre>
+<pre><code>##      nor_0.05  exp_0.05  logis_0.05  gumbel_0.05
+## 10      0.684     1.265       0.644        0.712
+## 20      0.692     1.302       0.652        0.725
+## 30      0.712     1.315       0.655        0.730
+## 50      0.736     1.325       0.657        0.736
+## 70      0.748     1.330       0.658        0.739
+## 100     0.759     1.333       0.658        0.742
+## 150     0.767     1.336       0.659        0.745
+## 300     0.777     1.338       0.659        0.748</code></pre>
+<p>Poniżej przykład wywołania funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson.html#scipy.stats.anderson"><code>scipy.stats.anderson</code></a> w celu zbadania zgodności rozkładu empirycznego z rozkładem normalnym.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+
+ad <span class="op">=</span> stats.anderson(x, dist<span class="op">=</span><span class="st">&#39;norm&#39;</span>)
+<span class="bu">print</span>(pd.DataFrame({<span class="st">&#39;20&#39;</span>:ad[<span class="dv">1</span>]},index<span class="op">=</span>ad[<span class="dv">2</span>]<span class="op">/</span><span class="dv">100</span>).T)
+<span class="bu">print</span>(<span class="st">&#39;</span><span class="ch">\n</span><span class="st">ad: </span><span class="sc">%.4f</span><span class="st">&#39;</span><span class="op">%</span> (ad[<span class="dv">0</span>]))</code></pre>
+<pre><code>##     0.150  0.100  0.050  0.025  0.010
+## 20  0.506  0.577  0.692  0.807   0.96
+## 
+## ad: 0.2568</code></pre>
+<p>Otrzymana wartość statystyki testu Andersona-Darlinga nie przekracza wartości krytycznej nawet dla <span class="math inline">\(\alpha=0.15\)</span> więc brak jest podstaw do odrzucenia hipotezy zerowej. Warto dodać, że w tym teście można zweryfikować hipotezę zerową w oparciu o p-wartość wyznaczoną w sposób analityczny <span class="citation">(Jäntschi i Bolboacă <a href="#ref-adgof">2018</a>)</span> lub symulacyjny. Jedna z propozycji <span class="citation">(Marsaglia i Marsaglia <a href="#ref-ad2004">2004</a>)</span> została zaimplementowana do pakietu <a href="https://rdrr.io/rforge/ADGofTest/"><code>ADGofTest</code></a> dla środowiska R.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+  
+A <span class="op">=</span> stats.anderson(x,dist<span class="op">=</span><span class="st">&#39;norm&#39;</span>)
+ad <span class="op">=</span> [stats.anderson(np.random.choice(x,size<span class="op">=</span><span class="bu">len</span>(x),replace<span class="op">=</span><span class="va">True</span>), dist<span class="op">=</span><span class="st">&#39;norm&#39;</span>)[<span class="dv">0</span>] <span class="op">\</span>
+      <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>)]
+<span class="bu">print</span>(<span class="st">&#39;AD: </span><span class="sc">%.4f</span><span class="st">, p-value: </span><span class="sc">%.4f</span><span class="st">&#39;</span> <span class="op">%</span> (A[<span class="dv">0</span>], np.mean(np.greater(ad,[A[<span class="dv">0</span>]]))))</code></pre>
+<pre><code>## AD: 0.2568, p-value: 0.9820</code></pre>
+<p><strong>Test zgodności Cressie-Read</strong>. Badanie zgodności rozkładu empirycznego z założonym rozkładem teoretycznym (ciągłym lub dyskretnym) o zdefiniowanych parametrach można wykonać za pomocą testu chi-kwadrat lub jego uogólnionej wersji tzn. testu Cressie-Reada. Do tego celu można wykorzystać odpowiednio funkcje <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chisquare.html"><code>scipy.stats.chisquare</code></a> oraz <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.power_divergence.html"><code>scipy.stats.power_divergence</code></a> w których argumentami są wartości empiryczne <code>f_obs=fi</code> oraz teoretyczne <code>f_exp=ei</code>.
+Jeśli w teście Cressie-Reada ustalimy, że parametr <code>lambda</code> będzie równy <code>&quot;1&quot;</code> lub przypiszemy mu nazwę <code>&quot;pearson&quot;</code> to zostanie wykonany test chi-kwadrat.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> pandas <span class="im">as</span> pd
+
+x <span class="op">=</span> stats.poisson.rvs(<span class="fl">1.5</span>, size<span class="op">=</span><span class="dv">80</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+    
+<span class="kw">def</span> goodfitPois(x): 
+    t <span class="op">=</span> pd.Series(x).value_counts(sort<span class="op">=</span><span class="va">False</span>)
+    fi <span class="op">=</span> t.values
+    xi <span class="op">=</span> <span class="bu">list</span>(t.index)
+    pi <span class="op">=</span> [stats.poisson.pmf(i,np.mean(x)) <span class="cf">for</span> i <span class="kw">in</span> xi]
+    pi.append(<span class="dv">1</span><span class="op">-</span><span class="bu">sum</span>(pi))
+    ei <span class="op">=</span> np.asarray(pi) <span class="op">*</span> <span class="bu">len</span>(x)
+    e <span class="op">=</span> ei[<span class="op">-</span><span class="dv">1</span>]<span class="op">+</span>ei[<span class="op">-</span><span class="dv">2</span>]
+    ei <span class="op">=</span> ei[:<span class="op">-</span><span class="dv">2</span>]
+    ei <span class="op">=</span> <span class="bu">list</span>(ei)
+    ei.append(e)
+    <span class="cf">return</span> stats.power_divergence(fi, ei, ddof<span class="op">=</span><span class="dv">1</span>, lambda_<span class="op">=</span><span class="dv">2</span><span class="op">/</span><span class="dv">3</span>)
+  
+<span class="bu">print</span>(goodfitPois(x))</code></pre>
+<pre><code>## Power_divergenceResult(statistic=0.47455822372954887, pvalue=0.9759300084452401)</code></pre>
+<p><strong>Test Andersona-Darlinga dla k prób</strong>. Test Kołmogorowa-Smirnowa (funkcja <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ks_2samp.html#scipy.stats.ks_2samp"><code>scipy.stats.ks_2samp</code></a>) to częsty wybór do weryfikacji hipotezy zerowej w której zakładamy, że dwie dystrybuanty są takie same.
+Inaczej mówiąc badamy czy dwie zmienne losowe pochodzą z tego samego ciągłego rozkładu o takich samych parametrach. Gdy porównujemy dwie próbki warto zwrócić uwagę także na test Eppsa-Singletona który jest zaimplementowany do funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.epps_singleton_2samp.html"><code>scipy.stats.epps_singleton_2samp</code></a>. Ta metoda charakteryzuje się między innymi tym, że ma większą moc niż test Kołmogorowa-Smirnowa oraz może porównywać także rozkłady dyskretne.
+Alternatytwnym rozwiązaniem jest test Andersona-Darlinga (funkcja <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.anderson_ksamp.html#scipy.stats.anderson_ksamp"><code>scipy.stats.anderson_ksamp</code></a>) który można stosować dla dwóch lub większej liczby próbek z rozkładu ciągłego. Dodatkowo po odrzuceniu hipotezy zerowej można sprawdzić które zmienne różnią się między sobą za pomocą testów post hoc – porównania wielokrotne.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">from</span> scikit_posthocs <span class="im">import</span> posthoc_anderson
+
+x1 <span class="op">=</span> stats.expon.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+x2 <span class="op">=</span> stats.expon.rvs(<span class="fl">0.5</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+x3 <span class="op">=</span> stats.expon.rvs(<span class="dv">1</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+d <span class="op">=</span> pd.DataFrame({<span class="st">&quot;y&quot;</span>:np.concatenate((x1,x2,x3)),<span class="st">&quot;g&quot;</span>:g})
+adk <span class="op">=</span> stats.anderson_ksamp([x1,x2,x3])
+
+<span class="bu">print</span>(<span class="st">&#39;ad = </span><span class="sc">%.4f</span><span class="st">, p-wartość = </span><span class="sc">%.4f</span><span class="st">&#39;</span> <span class="op">%</span> (adk[<span class="dv">0</span>],adk[<span class="dv">2</span>]),<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)
+<span class="bu">print</span>(posthoc_anderson(d,val_col<span class="op">=</span><span class="st">&#39;y&#39;</span>,group_col<span class="op">=</span><span class="st">&#39;g&#39;</span>))</code></pre>
+<pre><code>## ad = 3.8139, p-wartość = 0.0066 
+## 
+##           1.0       2.0       3.0
+## 1.0 -1.000000  0.103108  0.001627
+## 2.0  0.103108 -1.000000  0.121164
+## 3.0  0.001627  0.121164 -1.000000</code></pre>
+</div>
+<div id="R85" class="section level2">
+<h2><span class="header-section-number">8.5</span> Moc testu</h2>
+<p><strong>Test t-Studenta</strong>. Standardowy rozkład t-Studenta ma swój ogólniejszy odpowiednik tzn. niecentralny rozkład t-Studenta z dodatkowym parametrem ncp – non-centrality parameter. Dla <span class="math inline">\(ncp = 0\)</span> niecentralny rozkład t-Studenta jest tożsamy z centralnym rozkładem t-Studenta – takie szczególne przypadki mają także rozkłady chi-kwadrat oraz F-Snedecora. Rozkłady niecentralne są często wykorzystywane do obliczania mocy testów np. funkcja
+<a href="https://pingouin-stats.org/generated/pingouin.power_ttest.html#pingouin.power_ttest"><code>pingouin.power_ttest</code></a> oblicza moc testu t-Studenta dla dwóch niezależnych prób (test dwustronny) według wzoru:
+<span class="math display" id="eq:moc01">\[\begin{equation}
+\mbox{moc}=P(T\leq t_{crit},df,ncp)
+\tag{8.29}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(t_{crit}\)</span> to kwantyl rzędu <span class="math inline">\(1-\alpha/2\)</span> z rozkładu t-Studenta o stopniach swobody <span class="math inline">\(df=2n-2\)</span> oraz <span class="math inline">\(ncp=|d|\cdot\sqrt{\frac{n}{2}}\)</span> to non-centrality parameter.</p>
+<p>Wielkość efektu <span class="math inline">\(d\)</span> można obliczyć na podstawie wzoru:
+<span class="math display" id="eq:moc00">\[\begin{equation}
+d=t_{val}\cdot \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}.
+\tag{8.30}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(t_{val}\)</span> to statystyka testu t-Studenta dla dwóch niezależnych prób, <span class="math inline">\(n_1\)</span> oraz <span class="math inline">\(n_2\)</span> to liczenbość odpowiednio dla pierwszej i drugiej próby.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+  
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+
+tval, n1, n2 <span class="op">=</span> stats.ttest_ind(x,y)[<span class="dv">0</span>], <span class="bu">len</span>(x), <span class="bu">len</span>(y)
+d <span class="op">=</span> pg.compute_effsize_from_t(tval, nx<span class="op">=</span>n1, ny<span class="op">=</span>n2, eftype<span class="op">=</span><span class="st">&#39;cohen&#39;</span>)
+power <span class="op">=</span> pg.power_ttest(d<span class="op">=</span>d, n<span class="op">=</span><span class="bu">len</span>(x), contrast<span class="op">=</span><span class="st">&#39;two-samples&#39;</span>)
+<span class="bu">print</span>(<span class="st">&quot;Efekt: </span><span class="sc">%.4f</span><span class="st">, Moc: </span><span class="sc">%.4f</span><span class="st">&quot;</span> <span class="op">%</span> (d, power))</code></pre>
+<pre><code>## Efekt: -1.0903, Moc: 0.9192</code></pre>
+<p><strong>ANOVA</strong>. Moc testu dla klasycznej wersji jednoczynnikowej ANOVY można obliczyć za pomocą nie centralnego rozkładu F-Snedecora czyli z dodatkowym parametrem <span class="math inline">\(ncp\)</span>:
+<span class="math display" id="eq:moc04">\[\begin{equation}
+\mbox{moc}=P(F\geq F_{crit},df_1,\, df_2,\, ncp)
+\tag{8.31}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(F_{crit}\)</span> to kwantyl rzędu <span class="math inline">\(1-\alpha\)</span> z rozkładu F-Snedecora o stopniach swobody <span class="math inline">\(df1=k-1\)</span>, <span class="math inline">\(df2=n-3\)</span> oraz <span class="math inline">\(npc=f^2 N\)</span> to non-centrality parameter.</p>
+<p>Wielkość efektu <span class="math inline">\(f\)</span> można obliczyć według formuły:
+<span class="math display" id="eq:moc02">\[\begin{equation}
+f=\sqrt{\frac{\sum_{i=1}^{k}p_i(\mu_i-\mu)^2}{\sigma^2}}=\sqrt{\frac{SS_{betveen}}{MS_{residuals}\cdot N}}
+\tag{8.32}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(p_i=n_i/N\)</span>, <span class="math inline">\(n_i\)</span> to liczba obserwacji w <span class="math inline">\(i\)</span>-tej grupie, <span class="math inline">\(N\)</span> to suma wszystkich obserwacji, <span class="math inline">\(\mu_i\)</span> to średnia w <span class="math inline">\(i\)</span>-tej grupie, <span class="math inline">\(\mu\)</span> to ogólna średnia, <span class="math inline">\(\sigma^2\)</span> to wariancja błędu w obrębie grupy (<span class="math inline">\(MS_{residuals}\)</span> - mean squares for resuduals).</p>
+<p>Metoda zaimplementowana do funkcji <a href="https://pingouin-stats.org/generated/pingouin.power_anova.html#pingouin.power_anova"><code>pingouin.power_anova</code></a> bazuje na obliczeniu wielkości efektu <span class="math inline">\(f\)</span> według wzoru:
+<span class="math display" id="eq:moc05">\[\begin{equation}
+f=\sqrt{\frac{\eta^2}{1-\eta^2}}
+\tag{8.33}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(\eta^2\)</span> to wielkość efektu dla jednoczynnikowej analizy wariancji która jest tożsama z współczynnikiem determinacji <span class="math inline">\(R^2\)</span> dla regresji liniowej.
+<span class="math display" id="eq:moc03">\[\begin{equation}
+\eta^2=\frac{df_1\cdot F}{df_1\cdot F+df_2}\quad\mbox{lub} \quad \eta^2= \frac{SS_{between}}{SS_{residuals}+SS_{betveen}}
+\tag{8.34}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(SS_{between}\)</span> to suma kwadratów dla czynnika, <span class="math inline">\(SS_{total}\)</span> to suma kwadratów dla czynnika oraz reszt.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+y <span class="op">=</span> np.concatenate((stats.expon.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.expon.rvs(<span class="fl">0.5</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.expon.rvs(<span class="dv">1</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+d <span class="op">=</span> pd.DataFrame({<span class="st">&quot;y&quot;</span>:y,<span class="st">&quot;g&quot;</span>:g})
+eta2 <span class="op">=</span> pg.anova(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, between<span class="op">=</span><span class="st">&#39;g&#39;</span>, data<span class="op">=</span>d)[<span class="st">&#39;np2&#39;</span>]
+f <span class="op">=</span> np.sqrt(eta2<span class="op">/</span>(<span class="dv">1</span><span class="op">-</span>eta2))
+power <span class="op">=</span> pg.power_anova(eta<span class="op">=</span>eta2, k<span class="op">=</span><span class="dv">3</span>, n<span class="op">=</span><span class="dv">20</span>)[<span class="dv">0</span>]
+<span class="bu">print</span>(<span class="st">&quot;Efekt: </span><span class="sc">%.4f</span><span class="st">, Moc: </span><span class="sc">%.4f</span><span class="st">&quot;</span> <span class="op">%</span> (f[<span class="dv">0</span>], power))</code></pre>
+<pre><code>## Efekt: 0.1534, Moc: 0.1636</code></pre>
+<p>Jeśli metoda analityczna do obliczenia mocy wybranego testu nie jest dostępne to wygodnym rozwiązaniem może być symulacja komputerowa.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+z <span class="op">=</span> np.concatenate((x,y))
+g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>), [<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>)
+  
+<span class="kw">def</span> pvalA(x,y):
+    nx <span class="op">=</span> <span class="bu">len</span>(x)
+    ny <span class="op">=</span> <span class="bu">len</span>(y)
+    z <span class="op">=</span> np.concatenate((np.random.choice(x,nx),np.random.choice(y,ny)))
+    g <span class="op">=</span> np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>), [nx,ny], axis<span class="op">=</span><span class="dv">0</span>)
+    <span class="cf">return</span> pg.welch_anova(dv<span class="op">=</span><span class="st">&#39;z&#39;</span>, between<span class="op">=</span><span class="st">&#39;g&#39;</span>,data<span class="op">=</span>pd.DataFrame({<span class="st">&quot;z&quot;</span>:z,<span class="st">&quot;g&quot;</span>:g}))[<span class="st">&#39;p-unc&#39;</span>][<span class="dv">0</span>]
+
+m <span class="op">=</span> [pvalA(x,y) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>)]
+<span class="bu">print</span>(<span class="st">&quot;Moc: &quot;</span>, np.less(m,[<span class="fl">0.05</span>]).mean(), <span class="st">&quot;dla 1000 symulacji testu Welch-Anova&quot;</span>)</code></pre>
+<pre><code>## Moc:  0.914 dla 1000 symulacji testu Welch-Anova</code></pre>
+
+</div>
+</div>
+<h3>Bibliografia</h3>
+<div id="refs" class="references">
+<div id="ref-biecek2013">
+<p>Biecek, P. 2013. „Wybrane testy normalności”. SmarterPoland. <a href="http://tofesi.mimuw.edu.pl/~cogito/smarterpoland/samouczki/testyNormalnosci/testyNormalnosci.pdf">http://tofesi.mimuw.edu.pl/~cogito/smarterpoland/samouczki/testyNormalnosci/testyNormalnosci.pdf</a>.</p>
+</div>
+<div id="ref-biecek2017">
+<p>Biecek, P. 2017. <em>Przewodnik po pakiecie R</em>. Oficyna Wydawnicza &quot;GIS&quot;. <a href="http://www.biecek.pl/R/">http://www.biecek.pl/R/</a>.</p>
+</div>
+<div id="ref-BDM1997">
+<p>Brunner, Edgar, Holger Dette, i Axel Munk. 1997. „Box-Type Approximations in Nonparametric Factorial Designs”. <em>Journal of the American Statistical Association</em> 92 (440). Taylor &amp; Francis: 1494–1502. <a href="https://doi.org/10.1080/01621459.1997.10473671">https://doi.org/10.1080/01621459.1997.10473671</a>.</p>
+</div>
+<div id="ref-bm2000">
+<p>Brunner, E., i U. Munzel. 2000. „The Nonparametric Behrens‐Fisher Problem: Asymptotic Theory and a Small‐Sample Approximation”. <em>Biometrical Journal</em> 42 (1): 17–25. <a href="https://doi.org/10.1002/(SICI)1521-4036(200001)42:1&lt;17::AID-BIMJ17&gt;3.0.CO;2-U">https://doi.org/10.1002/(SICI)1521-4036(200001)42:1&lt;17::AID-BIMJ17&gt;3.0.CO;2-U</a>.</p>
+</div>
+<div id="ref-welch2016">
+<p>Derrick, B., i P. White. 2016. „Why Welch’s test is Type I error robust”. <em>The Quantitative Methods for Psychology</em> 12 (1). TQMP: 30–38. <a href="https://www.tqmp.org/RegularArticles/vol12-1/p030/ ">https://www.tqmp.org/RegularArticles/vol12-1/p030/</a>.</p>
+</div>
+<div id="ref-med2018">
+<p>Divine, George W., H. James Norton, Anna E. Barón, i Elizabeth Juarez-Colunga. 2018. „The Wilcoxon–Mann–Whitney Procedure Fails as a Test of Medians”. <em>The American Statistician</em> 0 (0). Taylor &amp; Francis: 1–9. <a href=" https://doi.org/10.1080/00031305.2017.1305291">https://doi.org/10.1080/00031305.2017.1305291</a>.</p>
+</div>
+<div id="ref-adgof">
+<p>Jäntschi, Lorentz, i Sorana D. Bolboacă. 2018. „Computation of Probability Associated with Anderson–Darling Statistic”. <em>Mathematics</em> 6 (6). <a href="https://doi.org/10.3390/math6060088">https://doi.org/10.3390/math6060088</a>.</p>
+</div>
+<div id="ref-ad2004">
+<p>Marsaglia, John, i George Marsaglia. 2004. „Evaluating the Anderson-Darling Distribution”. <em>Journal of Statistical Software</em> 09 (luty). <a href="https://doi.org/10.18637/jss.v009.i02">https://doi.org/10.18637/jss.v009.i02</a>.</p>
+</div>
+<div id="ref-kw2013">
+<p>Meyer, J. Patrick, i Michael A. Seaman. 2013. „A Comparison of the Exact Kruskal-Wallis Distribution to Asymptotic Approximations for All Sample Sizes up to 105”. <em>The Journal of Experimental Education</em> 81 (2). Routledge: 139–56. <a href="https://doi.org/10.1080/00220973.2012.699904">https://doi.org/10.1080/00220973.2012.699904</a>.</p>
+</div>
+<div id="ref-neub2007">
+<p>Neubert, Karin, i Edgar Brunner. 2007. „A studentized permutation test for the non-parametric Behrens–Fisher problem”. <em>Computational Statistics and Data Analysis</em> 51 (10): 5192–5204. <a href="https://doi.org/10.1016/j.csda.2006.05.024">https://doi.org/10.1016/j.csda.2006.05.024</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="R7.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="R9.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["PythonStat.pdf", "PythonStat.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

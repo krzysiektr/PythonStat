@@ -1,0 +1,1 @@
+To opracowanie zawiera informacje o zastosowaniu języka Python w statystyce.

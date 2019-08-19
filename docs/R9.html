@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Rozdział 9 Porównanie zmiennych zależnych | Statystyka w języku Python</title>
+  <meta name="description" content="Zbiór zastosowań języka Python w statystyce." />
+  <meta name="generator" content="bookdown 0.10 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Rozdział 9 Porównanie zmiennych zależnych | Statystyka w języku Python" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Rozdział 9 Porównanie zmiennych zależnych | Statystyka w języku Python" />
+  
+  <meta name="twitter:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+<meta name="author" content="Krzysztof Trajkowski" />
+
+
+<meta name="date" content="2019-08-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="R8.html">
+<link rel="next" href="bibliografia.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Statystyka w języku Python </a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Statystyki rozkładu</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#R11"><i class="fa fa-check"></i><b>1.1</b> Rozkład dyskretny</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#R12"><i class="fa fa-check"></i><b>1.2</b> Rozkład ciągły</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="R2.html"><a href="R2.html"><i class="fa fa-check"></i><b>2</b> Rozkład normalny</a><ul>
+<li class="chapter" data-level="2.1" data-path="R2.html"><a href="R2.html#R21"><i class="fa fa-check"></i><b>2.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="2.2" data-path="R2.html"><a href="R2.html#R22"><i class="fa fa-check"></i><b>2.2</b> Liniowy model regresji</a></li>
+<li class="chapter" data-level="2.3" data-path="R2.html"><a href="R2.html#R23"><i class="fa fa-check"></i><b>2.3</b> Nieliniowy model regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="R3.html"><a href="R3.html"><i class="fa fa-check"></i><b>3</b> Rozkład gamma</a><ul>
+<li class="chapter" data-level="3.1" data-path="R3.html"><a href="R3.html#R31"><i class="fa fa-check"></i><b>3.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="3.2" data-path="R3.html"><a href="R3.html#R32"><i class="fa fa-check"></i><b>3.2</b> Liniowy model gamma regresji</a></li>
+<li class="chapter" data-level="3.3" data-path="R3.html"><a href="R3.html#R33"><i class="fa fa-check"></i><b>3.3</b> Nieliniowy model gamma regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="R4.html"><a href="R4.html"><i class="fa fa-check"></i><b>4</b> Rozkład beta</a><ul>
+<li class="chapter" data-level="4.1" data-path="R4.html"><a href="R4.html#R41"><i class="fa fa-check"></i><b>4.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="4.2" data-path="R4.html"><a href="R4.html#R42"><i class="fa fa-check"></i><b>4.2</b> Liniowy model beta regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="R5.html"><a href="R5.html"><i class="fa fa-check"></i><b>5</b> Rozkład beta dwumianowy</a><ul>
+<li class="chapter" data-level="5.1" data-path="R5.html"><a href="R5.html#R51"><i class="fa fa-check"></i><b>5.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="5.2" data-path="R5.html"><a href="R5.html#R52"><i class="fa fa-check"></i><b>5.2</b> Liniowy model beta dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="R6.html"><a href="R6.html"><i class="fa fa-check"></i><b>6</b> Rozkład ujemny dwumianowy</a><ul>
+<li class="chapter" data-level="6.1" data-path="R6.html"><a href="R6.html#R61"><i class="fa fa-check"></i><b>6.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="6.2" data-path="R6.html"><a href="R6.html#R62"><i class="fa fa-check"></i><b>6.2</b> Liniowy model ujemnej dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="R7.html"><a href="R7.html"><i class="fa fa-check"></i><b>7</b> Błąd standardowy estymatora</a><ul>
+<li class="chapter" data-level="7.1" data-path="R7.html"><a href="R7.html#R71"><i class="fa fa-check"></i><b>7.1</b> Średnia</a></li>
+<li class="chapter" data-level="7.2" data-path="R7.html"><a href="R7.html#R72"><i class="fa fa-check"></i><b>7.2</b> Proporcja</a></li>
+<li class="chapter" data-level="7.3" data-path="R7.html"><a href="R7.html#R73"><i class="fa fa-check"></i><b>7.3</b> Mediana</a></li>
+<li class="chapter" data-level="7.4" data-path="R7.html"><a href="R7.html#R74"><i class="fa fa-check"></i><b>7.4</b> Wariancja</a></li>
+<li class="chapter" data-level="7.5" data-path="R7.html"><a href="R7.html#R75"><i class="fa fa-check"></i><b>7.5</b> Średnia ucięta</a></li>
+<li class="chapter" data-level="7.6" data-path="R7.html"><a href="R7.html#R76"><i class="fa fa-check"></i><b>7.6</b> Skośność</a></li>
+<li class="chapter" data-level="7.7" data-path="R7.html"><a href="R7.html#R77"><i class="fa fa-check"></i><b>7.7</b> Kurtoza</a></li>
+<li class="chapter" data-level="7.8" data-path="R7.html"><a href="R7.html#R78"><i class="fa fa-check"></i><b>7.8</b> Bootstrap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="R8.html"><a href="R8.html"><i class="fa fa-check"></i><b>8</b> Porównanie zmiennych niezależnych</a><ul>
+<li class="chapter" data-level="8.1" data-path="R8.html"><a href="R8.html#R81"><i class="fa fa-check"></i><b>8.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="8.2" data-path="R8.html"><a href="R8.html#R82"><i class="fa fa-check"></i><b>8.2</b> Porównanie rang</a></li>
+<li class="chapter" data-level="8.3" data-path="R8.html"><a href="R8.html#R83"><i class="fa fa-check"></i><b>8.3</b> Porównanie wariancji</a></li>
+<li class="chapter" data-level="8.4" data-path="R8.html"><a href="R8.html#R84"><i class="fa fa-check"></i><b>8.4</b> Porównanie rozkładów</a></li>
+<li class="chapter" data-level="8.5" data-path="R8.html"><a href="R8.html#R85"><i class="fa fa-check"></i><b>8.5</b> Moc testu</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="R9.html"><a href="R9.html"><i class="fa fa-check"></i><b>9</b> Porównanie zmiennych zależnych</a><ul>
+<li class="chapter" data-level="9.1" data-path="R9.html"><a href="R9.html#R91"><i class="fa fa-check"></i><b>9.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="9.2" data-path="R9.html"><a href="R9.html#R93"><i class="fa fa-check"></i><b>9.2</b> Porównanie rang</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="bibliografia.html"><a href="bibliografia.html"><i class="fa fa-check"></i>Bibliografia</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statystyka w języku Python</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="R9" class="section level1">
+<h1><span class="header-section-number">Rozdział 9</span> Porównanie zmiennych zależnych</h1>
+<hr />
+<div id="R91" class="section level2">
+<h2><span class="header-section-number">9.1</span> Porównanie średnich</h2>
+<p><strong>Test t-Studenta</strong>. Metoda do porównania dwóch zmiennych zależnych sprowadza się do przeprowadzenia testu t-Studenta dla jednej zmiennej tzn. różnic między obserwacjami.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+  
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+  
+<span class="bu">print</span>(pg.ttest(x,y,paired<span class="op">=</span><span class="va">True</span>))</code></pre>
+<pre><code>##             T  dof       tail     p-val           CI95%  cohen-d   BF10  power
+## T-test -2.688   19  two-sided  0.014562  [-3.73, -0.46]    1.006  3.752  0.989</code></pre>
+<p><strong>Dokładny test znaków</strong>. Ta procedura sprowadza się do określenia liczby znaków dla różnic między obserwacjami. Inaczej mówiąc po pominięciu różnic równych zero zliczamy dodatnie (statystyka dokładnego testu <span class="math inline">\(T_+\)</span>) i ujemne różnice. Na podstawie testu dwumianowego <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom_test.html#scipy.stats.binom_test"><code>scipy.stats.binom_test</code></a> o argunentach: <span class="math inline">\(x=T_+\)</span>,<span class="math inline">\(n=T_++T_-\)</span> oraz <span class="math inline">\(p=0,5\)</span> możemy określić dokładną p-wartość. Weryfikowana hipoteza zerowa ma postać:
+<span class="math display" id="eq:dep01">\[\begin{equation}
+H_0:\;p=0,5\quad\mbox{vs}\quad H_1:\;p\neq 0,5
+\tag{9.1}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(p\)</span> to prawdopodobieństwo tego, że <span class="math inline">\(P(x&gt;y)=0,5\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+z <span class="op">=</span> np.greater(x<span class="op">-</span>y,[<span class="dv">0</span>]).astype(<span class="bu">int</span>)
+
+<span class="bu">print</span>(<span class="st">&quot;S:&quot;</span>,<span class="bu">sum</span>(z),<span class="st">&quot;, p-value:&quot;</span>,stats.binom_test(<span class="bu">sum</span>(z), <span class="bu">len</span>(z)))</code></pre>
+<pre><code>## S: 6 , p-value: 0.11531829833984371</code></pre>
+<p><strong>RM-Anova / Greenhouse-Geisser</strong>. Test Mauchly który został zaimplementowany do funkcji
+<a href="https://pingouin-stats.org/generated/pingouin.sphericity.html#pingouin.sphericity"><code>pingouin.sphericity</code></a> określa czy warunek sferyczności jest spełniony. W hipotezie zerowej zakładamy, że
+wariancje dla różnic pomiędzy parami powtarzanych pomiarów są takie same.
+<span class="math display" id="eq:dep02">\[\begin{equation}
+H_0:\;\sigma^2_{d1}=\sigma^2_{d2}=\ldots=\sigma^2_{di}\quad\mbox{vs}\quad H_1:\mbox{nie wszystkie wariancje są równe}
+\tag{9.2}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(\sigma^2_{di}\)</span> to wariancja dla <span class="math inline">\(i\)</span>-tej różnicy zmiennych.</p>
+<p>Jeśli analizowane zmienne nie spełniają tego założenia, to należy dostosować wyniki RM-ANOVA za pomocą jednej z korekt: Greenhouse-Geisser [1958] lub Huynh and
+Feldt [1976]. Funkcja <a href="https://pingouin-stats.org/generated/pingouin.rm_anova.html#pingouin.rm_anova"><code>pingouin.rm_anova</code></a> ma opcję <code>correction</code> dzięki której można wykonać test z korektą lub bez. Generalnie współczynnik korekcyjny HF jest używany częściej, ponieważ współczynnik GG jest zbyt konserwatywny tzn. nie zawsze udaje się wykryć prawdziwą różnicę między grupami.
+Dzięki funkcji <a href="https://pingouin-stats.org/generated/pingouin.epsilon.html#pingouin.epsilon"><code>pingouin.epsilon</code></a> można otrzymać współczynniki <span class="math inline">\(\epsilon-\)</span>epsilon. Określają one odstępstwo od symetrii
+złożonej dla każdej z dwóch procedur: GG i HF. Im mniejsza wartość <span class="math inline">\(\epsilon\)</span> tym większe
+jest odstępstwo od warunku sferyczności.
+<span class="math display" id="eq:dep03">\[\begin{equation}
+\epsilon_{HF} = \frac{n(k-1)\epsilon_{GG}-2}{(k-1)(n-1-(k-1)\epsilon_{GG})}
+\tag{9.3}
+\end{equation}\]</span>
+Wartości p-value są obliczane na podstawie rozkładu F po skorygowaniu stopni swobody:
+<span class="math display" id="eq:dep04">\[\begin{equation}
+df_1=(k-1)\cdot \epsilon_{HF} \quad\mbox{oraz}\quad df_2=(k-1)\cdot (n-1)\cdot \epsilon_{HF}
+\tag{9.4}
+\end{equation}\]</span></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+
+y <span class="op">=</span> np.concatenate((stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+Dpaired <span class="op">=</span> pd.DataFrame({<span class="st">&#39;y&#39;</span>: y,
+                        <span class="st">&#39;g&#39;</span>: np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>),
+                        <span class="st">&#39;b&#39;</span>: np.tile(np.linspace(<span class="dv">1</span>,<span class="dv">20</span>,<span class="dv">20</span>), <span class="dv">3</span>)})
+
+<span class="bu">print</span>(pg.rm_anova(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, within<span class="op">=</span><span class="st">&#39;g&#39;</span>, subject<span class="op">=</span><span class="st">&#39;b&#39;</span>, data<span class="op">=</span>Dpaired,<span class="op">\</span>
+                  correction<span class="op">=</span><span class="va">True</span>).drop([<span class="st">&#39;sphericity&#39;</span>,<span class="st">&#39;np2&#39;</span>], axis<span class="op">=</span><span class="dv">1</span>),<span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)
+
+dat <span class="op">=</span> Dpaired.pivot(index<span class="op">=</span><span class="st">&#39;b&#39;</span>, columns<span class="op">=</span><span class="st">&#39;g&#39;</span>, values<span class="op">=</span><span class="st">&#39;y&#39;</span>)
+hf <span class="op">=</span> pg.epsilon(dat, correction<span class="op">=</span><span class="st">&#39;hf&#39;</span>)
+df1 <span class="op">=</span> dat.shape[<span class="dv">1</span>]<span class="op">-</span><span class="dv">1</span>
+df2 <span class="op">=</span> dat.shape[<span class="dv">0</span>]<span class="op">-</span><span class="dv">1</span>
+p <span class="op">=</span> <span class="dv">1</span><span class="op">-</span>stats.f.cdf(<span class="fl">5.094</span>, hf<span class="op">*</span>df1, hf<span class="op">*</span>df1<span class="op">*</span>df2)
+
+<span class="bu">print</span>(pd.DataFrame({<span class="st">&#39;HF&#39;</span>:[hf],<span class="st">&#39;df1&#39;</span>:[df1],<span class="st">&#39;df2&#39;</span>:[df2],<span class="st">&#39;p-HF-corr&#39;</span>:[p]}))</code></pre>
+<pre><code>##   Source  ddof1  ddof2      F     p-unc  p-GG-corr   eps  W-spher   p-spher
+## 0      g      2     38  5.094  0.010968   0.018047  0.79    0.734  0.061652 
+## 
+##          HF  df1  df2  p-HF-corr
+## 0  0.849268    2   19   0.015664</code></pre>
+<p>W większości przypadków lepiej zastosować wielowymiarową analize wariancji tj. MANOVA <span class="citation">(O’brien i Kaiser <a href="#ref-Obrien1985">1985</a>)</span> lub liniowe modele mieszane <span class="citation">(Zieliński <a href="#ref-ziel2010">2010</a>)</span> ponieważ są one odporne na złamanie założenia kulistości. Ta procedura jest dostępna dzięki funkcji <a href="https://pingouin-stats.org/generated/pingouin.mixed_anova.html#pingouin.mixed_anova"><code>pingouin.mixed_anova</code></a>.</p>
+</div>
+<div id="R93" class="section level2">
+<h2><span class="header-section-number">9.2</span> Porównanie rang</h2>
+<p><strong>Test Wilcoxona / metoda Pratta</strong>. Procedura rangowanych znaków dla dwóch zmiennych zależnych polega na obliczeniu <span class="math inline">\(d_i\)</span> czyli różnic między obserwacjami a następnie porangowaniu ich wartości bezwzględnych tzn. <span class="math inline">\(\mbox{rank}|d_i|\)</span>. W metodzie Pratta sumujemy tylko te rangi dla których różnica dwóch zmiennych <span class="math inline">\(d_i\)</span> była mniejsza od zera tzn.
+<span class="math inline">\(V=\sum_{d_i&lt;0}\mbox{rank}|d_i|\)</span>.
+Według metody Wilcoxona zanim porangujemy wartości bezwzględnych różnic musimy usunąć różnice równe zero. Następnie obliczamy sumę rang według wzoru <span class="math inline">\(V=\sum_{d_i&gt;0}\mbox{rank}|d_i|\)</span>. Do funkcji
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html#scipy.stats.wilcoxon"><code>scipy.stats.wilcoxon</code></a> zostały zaimplementowane obie metody.</p>
+<p>Statystyka testowa dla metody Wilcoxona z poprawką na ciągłość:
+<span class="math display" id="eq:dep05">\[\begin{equation}
+Z=\frac{V-\frac{1}{4}\left[n(n+1)\right]-0,5}{\sqrt{\frac{1}{24}\left[n(n+1)(2n+1)\right]-\frac{1}{48}\sum_{i=1}^{c}(t_i^3-t_i)}}
+\tag{9.5}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(n\)</span> to liczba różnic czyli par zmiennych, <span class="math inline">\(V\)</span> to suma rang dla różnic dodatnich, <span class="math inline">\(0,5\)</span> to poprawka na ciągłość, <span class="math inline">\(c\)</span> to liczba grup pomiarów wiązanych, <span class="math inline">\(t_i\)</span> to liczba pomiarów wiązanych w <span class="math inline">\(i\)</span>-tej grupie pomiarów wiązanych.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+
+<span class="bu">print</span>(stats.wilcoxon(x, y, zero_method<span class="op">=</span><span class="st">&#39;wilcox&#39;</span>, correction<span class="op">=</span><span class="va">True</span>))</code></pre>
+<pre><code>## WilcoxonResult(statistic=43.0, pvalue=0.021678215270968325)</code></pre>
+<p>Statystyka testowa dla metody Pratta:
+<span class="math display" id="eq:dep06">\[\begin{equation}
+Z=\frac{V-\frac{1}{4}\left[n(n+1)-t_0(t_0+1)\right]}{\sqrt{\frac{1}{24}\left[n(n+1)(2n+1)-t_0(t_0+1)(2t_0+1)\right]-\frac{1}{48}\sum_{i=1}^{c}(t_i^3-t_i)}}
+\tag{9.6}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(n\)</span> to liczba różnic czyli par zmiennych, <span class="math inline">\(V\)</span> to suma rang dla różnic ujemnych, <span class="math inline">\(t_0\)</span> to liczba zerowych różnic, <span class="math inline">\(c\)</span> to liczba grup pomiarów wiązanych, <span class="math inline">\(t_i\)</span> to liczba pomiarów wiązanych w <span class="math inline">\(i\)</span>-tej grupie pomiarów wiązanych.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> scipy.stats <span class="im">as</span> stats
+
+x <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+y <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+
+<span class="bu">print</span>(stats.wilcoxon(x, y, zero_method<span class="op">=</span><span class="st">&#39;pratt&#39;</span>))</code></pre>
+<pre><code>## WilcoxonResult(statistic=43.0, pvalue=0.020633435105949553)</code></pre>
+<p><strong>Test Friedmana</strong>. Rozszerzeniem testu znaków na kilka zmiennych sparowanych jest test Friedmana który został zaimplementowany do funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html"><code>scipy.stats.friedmanchisquare</code></a> oraz
+<a href="https://pingouin-stats.org/generated/pingouin.friedman.html#pingouin.friedman"><code>pingouin.friedman</code></a>.</p>
+<p>Statystyka testowa:</p>
+<p><span class="math display" id="eq:dep07">\[\begin{equation}
+\chi^2=\left(1-\frac{\sum_{i=1}^{c}(t^3_i-t_i)}{nk(k^2-1)}\right)^{-1}\left[\frac{12}{nk(k+1)}\sum_{j=1}^{k}R^2_j-3n(k+1)\right]
+\tag{9.7}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(k\)</span> to liczebność grup, <span class="math inline">\(n_j\)</span> to liczebność obserwacji w <span class="math inline">\(i\)</span>-tej grupie, <span class="math inline">\(c\)</span> to liczba grup pomiarów wiązanych, <span class="math inline">\(t_i\)</span> to liczba pomiarów wiązanych w <span class="math inline">\(i\)</span>-tej grupie pomiarów wiązanych.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+  
+y <span class="op">=</span> np.concatenate((stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+Dpaired <span class="op">=</span> pd.DataFrame({<span class="st">&#39;y&#39;</span>: y,
+                        <span class="st">&#39;g&#39;</span>: np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>),
+                        <span class="st">&#39;b&#39;</span>: np.tile(np.linspace(<span class="dv">1</span>,<span class="dv">20</span>,<span class="dv">20</span>), <span class="dv">3</span>)})
+                              
+<span class="bu">print</span>(pg.friedman(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, within<span class="op">=</span><span class="st">&#39;g&#39;</span>, subject<span class="op">=</span><span class="st">&#39;b&#39;</span>, data<span class="op">=</span>Dpaired))</code></pre>
+<pre><code>##          Source  ddof1    Q     p-unc
+## Friedman      g      2  3.9  0.142274</code></pre>
+<p><strong>Test Imana-Davenporta</strong>. Modyfikacją testu Friedmana jest metoda Imana-Davenporta która sprowadza się do przekształcenia statystyki <span class="math inline">\(\chi^2\)</span> według wzoru:
+<span class="math display" id="eq:dep08">\[\begin{equation}
+F=\frac{(n_j-1)\chi^2}{n_j(k-1)-\chi^2}
+\tag{9.8}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(k\)</span> to liczebność grup, <span class="math inline">\(n_j\)</span> to liczebność obserwacji w <span class="math inline">\(j\)</span>-tej grupie, <span class="math inline">\(df_1=k-1\)</span> oraz <span class="math inline">\(df_2=(k-1)(n_j-1)\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> pingouin <span class="im">as</span> pg
+  
+y <span class="op">=</span> np.concatenate((stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>),
+                    stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)))
+Dpaired <span class="op">=</span> pd.DataFrame({<span class="st">&#39;y&#39;</span>: y,
+                        <span class="st">&#39;g&#39;</span>: np.repeat(np.linspace(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>), [<span class="dv">20</span>,<span class="dv">20</span>,<span class="dv">20</span>], axis<span class="op">=</span><span class="dv">0</span>),
+                        <span class="st">&#39;b&#39;</span>: np.tile(np.linspace(<span class="dv">1</span>,<span class="dv">20</span>,<span class="dv">20</span>), <span class="dv">3</span>)})
+
+F <span class="op">=</span> pg.friedman(dv<span class="op">=</span><span class="st">&#39;y&#39;</span>, within<span class="op">=</span><span class="st">&#39;g&#39;</span>, subject<span class="op">=</span><span class="st">&#39;b&#39;</span>, data<span class="op">=</span>Dpaired)[<span class="st">&#39;Q&#39;</span>][<span class="dv">0</span>]
+n <span class="op">=</span> <span class="dv">20</span>
+k <span class="op">=</span> <span class="dv">3</span>
+df1 <span class="op">=</span> k<span class="dv">-1</span>
+df2 <span class="op">=</span> (k<span class="dv">-1</span>)<span class="op">*</span>(n<span class="dv">-1</span>)
+F <span class="op">=</span> ((n<span class="dv">-1</span>)<span class="op">*</span>F)<span class="op">/</span>(n<span class="op">*</span>(k<span class="dv">-1</span>)<span class="op">-</span>F)
+p <span class="op">=</span> <span class="dv">1</span><span class="op">-</span>stats.f.cdf(F,df1,df2)
+<span class="bu">print</span>(pd.DataFrame({<span class="st">&#39;F&#39;</span>:[F],<span class="st">&#39;df1&#39;</span>:[df1],<span class="st">&#39;df2&#39;</span>:[df2],<span class="st">&#39;p&#39;</span>:[p]}))</code></pre>
+<pre><code>##           F  df1  df2         p
+## 0  2.052632    2   38  0.142396</code></pre>
+<p><strong>Test wyrównanych rang Friedmana</strong>. W tej procedurze (ang. Friedman Aligned Ranks) obliczenia wykonujemy na przekształconych danych tj. <span class="math inline">\(x_{ij}-\bar{x}_i\)</span>. Otrzymane w ten sposób wartości trzeba porangować bez podziału na grupy i obliczyć sumy kwadratów rang dla <span class="math inline">\(k\)</span> grup (kolumn) <span class="math inline">\(\sum_{j=1}^{k}\hat{R^2_j}\)</span> oraz dla <span class="math inline">\(n\)</span> obserwacji (wierszy) <span class="math inline">\(\sum_{i=1}^{n}\hat{R^2_i}\)</span> aby wyznaczyć statystykę testu.</p>
+<p>Statystyka testu:
+<span class="math display" id="eq:FAR01">\[\begin{equation}
+T=\frac{(k-1)[\sum_{j=1}^{k}\hat{R^2_j}-(kn^2/4)(kn+1)^2]}{\left([kn(kn+1)(2kn+1)]/6\right)-(1/k)\sum_{i=1}^{n}\hat{R^2_i}}
+\tag{9.9}
+\end{equation}\]</span></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+    
+df <span class="op">=</span> pd.DataFrame()
+df[<span class="st">&#39;a1&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+df[<span class="st">&#39;a2&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+df[<span class="st">&#39;a3&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)
+
+mu <span class="op">=</span> df.mean(axis<span class="op">=</span><span class="dv">1</span>)
+w <span class="op">=</span> [ df[i]<span class="op">-</span>mu <span class="cf">for</span> i <span class="kw">in</span> df.columns ]
+r <span class="op">=</span> stats.rankdata(w)
+rdf <span class="op">=</span> pd.DataFrame({<span class="st">&#39;a1&#39;</span>:r[:<span class="dv">20</span>],<span class="st">&#39;a2&#39;</span>:r[<span class="dv">20</span>:<span class="dv">40</span>],<span class="st">&#39;a3&#39;</span>:r[<span class="dv">40</span>:<span class="dv">60</span>]})
+Sk <span class="op">=</span> <span class="bu">sum</span>(rdf.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="op">**</span><span class="dv">2</span>)
+Sn <span class="op">=</span> <span class="bu">sum</span>(rdf.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)
+n <span class="op">=</span> df.shape[<span class="dv">0</span>]
+k <span class="op">=</span> df.shape[<span class="dv">1</span>]
+T <span class="op">=</span> ((k<span class="dv">-1</span>)<span class="op">*</span>(Sk<span class="op">-</span>((k<span class="op">*</span>n<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span><span class="dv">4</span>)<span class="op">*</span>(k<span class="op">*</span>n<span class="op">+</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>))<span class="op">/</span>(((k<span class="op">*</span>n<span class="op">*</span>(k<span class="op">*</span>n<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>(<span class="dv">2</span><span class="op">*</span>k<span class="op">*</span>n<span class="op">+</span><span class="dv">1</span>))<span class="op">/</span><span class="dv">6</span>)<span class="op">-</span>(<span class="dv">1</span><span class="op">/</span>k)<span class="op">*</span>Sn)
+p <span class="op">=</span> <span class="dv">1</span><span class="op">-</span>stats.chi2.cdf(T,df<span class="op">=</span>k<span class="dv">-1</span>)
+<span class="bu">print</span>(pd.DataFrame({<span class="st">&#39;T&#39;</span>:[T],<span class="st">&#39;df&#39;</span>:[k<span class="dv">-1</span>],<span class="st">&#39;p&#39;</span>:[p]}))</code></pre>
+<pre><code>##           T  df         p
+## 0  7.448925   2  0.024126</code></pre>
+<p><strong>Test Quade</strong>. Dobrą alternatywą dla testu Friedmana może być również metoda Quade dostępna w funkcji <a href="http://tec.citius.usc.es/stac/doc/stac.nonparametric_tests.quade_test.html#stac.nonparametric_tests.quade_test"><code>stac.nonparametric_tests.quade_test</code></a>. Jest to rozszerzenie testu rangowanych znaków Wilcoxona na więcej niż dwie sparaowane zmienne.</p>
+<p>Statystyka testu:
+<span class="math display" id="eq:dep09">\[\begin{equation}
+F_Q=\frac{(n-1)SS_{tre}}{SS_{tot}-SS_{tre}}
+\tag{9.10}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(n\)</span> to liczba bloków, <span class="math inline">\(k\)</span> to liczba grup, <span class="math inline">\(R_{ij}\)</span> to rangi obliczone oddzielnie dla każdego bloku, <span class="math inline">\(Q_i\)</span> to rangi obliczone dla różnic <span class="math inline">\(x_{max}-x_{min}\)</span> obliczonych dla każdego bloku, <span class="math inline">\(S_{ij}\)</span> to macierz o postaci <span class="math inline">\(S_{ij}=Q_i\left[R_{ij}-(k+1)/2\right]\)</span>, <span class="math inline">\(SS_{tot}=\sum_{i=1}^{n}\sum_{j=1}^{k}S_{ij}^2\)</span> to suma wszystkich elementów macierzy <span class="math inline">\(S_{ij}\)</span> które zostały podniesione do kwadratu, <span class="math inline">\(SS_{tre}=\frac{1}{n}\sum_{j=1}^{k}S_i^2\)</span> to suma
+elementów macierzy <span class="math inline">\(S_{ij}\)</span> dla każdej grupy i podniesionych do kwadratu a następnie te wartości są sumowane i podzielone przez liczbę bloków. Stopnie swobody są obliczane na podstawie wzorów <span class="math inline">\(df_1=k-1\)</span> oraz <span class="math inline">\(df_2=(n-1)(k-1)\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+
+df <span class="op">=</span> pd.DataFrame()
+df[<span class="st">&#39;a1&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+df[<span class="st">&#39;a2&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+df[<span class="st">&#39;a3&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)
+
+<span class="kw">def</span> quade_test(x):
+    df <span class="op">=</span> x
+    n <span class="op">=</span> df.shape[<span class="dv">0</span>]
+    k <span class="op">=</span> df.shape[<span class="dv">1</span>]
+    rdat <span class="op">=</span> df.rank(axis<span class="op">=</span><span class="dv">1</span>)
+    minmax <span class="op">=</span> df.<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="bu">max</span>(x)<span class="op">-</span><span class="bu">min</span>(x),axis<span class="op">=</span><span class="dv">1</span>)
+    Q <span class="op">=</span> pd.DataFrame(stats.rankdata(minmax), columns<span class="op">=</span>[<span class="st">&#39;a&#39;</span>])
+    m <span class="op">=</span> rdat<span class="op">-</span>(k<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span><span class="dv">2</span>
+    S <span class="op">=</span> m.values <span class="op">*</span> Q.values
+    SStot <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">sum</span>(S<span class="op">**</span><span class="dv">2</span>))
+    SStre <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">sum</span>(S)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>n
+    F <span class="op">=</span> (n<span class="dv">-1</span>)<span class="op">*</span>(SStre)<span class="op">/</span>(SStot<span class="op">-</span>SStre)
+    df1 <span class="op">=</span> k<span class="dv">-1</span>
+    df2 <span class="op">=</span> (n<span class="dv">-1</span>)<span class="op">*</span>(k<span class="dv">-1</span>)
+    p <span class="op">=</span> <span class="dv">1</span><span class="op">-</span>stats.f.cdf(F,df1,df2)
+    DF <span class="op">=</span> pd.DataFrame({<span class="st">&#39;F&#39;</span>:[F],<span class="st">&#39;df1&#39;</span>:[df1],<span class="st">&#39;df2&#39;</span>:[df2],<span class="st">&#39;SStot&#39;</span>:[SStot],<span class="st">&#39;SStre&#39;</span>:[SStre],<span class="st">&#39;p&#39;</span>:[p]})
+    <span class="cf">return</span> DF
+    
+<span class="bu">print</span>(quade_test(df))</code></pre>
+<pre><code>##           F  df1  df2   SStot   SStre         p
+## 0  4.066348    2   38  5740.0  1011.9  0.025103</code></pre>
+<p><strong>Dalsza analiza</strong>. W pakiecie <a href="https://scikit-posthocs.readthedocs.io/en/latest/intro/"><code>scikit-posthocs</code></a> jest dostępnych wiele testów post hoc dla nieparametrycznej analizy wariancji z powtarzanymi pomiarami. Popularnym wyborem do porównań wielokrotnych po odrzuceniu hipotezy zerowej w teście Friedmana jest przeprowadzenie serii testów znaków lub test Nemenyi. W przypadku wyrównanych rang Friedmana błąd standardowy badanych różnic rang <span class="math inline">\(\hat{R}_i-\hat{R}_j\)</span> jest dany wzorem:
+<span class="math display" id="eq:FAR02">\[\begin{equation}
+SE=\sqrt{\frac{k(kn+1)}{6}}
+\tag{9.11}
+\end{equation}\]</span>
+Poniżej przykład skryptu dla tego rozwiązania w języku Python:</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">from</span> pingouin <span class="im">import</span> multicomp
+<span class="im">import</span> itertools
+
+df <span class="op">=</span> pd.DataFrame()
+df[<span class="st">&#39;a1&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+df[<span class="st">&#39;a2&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+df[<span class="st">&#39;a3&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)
+
+<span class="kw">def</span> post_hoc_far(x):
+    df <span class="op">=</span> x
+    n <span class="op">=</span> df.shape[<span class="dv">0</span>]
+    k <span class="op">=</span> df.shape[<span class="dv">1</span>]
+    mu <span class="op">=</span> df.mean(axis<span class="op">=</span><span class="dv">1</span>)
+    w <span class="op">=</span> [ df[i]<span class="op">-</span>mu <span class="cf">for</span> i <span class="kw">in</span> df.columns ]
+    r <span class="op">=</span> stats.rankdata(w)
+    rdat <span class="op">=</span> pd.DataFrame(r.reshape((k,n)).T,columns<span class="op">=</span>df.columns)
+    SS <span class="op">=</span> rdat.mean(axis<span class="op">=</span><span class="dv">0</span>)
+    SE <span class="op">=</span> np.sqrt((k <span class="op">*</span> (n <span class="op">*</span> k <span class="op">+</span> <span class="dv">1</span>))<span class="op">/</span><span class="dv">6</span>)
+    stat <span class="op">=</span> SS<span class="op">/</span>SE
+    res <span class="op">=</span> <span class="bu">list</span>(itertools.combinations(stat, <span class="dv">2</span>))
+    sol <span class="op">=</span> [np.<span class="bu">abs</span>(np.diff(res[i])) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(res))]
+    es <span class="op">=</span> <span class="bu">list</span>(itertools.combinations(<span class="bu">list</span>(df.columns), <span class="dv">2</span>))
+    f <span class="op">=</span> pd.DataFrame({<span class="st">&#39;stat&#39;</span>:np.ravel(sol).tolist()},index<span class="op">=</span>es)
+    f[<span class="st">&#39;p-val&#39;</span>] <span class="op">=</span> [ <span class="dv">2</span><span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>stats.norm.cdf(i)) <span class="cf">for</span> i <span class="kw">in</span> f[<span class="st">&#39;stat&#39;</span>]]
+    f[<span class="st">&#39;p-val_Holm&#39;</span>] <span class="op">=</span> multicomp(f[<span class="st">&#39;p-val&#39;</span>].tolist(), method<span class="op">=</span><span class="st">&#39;holm&#39;</span>)[<span class="dv">1</span>].tolist()
+    f[<span class="st">&#39;sign&#39;</span>] <span class="op">=</span> multicomp(f[<span class="st">&#39;p-val&#39;</span>].tolist(), method<span class="op">=</span><span class="st">&#39;holm&#39;</span>)[<span class="dv">0</span>].tolist()
+    <span class="cf">return</span> f
+    
+<span class="bu">print</span>(post_hoc_far(df))</code></pre>
+<pre><code>##               stat     p-val  p-val_Holm   sign
+## (a1, a2)  3.250233  0.001153    0.003459   True
+## (a1, a3)  1.231286  0.218216    0.218216  False
+## (a2, a3)  2.018947  0.043493    0.086985  False</code></pre>
+<p>Z kolei rozwiązaniem dedykowanym dla testu Quade jest seria testów rangowanych znaków Wilcoxona zaimplementowanych do funkcji <a href="https://scikit-posthocs.readthedocs.io/en/latest/generated/scikit_posthocs.posthoc_wilcoxon/"><code>scikit_posthocs.posthoc_wilcoxon</code></a> oraz metoda dostępna dzięki funkcji
+<a href="https://scikit-posthocs.readthedocs.io/en/latest/generated/scikit_posthocs.posthoc_quade/"><code>scikit_posthocs.posthoc_quade</code></a> która działa z wykorzystaniem rozkładu t-Studenta lub normalnego. W tej metodzie badamy różnice wyznaczone w oparciu o sumy obliczone dla każdej grupy z wykorzystaniem macierzy <span class="math inline">\(S_{ij}\)</span> natomiast błąd standardowy można określić za pomocą wzoru:
+<span class="math display" id="eq:dep010">\[\begin{equation}
+SE=\sqrt{\frac{2n(SS_{tot}-SS_{tre})}{(n-1)(k-1)}}
+\tag{9.12}
+\end{equation}\]</span></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">from</span> pingouin <span class="im">import</span> multicomp
+<span class="im">import</span> itertools
+
+df <span class="op">=</span> pd.DataFrame()
+df[<span class="st">&#39;a1&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+df[<span class="st">&#39;a2&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+df[<span class="st">&#39;a3&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)
+
+<span class="kw">def</span> post_hoc_quade_test_1(x):
+    df <span class="op">=</span> x
+    n <span class="op">=</span> df.shape[<span class="dv">0</span>]
+    k <span class="op">=</span> df.shape[<span class="dv">1</span>]
+    rdat <span class="op">=</span> df.rank(axis<span class="op">=</span><span class="dv">1</span>)
+    minmax <span class="op">=</span> df.<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="bu">max</span>(x)<span class="op">-</span><span class="bu">min</span>(x),axis<span class="op">=</span><span class="dv">1</span>)
+    Q <span class="op">=</span> pd.DataFrame(stats.rankdata(minmax), columns<span class="op">=</span>[<span class="st">&#39;a&#39;</span>])
+    m <span class="op">=</span> rdat<span class="op">-</span>(k<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span><span class="dv">2</span>
+    S <span class="op">=</span> m.values <span class="op">*</span> Q.values
+    SStot <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">sum</span>(S<span class="op">**</span><span class="dv">2</span>))
+    SStre <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">sum</span>(S)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>n
+    SS <span class="op">=</span> S.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)
+    df2 <span class="op">=</span> (n<span class="dv">-1</span>)<span class="op">*</span>(k<span class="dv">-1</span>)
+    SE <span class="op">=</span> np.sqrt((<span class="dv">2</span><span class="op">*</span>n<span class="op">*</span>(SStot<span class="op">-</span>SStre))<span class="op">/</span>df2)
+    stat <span class="op">=</span> SS<span class="op">/</span>SE
+    res <span class="op">=</span> <span class="bu">list</span>(itertools.combinations(stat, <span class="dv">2</span>))
+    sol <span class="op">=</span> [np.<span class="bu">abs</span>(np.diff(res[i])) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(res))]
+    es <span class="op">=</span> <span class="bu">list</span>(itertools.combinations(<span class="bu">list</span>(df.columns), <span class="dv">2</span>))
+    f <span class="op">=</span> pd.DataFrame({<span class="st">&#39;stat&#39;</span>:np.ravel(sol).tolist()},index<span class="op">=</span>es)
+    f[<span class="st">&#39;p-val&#39;</span>] <span class="op">=</span> [ <span class="dv">2</span><span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>stats.t.cdf(i,df<span class="op">=</span>df2)) <span class="cf">for</span> i <span class="kw">in</span> f[<span class="st">&#39;stat&#39;</span>]]
+    f[<span class="st">&#39;p-val_Holm&#39;</span>] <span class="op">=</span> multicomp(f[<span class="st">&#39;p-val&#39;</span>].tolist(), method<span class="op">=</span><span class="st">&#39;holm&#39;</span>)[<span class="dv">1</span>].tolist()
+    f[<span class="st">&#39;sign&#39;</span>] <span class="op">=</span> multicomp(f[<span class="st">&#39;p-val&#39;</span>].tolist(), method<span class="op">=</span><span class="st">&#39;holm&#39;</span>)[<span class="dv">0</span>].tolist()
+    <span class="cf">return</span> f
+    
+<span class="bu">print</span>(post_hoc_quade_test_1(df))</code></pre>
+<pre><code>##               stat     p-val  p-val_Holm   sign
+## (a1, a2)  2.849145  0.007041    0.021122   True
+## (a1, a3)  1.318261  0.195307    0.268163  False
+## (a2, a3)  1.530884  0.134081    0.268163  False</code></pre>
+<p>Alternatywą może być badanie różnic w oparciu o sumy elementów macierzy <span class="math inline">\(R_{ij}Q_i\)</span> obliczone dla każdej grupy tzn. <span class="math inline">\(W_j=\frac{\sum_{i=1}^{n}R_{ij}Q_i}{n(n+1)/2}\)</span> a błąd standardowy jest dany wzorem:
+<span class="math display" id="eq:dep011">\[\begin{equation}
+SE=\sqrt{\frac{k(k+1)(2n+1)(k-1)}{18n(n+1)}}
+\tag{9.13}
+\end{equation}\]</span></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">from</span> pingouin <span class="im">import</span> multicomp
+<span class="im">import</span> itertools
+
+df <span class="op">=</span> pd.DataFrame()
+df[<span class="st">&#39;a1&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+df[<span class="st">&#39;a2&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">3</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4101</span>)
+df[<span class="st">&#39;a3&#39;</span>] <span class="op">=</span> stats.norm.rvs(<span class="fl">1.5</span>, <span class="dv">2</span>, size<span class="op">=</span><span class="dv">20</span>, random_state<span class="op">=</span><span class="dv">4026</span>)
+  
+<span class="kw">def</span> post_hoc_quade_test_2(x):
+    df <span class="op">=</span> x<span class="op">;</span> n <span class="op">=</span> df.shape[<span class="dv">0</span>]<span class="op">;</span> k <span class="op">=</span> df.shape[<span class="dv">1</span>]
+    rdat <span class="op">=</span> df.rank(axis<span class="op">=</span><span class="dv">1</span>)
+    minmax <span class="op">=</span> df.<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="bu">max</span>(x)<span class="op">-</span><span class="bu">min</span>(x),axis<span class="op">=</span><span class="dv">1</span>)
+    Q <span class="op">=</span> pd.DataFrame(stats.rankdata(minmax), columns<span class="op">=</span>[<span class="st">&#39;a&#39;</span>])
+    W <span class="op">=</span> rdat.values <span class="op">*</span> Q.values
+    SS <span class="op">=</span> W.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)<span class="op">/</span>(n<span class="op">*</span>(n<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span><span class="dv">2</span>)
+    SE <span class="op">=</span> np.sqrt((k<span class="op">*</span>(k<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>(<span class="dv">2</span><span class="op">*</span>n<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>(k<span class="dv">-1</span>))<span class="op">/</span>(<span class="dv">18</span><span class="op">*</span>n<span class="op">*</span>(n<span class="op">+</span><span class="dv">1</span>)))
+    stat <span class="op">=</span> SS<span class="op">/</span>SE
+    res <span class="op">=</span> <span class="bu">list</span>(itertools.combinations(stat, <span class="dv">2</span>))
+    sol <span class="op">=</span> [np.<span class="bu">abs</span>(np.diff(res[i])) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(res))]
+    es <span class="op">=</span> <span class="bu">list</span>(itertools.combinations(<span class="bu">list</span>(df.columns), <span class="dv">2</span>))
+    f <span class="op">=</span> pd.DataFrame({<span class="st">&#39;stat&#39;</span>:np.ravel(sol).tolist()},index<span class="op">=</span>es)
+    f[<span class="st">&#39;p-val&#39;</span>] <span class="op">=</span> [ <span class="dv">2</span><span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>stats.norm.cdf(i)) <span class="cf">for</span> i <span class="kw">in</span> f[<span class="st">&#39;stat&#39;</span>]]
+    f[<span class="st">&#39;p-val_Holm&#39;</span>] <span class="op">=</span> multicomp(f[<span class="st">&#39;p-val&#39;</span>].tolist(), method<span class="op">=</span><span class="st">&#39;holm&#39;</span>)[<span class="dv">1</span>].tolist()
+    f[<span class="st">&#39;sign&#39;</span>] <span class="op">=</span> multicomp(f[<span class="st">&#39;p-val&#39;</span>].tolist(), method<span class="op">=</span><span class="st">&#39;holm&#39;</span>)[<span class="dv">0</span>].tolist()
+    <span class="cf">return</span> f
+    
+<span class="bu">print</span>(post_hoc_quade_test_2(df))</code></pre>
+<pre><code>##               stat     p-val  p-val_Holm   sign
+## (a1, a2)  2.653017  0.007978    0.023933   True
+## (a1, a3)  1.227516  0.219629    0.308024  False
+## (a2, a3)  1.425502  0.154012    0.308024  False</code></pre>
+
+</div>
+</div>
+<h3>Bibliografia</h3>
+<div id="refs" class="references">
+<div id="ref-Obrien1985">
+<p>O’brien, R. G., i M. Kent Kaiser. 1985. „MANOVA method for analyzing repeated measures designs: an extensive primer.” <em>Psychological bulletin</em> 97 2: 316–33. <a href="https://www.semanticscholar.org/paper/MANOVA-method-for-analyzing-repeated-measures-an-O&#39;brien-Kaiser/589e9049758cd50b8fde4ceb8842e8b3f3778c6e?tab=abstract">https://www.semanticscholar.org/paper/MANOVA-method-for-analyzing-repeated-measures-an-O'brien-Kaiser/589e9049758cd50b8fde4ceb8842e8b3f3778c6e?tab=abstract</a>.</p>
+</div>
+<div id="ref-ziel2010">
+<p>Zieliński, P. 2010. „Multilevel analysis for repeated measures - hierarchical linear model as an alternative to the analysis of variance”. <em>Psychologia Społeczna</em> 5 (14, 2-3). Wydawnictwo Naukowe SCHOLAR: 234–59. <a href=" http://spbulletin.com/articles/zielinski-p-2010-multilevel-analysis-for-repeated-measures-hierarchical-linear-model-as-an-alternative-to-the-analysis-of-variance/">http://spbulletin.com/articles/zielinski-p-2010-multilevel-analysis-for-repeated-measures-hierarchical-linear-model-as-an-alternative-to-the-analysis-of-variance/</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="R8.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="bibliografia.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["PythonStat.pdf", "PythonStat.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

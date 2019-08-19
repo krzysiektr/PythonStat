@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Rozdział 7 Błąd standardowy estymatora | Statystyka w języku Python</title>
+  <meta name="description" content="Zbiór zastosowań języka Python w statystyce." />
+  <meta name="generator" content="bookdown 0.10 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Rozdział 7 Błąd standardowy estymatora | Statystyka w języku Python" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Rozdział 7 Błąd standardowy estymatora | Statystyka w języku Python" />
+  
+  <meta name="twitter:description" content="Zbiór zastosowań języka Python w statystyce." />
+  
+
+<meta name="author" content="Krzysztof Trajkowski" />
+
+
+<meta name="date" content="2019-08-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="R6.html">
+<link rel="next" href="R8.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Statystyka w języku Python </a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Statystyki rozkładu</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#R11"><i class="fa fa-check"></i><b>1.1</b> Rozkład dyskretny</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#R12"><i class="fa fa-check"></i><b>1.2</b> Rozkład ciągły</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="R2.html"><a href="R2.html"><i class="fa fa-check"></i><b>2</b> Rozkład normalny</a><ul>
+<li class="chapter" data-level="2.1" data-path="R2.html"><a href="R2.html#R21"><i class="fa fa-check"></i><b>2.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="2.2" data-path="R2.html"><a href="R2.html#R22"><i class="fa fa-check"></i><b>2.2</b> Liniowy model regresji</a></li>
+<li class="chapter" data-level="2.3" data-path="R2.html"><a href="R2.html#R23"><i class="fa fa-check"></i><b>2.3</b> Nieliniowy model regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="R3.html"><a href="R3.html"><i class="fa fa-check"></i><b>3</b> Rozkład gamma</a><ul>
+<li class="chapter" data-level="3.1" data-path="R3.html"><a href="R3.html#R31"><i class="fa fa-check"></i><b>3.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="3.2" data-path="R3.html"><a href="R3.html#R32"><i class="fa fa-check"></i><b>3.2</b> Liniowy model gamma regresji</a></li>
+<li class="chapter" data-level="3.3" data-path="R3.html"><a href="R3.html#R33"><i class="fa fa-check"></i><b>3.3</b> Nieliniowy model gamma regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="R4.html"><a href="R4.html"><i class="fa fa-check"></i><b>4</b> Rozkład beta</a><ul>
+<li class="chapter" data-level="4.1" data-path="R4.html"><a href="R4.html#R41"><i class="fa fa-check"></i><b>4.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="4.2" data-path="R4.html"><a href="R4.html#R42"><i class="fa fa-check"></i><b>4.2</b> Liniowy model beta regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="R5.html"><a href="R5.html"><i class="fa fa-check"></i><b>5</b> Rozkład beta dwumianowy</a><ul>
+<li class="chapter" data-level="5.1" data-path="R5.html"><a href="R5.html#R51"><i class="fa fa-check"></i><b>5.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="5.2" data-path="R5.html"><a href="R5.html#R52"><i class="fa fa-check"></i><b>5.2</b> Liniowy model beta dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="R6.html"><a href="R6.html"><i class="fa fa-check"></i><b>6</b> Rozkład ujemny dwumianowy</a><ul>
+<li class="chapter" data-level="6.1" data-path="R6.html"><a href="R6.html#R61"><i class="fa fa-check"></i><b>6.1</b> Funkcja gęstości</a></li>
+<li class="chapter" data-level="6.2" data-path="R6.html"><a href="R6.html#R62"><i class="fa fa-check"></i><b>6.2</b> Liniowy model ujemnej dwumianowej regresji</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="R7.html"><a href="R7.html"><i class="fa fa-check"></i><b>7</b> Błąd standardowy estymatora</a><ul>
+<li class="chapter" data-level="7.1" data-path="R7.html"><a href="R7.html#R71"><i class="fa fa-check"></i><b>7.1</b> Średnia</a></li>
+<li class="chapter" data-level="7.2" data-path="R7.html"><a href="R7.html#R72"><i class="fa fa-check"></i><b>7.2</b> Proporcja</a></li>
+<li class="chapter" data-level="7.3" data-path="R7.html"><a href="R7.html#R73"><i class="fa fa-check"></i><b>7.3</b> Mediana</a></li>
+<li class="chapter" data-level="7.4" data-path="R7.html"><a href="R7.html#R74"><i class="fa fa-check"></i><b>7.4</b> Wariancja</a></li>
+<li class="chapter" data-level="7.5" data-path="R7.html"><a href="R7.html#R75"><i class="fa fa-check"></i><b>7.5</b> Średnia ucięta</a></li>
+<li class="chapter" data-level="7.6" data-path="R7.html"><a href="R7.html#R76"><i class="fa fa-check"></i><b>7.6</b> Skośność</a></li>
+<li class="chapter" data-level="7.7" data-path="R7.html"><a href="R7.html#R77"><i class="fa fa-check"></i><b>7.7</b> Kurtoza</a></li>
+<li class="chapter" data-level="7.8" data-path="R7.html"><a href="R7.html#R78"><i class="fa fa-check"></i><b>7.8</b> Bootstrap</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="R8.html"><a href="R8.html"><i class="fa fa-check"></i><b>8</b> Porównanie zmiennych niezależnych</a><ul>
+<li class="chapter" data-level="8.1" data-path="R8.html"><a href="R8.html#R81"><i class="fa fa-check"></i><b>8.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="8.2" data-path="R8.html"><a href="R8.html#R82"><i class="fa fa-check"></i><b>8.2</b> Porównanie rang</a></li>
+<li class="chapter" data-level="8.3" data-path="R8.html"><a href="R8.html#R83"><i class="fa fa-check"></i><b>8.3</b> Porównanie wariancji</a></li>
+<li class="chapter" data-level="8.4" data-path="R8.html"><a href="R8.html#R84"><i class="fa fa-check"></i><b>8.4</b> Porównanie rozkładów</a></li>
+<li class="chapter" data-level="8.5" data-path="R8.html"><a href="R8.html#R85"><i class="fa fa-check"></i><b>8.5</b> Moc testu</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="R9.html"><a href="R9.html"><i class="fa fa-check"></i><b>9</b> Porównanie zmiennych zależnych</a><ul>
+<li class="chapter" data-level="9.1" data-path="R9.html"><a href="R9.html#R91"><i class="fa fa-check"></i><b>9.1</b> Porównanie średnich</a></li>
+<li class="chapter" data-level="9.2" data-path="R9.html"><a href="R9.html#R93"><i class="fa fa-check"></i><b>9.2</b> Porównanie rang</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="bibliografia.html"><a href="bibliografia.html"><i class="fa fa-check"></i>Bibliografia</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Statystyka w języku Python</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="R7" class="section level1">
+<h1><span class="header-section-number">Rozdział 7</span> Błąd standardowy estymatora</h1>
+<div id="R71" class="section level2">
+<h2><span class="header-section-number">7.1</span> Średnia</h2>
+<p>Średnia jest parametrem który ma swoje zastosowanie dla rozkładów symetrycznych.
+Błąd standardowy estymatora średniej <span class="math inline">\(\bar{x}\)</span> można zapisać za pomocą wzoru:
+<span class="math display" id="eq:se01">\[\begin{equation}
+SE_{\bar{x}}=\sqrt{s^2/n}
+\tag{7.1}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(s^2\)</span> to nieobciążony estymator wariancji: <span class="math inline">\(\sum_{i=1}^{n}(x_i-\bar{x})^2/(n-1)\)</span> oraz <span class="math inline">\(\bar{x}\)</span> to estymator średniej czyli <span class="math inline">\(\sum_{i=1}^{n}x_i/n\)</span>. Dodatkowo <span class="math inline">\(x_i\)</span> to kolejne elementy próby a <span class="math inline">\(n\)</span> to liczebność próby.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+MU <span class="op">=</span> np.mean(y)
+SE_mu <span class="op">=</span> np.sqrt(np.var(y, ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">/</span><span class="bu">len</span>(y))
+conf <span class="op">=</span> [ stats.norm.ppf(i, loc<span class="op">=</span>MU, scale<span class="op">=</span>SE_mu) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>] ]
+p <span class="op">=</span> stats.norm.cdf(<span class="dv">0</span>, MU, SE_mu)
+
+<span class="bu">print</span>(<span class="st">&quot;średnia:&quot;</span>,MU,<span class="st">&quot;, błąd:&quot;</span>,SE_mu)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: mu = 0 vs. H1: mu != 0&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## średnia: 0.2707762688190597 , błąd: 0.16529559742815514
+## 95% przedział ufności: [-0.053197148943156025, 0.5947496865812754]
+## 
+## H0: mu = 0 vs. H1: mu != 0
+## p-wartość: 0.1013938313336142</code></pre>
+<p>Ponieważ badamy hipotezę zerową <span class="math inline">\(H_0:\mu=0\)</span> więc takie same wyniki można uzyskać za pomocą funkcji regresji liniowej.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+<span class="im">import</span> pandas <span class="im">as</span> pd
+
+df <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>{<span class="st">&#39;y&#39;</span>:stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)})
+
+<span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf
+
+m <span class="op">=</span> smf.glm(<span class="st">&#39;y ~ 1&#39;</span>, data<span class="op">=</span>df).fit().summary().tables[<span class="dv">1</span>]
+<span class="bu">print</span>(m)</code></pre>
+<pre><code>## ==============================================================================
+##                  coef    std err          z      P&gt;|z|      [0.025      0.975]
+## ------------------------------------------------------------------------------
+## Intercept      0.2708      0.165      1.638      0.101      -0.053       0.595
+## ==============================================================================</code></pre>
+</div>
+<div id="R72" class="section level2">
+<h2><span class="header-section-number">7.2</span> Proporcja</h2>
+<p>Obliczenie proporcji na podstawie próby binarnej czyli zawierającej tylko zera (porażka) i jedynki (sukces) sprowadza się do wyznaczenia średniej. Przykładem może być zmienna <code>plec</code> gdzie: <code>0</code> - kobieta, <code>1</code> - mężczyzna.
+Błąd standardowy dla oszacowanej frakcji <span class="math inline">\(\hat{p}\)</span> jest dany wzorem:
+<span class="math display" id="eq:se02">\[\begin{equation}
+SE_{\hat{p}}=\sqrt{\big(\hat{p}(1-\hat{p})\big)/n}\quad\mbox{gdzie}\quad \hat{p}\in(0,1)
+\tag{7.2}
+\end{equation}\]</span></p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+y <span class="op">=</span> stats.binom.rvs(n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.3</span>, loc<span class="op">=</span><span class="dv">0</span>, size<span class="op">=</span><span class="dv">50</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+
+P <span class="op">=</span> np.mean(y)
+SE_pw <span class="op">=</span> np.sqrt((P<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>P))<span class="op">/</span><span class="bu">len</span>(y))
+conf <span class="op">=</span> [ stats.norm.ppf(i, loc<span class="op">=</span>P, scale<span class="op">=</span>SE_pw) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>] ]
+p <span class="op">=</span> stats.norm.cdf(<span class="fl">0.5</span>, P, SE_pw)
+
+<span class="bu">print</span>(<span class="st">&quot;proporcja:&quot;</span>,P,<span class="st">&quot;, błąd:&quot;</span>,SE_pw)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: p = 0.5 vs. H1: p != 0.5&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## proporcja: 0.28 , błąd: 0.06349803146555018
+## 95% przedział ufności: [0.15554614523833055, 0.4044538547616695]
+## 
+## H0: p = 0.5 vs. H1: p != 0.5
+## p-wartość: 0.0005308739249216821</code></pre>
+<p>Więcej procedur budowy przedziału ufności dla proporcji jest zaimplementowanych do funkcji
+<a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.proportion.proportion_confint.html#statsmodels.stats.proportion.proportion_confint"><code>statsmodels.stats.proportion.proportion_confint</code></a> w której metoda Walda <a href="R7.html#eq:se02">(7.2)</a> jest rozwiązaniem domyślnym.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> statsmodels.stats.proportion <span class="im">import</span> proportion_confint
+<span class="im">from</span> scipy <span class="im">import</span> stats
+
+y <span class="op">=</span> stats.binom.rvs(n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.3</span>, loc<span class="op">=</span><span class="dv">0</span>, size<span class="op">=</span><span class="dv">50</span>, random_state<span class="op">=</span><span class="dv">2305</span>)
+
+<span class="bu">print</span>(proportion_confint(<span class="bu">sum</span>(y), <span class="dv">50</span>, alpha<span class="op">=</span><span class="fl">0.05</span>, method<span class="op">=</span><span class="st">&#39;normal&#39;</span>))</code></pre>
+<pre><code>## (0.15554614523833055, 0.4044538547616695)</code></pre>
+</div>
+<div id="R73" class="section level2">
+<h2><span class="header-section-number">7.3</span> Mediana</h2>
+<p>Jednym z bardziej popularnych odpornych estymatorów średniej jest mediana czyli drugi kwartyl który dzieli uporządkowany rosnąco zbiór obserwacji <span class="math inline">\(x\)</span> na połowę. Wartość środkowa to <span class="math inline">\(x_{(n+1)/2}\)</span> lub <span class="math inline">\((x_{n/2}+x_{(n/2 )+1})/2\)</span> odpowiednio dla nieparzystej i parzystej liczebności danych.
+Do estymacji przedziałowej mediany często jest wykorzystywany błąd standardowy:
+<span class="math display" id="eq:se03">\[\begin{equation}
+SE_{np_0}=\sqrt{p_0(1-p_0)\cdot n}\quad\mbox{gdzie}\quad p_0=0.5
+\tag{7.3}
+\end{equation}\]</span>
+Po uporządkowaniu rosnąco danych wybieramy dwa elementy o indeksach <span class="math inline">\(v_1\)</span> i <span class="math inline">\(v_2\)</span> które wyznaczają dolną <span class="math inline">\(x_{v_1}\)</span> i górną <span class="math inline">\(x_{v_2}\)</span> granicę przedziału ufności gdzie:
+<span class="math display" id="eq:se04">\[\begin{equation}
+v_1=\lceil \Phi^{-1}(\alpha/2,\;np_0,SE_{np_0})\rceil,\quad v_2=\lceil  \Phi^{-1}(1-\alpha/2,\;np_0,SE_{np_0})\rceil
+\tag{7.4}
+\end{equation}\]</span>
+Dodajmy, że dla mediany czyli <span class="math inline">\(p_0=0.5\)</span> otrzymamy <span class="math inline">\(np_0=n/2\)</span> oraz <span class="math inline">\(SE_{np_0}=\sqrt{n/4}\)</span>.</p>
+<p>W innym rozwiązaniu <span class="citation">(McKean i Schrader <a href="#ref-ms1984">1984</a>)</span> wykorzystywany jest błąd standardowy mediany dany wzorem:
+<span class="math display" id="eq:se05">\[\begin{equation}
+SE_{\hat{m}}=\frac{x_{n-k+1}-x_{k}}{2\cdot z_{\,0.995}}\quad \mathrm{dla}\quad k=\frac{n+1}{2}-z_{\,0.995}\cdot\sqrt{\frac{n}{4}}
+\tag{7.5}
+\end{equation}\]</span>
+gdzie kwantyle z rozkładu normalnego: <span class="math inline">\(\Phi^{-1}(\alpha/2,\;\hat{m},SE_{\hat{m}})\)</span> oraz <span class="math inline">\(\Phi^{-1}(1-\alpha/2,\;\hat{m},SE_{\hat{m}})\)</span>
+to odpowiednio dolna i górna granica przedziału ufności.</p>
+<p>Zwróćmy uwagę, że powyższe metody nie uwzględniają wartości wiązanych a więc są przeznaczone dla danych ciągłych. W artykule <span class="citation">(Iwasaki Manabu <a href="#ref-iwasaki2005">2005</a>)</span> jest przedstawiona metoda która uwzględnia występowanie duplikatów:
+<span class="math display" id="eq:se06">\[\begin{equation}
+v=\left[n/2-z_{1-\alpha/2}\cdot \sqrt{n/4}\right]+1,\quad v^{\prime}=\left[n/2-z_{1-\alpha/2}\cdot\sqrt{n/4}+0,5\right]+1
+\tag{7.6}
+\end{equation}\]</span>
+<span class="math display" id="eq:se07">\[\begin{equation}
+\begin{aligned}
+x_{v}\,,\;x_{n+1-v}
+&amp;
+&amp;
+\textrm{dla}\quad
+&amp;
+v=v^{\prime}\\[0.0in]
+(x_{v-1}+x_{v})/2\,,\;(x_{n+1-v}+x_{(n+1-v)+1})/2
+&amp;
+&amp;
+\textrm{dla}\quad
+&amp;
+v=v^{\prime}-1
+\end{aligned}
+\tag{7.7}
+\end{equation}\]</span></p>
+<p>W literaturze <span class="citation">(Wilcox Rand <a href="#ref-wilcox2017">2017</a>)</span> można znaleźć jeszcze wiele innych propozycji. Za przykład może posłużyć estymator Harrella–Davisa <span class="citation">(Harrel i Davis <a href="#ref-hd1982">1982</a>)</span> dla mediany lub wybranych kwantyli:
+<span class="math display" id="eq:se08">\[\begin{equation}
+HD_{q}=\sum_{i=1}^{n}\left[\Big(B(i/n,\,a,\,b)-B((i-1)/n,\,a,\,b)\Bigr)x_{i}\right]
+\tag{7.8}
+\end{equation}\]</span>
+z wykorzystaniem rozkładu beta (patrz rozdział <a href="R4.html#R4">4</a>):
+<span class="math display" id="eq:se09">\[\begin{equation}
+B(t,a,b)=\int_{0}^{t}\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1}\;dx
+\tag{7.9}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(a=(n+1)q\)</span> oraz <span class="math inline">\(b=(n+1)(q-1)\)</span> dla <span class="math inline">\(q=0.5\)</span> w przypadku drugiego kwartyla czyli mediany.
+Błąd standardowy estymatora mediany Harrella–Davisa można obliczyć za pomocą funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mstats.hdquantiles_sd.html#scipy.stats.mstats.hdquantiles_sd"><code>scipy.stats.mstats.hdquantiles_sd</code></a> do której zaimplementowano metodę jackknife. Inne rozwiązanie to wykorzystanie metody bootstrap (patrz podrozdział <a href="R7.html#R78">7.8</a>) w której można wykorzystać estymator Harrella–Davisa zaimplementowany w funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mstats.hdquantiles.html"><code>scipy.stats.mstats.hdquantiles</code></a>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+MD <span class="op">=</span> stats.mstats.hdquantiles(y,[<span class="fl">0.5</span>])[<span class="dv">0</span>]
+SE_md <span class="op">=</span> stats.mstats.hdquantiles_sd(y,[<span class="fl">0.5</span>])[<span class="dv">0</span>]
+conf <span class="op">=</span> [ stats.norm.ppf(i, loc<span class="op">=</span>MD, scale<span class="op">=</span>SE_md) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>] ]
+p <span class="op">=</span> stats.norm.cdf(<span class="dv">0</span>, MD, SE_md)
+
+<span class="bu">print</span>(<span class="st">&quot;medianaHD:&quot;</span>,MD,<span class="st">&quot;, błąd:&quot;</span>,SE_md)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: md = 0 vs. H1: md != 0&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## medianaHD: 0.30109081321402076 , błąd: 0.1584119409852424
+## 95% przedział ufności: [-0.009390885838138907, 0.6115725122661804]
+## 
+## H0: md = 0 vs. H1: md != 0
+## p-wartość: 0.05734360449353051</code></pre>
+</div>
+<div id="R74" class="section level2">
+<h2><span class="header-section-number">7.4</span> Wariancja</h2>
+<p>Błąd standardowy estymatora wariancji <span class="citation">(Coeurjolly i in. <a href="#ref-asym2009">2009</a>)</span> można obliczyć za pomocą wzoru:
+<span class="math display" id="eq:se11">\[\begin{equation}
+SE_{s^2}=\sqrt{S^2/n}
+\tag{7.10}
+\end{equation}\]</span>
+gdzie <span class="math inline">\(S^2\)</span> to nieobciążony estymator wariancji dla zmiennej <span class="math inline">\(z_i=(x_i-\bar{x})^2\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+V <span class="op">=</span> np.var(y,ddof<span class="op">=</span><span class="dv">1</span>)
+z <span class="op">=</span> (y<span class="op">-</span>np.mean(y))<span class="op">**</span><span class="dv">2</span>
+SE_v <span class="op">=</span> np.sqrt(np.var(z,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">/</span><span class="bu">len</span>(z))
+conf <span class="op">=</span> [ stats.norm.ppf(i, loc<span class="op">=</span>V, scale<span class="op">=</span>SE_v) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>] ]
+p <span class="op">=</span> stats.norm.cdf(<span class="dv">10</span>, V, SE_v)
+
+<span class="bu">print</span>(<span class="st">&quot;wariancja:&quot;</span>,V,<span class="st">&quot;, błąd:&quot;</span>,SE_v)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: var = 10 vs. H1: var != 10&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## wariancja: 8.19679035873922 , błąd: 0.6734837212813637
+## 95% przedział ufności: [6.876786520853734, 9.516794196624705]
+## 
+## H0: var = 10 vs. H1: var != 10
+## p-wartość: 0.007418799795601672</code></pre>
+<p>Inne rozwiązanie <span class="citation">(Fuchs i Krautenbacher <a href="#ref-FK2016">2016</a>)</span> jest przedstawione poniżej:</p>
+<p><span class="math display" id="eq:se12">\[\begin{equation}
+SE_{var}=\sqrt{\left(\frac{1}{2(n-2)} +\frac{1}{2n}-\frac{2}{n - 3}\right) v^2 + 
+        \left(\frac{3}{n-3}-\frac{2}{n-2}\right) m_4}
+\tag{7.11}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(m_4=\sum_{i=1}^{n}(x_i-\bar{x})^4/n\)</span> to czwarty moment centralny oraz <span class="math inline">\(v=\sum_{i-1}^{n}(x_i-\bar{x})^2/(n-1)\)</span> to nieobciążony estymator wariancji.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+n <span class="op">=</span> <span class="bu">len</span>(y)
+v2 <span class="op">=</span> np.var(y,ddof<span class="op">=</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>
+m4 <span class="op">=</span> stats.moment(y, moment<span class="op">=</span><span class="dv">4</span>)
+SE_v <span class="op">=</span> np.sqrt((<span class="dv">1</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>n<span class="dv">-4</span>)<span class="op">+</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>n)<span class="op">-</span><span class="dv">2</span><span class="op">/</span>(n<span class="dv">-3</span>))<span class="op">*</span>v2<span class="op">+</span>(<span class="dv">3</span><span class="op">/</span>(n<span class="dv">-3</span>)<span class="op">-</span><span class="dv">2</span><span class="op">/</span>(n<span class="dv">-2</span>))<span class="op">*</span>m4)
+<span class="bu">print</span>(<span class="st">&quot;wariancja:&quot;</span>,v2<span class="op">**</span><span class="fl">0.5</span>,<span class="st">&quot;, błąd:&quot;</span>,SE_v)</code></pre>
+<pre><code>## wariancja: 8.19679035873922 , błąd: 0.6768982673783448</code></pre>
+</div>
+<div id="R75" class="section level2">
+<h2><span class="header-section-number">7.5</span> Średnia ucięta</h2>
+<p>W przypadku gdy dane nie pochodzą z rozkładu normalnego (np. gdy rozkład jest skośny, w danych występują obserwacje odstające itp.) wnioskowanie o populacji z wykorzystaniem średniej nie jest dobrym wyborem. Jednym z możliwych rozwiązań jest zweryfikowanie hipotezy statystycznej dotyczącej średniej uciętej <span class="citation">(Tukey i McLaughlin <a href="#ref-tmc1963">1963</a>)</span> w oparciu o rozkład t-Studenta ze stopniami swobody <span class="math inline">\(df=n-2\lfloor n G \rfloor -1\)</span>. Estymator średniej uciętej jest obliczany na podstawie próbki z której została usunięta pewna frakcja skrajnych obserwacji a jego błąd standardowy jest dany wzorem:
+<span class="math display" id="eq:se10">\[\begin{equation}
+SE_{\bar{x}_t}=s_w/(1-2G)\sqrt{n}
+\tag{7.12}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(sw\)</span> to odchylenie standardowe obliczone na podstawie próbki poddanej procesowi winsoryzacji.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+<span class="im">import</span> numpy <span class="im">as</span> np
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+tMU <span class="op">=</span> stats.mstats.trimmed_mean(y,limits<span class="op">=</span>(<span class="fl">0.2</span>,<span class="fl">0.2</span>))
+SE_tmu <span class="op">=</span> stats.mstats.trimmed_stde(y,limits<span class="op">=</span>(<span class="fl">0.2</span>,<span class="fl">0.2</span>))
+conf <span class="op">=</span> stats.mstats.trimmed_mean_ci(y, limits<span class="op">=</span>(<span class="fl">0.2</span>, <span class="fl">0.2</span>))
+df <span class="op">=</span> <span class="bu">len</span>(y) <span class="op">-</span> <span class="dv">2</span> <span class="op">*</span> np.floor(<span class="fl">0.2</span> <span class="op">*</span> <span class="bu">len</span>(y)) <span class="op">-</span> <span class="dv">1</span>
+p <span class="op">=</span> stats.t.cdf(<span class="dv">0</span>, df, tMU, SE_tmu)
+
+<span class="bu">print</span>(<span class="st">&quot;średnia ucięta:&quot;</span>,tMU,<span class="st">&quot;, błąd:&quot;</span>,SE_tmu)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: tmu = 0 vs. H1: tmu != 0&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## średnia ucięta: 0.2929142000036129 , błąd: 0.17589712092651877
+## 95% przedział ufności: [-0.05418454  0.64001294]
+## 
+## H0: tmu = 0 vs. H1: tmu != 0
+## p-wartość: 0.09761041405364616</code></pre>
+<p>Warto dodać, że dla parametru ucięcia <span class="math inline">\(G\)</span> równego 0 wynik będzie tożsamy z testem t-Studenta który został zaimplementowany do funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html"><code>scipy.stats.ttest_1samp</code></a>.</p>
+</div>
+<div id="R76" class="section level2">
+<h2><span class="header-section-number">7.6</span> Skośność</h2>
+<p>W rozkładzie normalnym (rozkład symetryczny) parametr skośności jest równy zero. Wartość tego parametru może być większa lub mniejsza od zera dla rozkładu odpowiednio prawostronnie skośnego lub lewostronnie skośnego. Dla podstawowej wersji parametru skośności <span class="math inline">\(g1=m_3/m_2^{3/2}\)</span> bład standardowy można zapisać za pomocą wzoru:
+<span class="math display" id="eq:sk01">\[\begin{equation}
+SE_{g1}=\sqrt{\frac{6(n-2)}{(n+1)(n+3)}}
+\tag{7.13}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(m_2\)</span> i <span class="math inline">\(m_3\)</span> to odpowiednio drugi i trzeci moment centralny, <span class="math inline">\(n\)</span> to liczebność próby.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+g1 <span class="op">=</span> stats.skew(y)
+n <span class="op">=</span> <span class="bu">len</span>(y)
+SE_g1 <span class="op">=</span> ((<span class="dv">6</span><span class="op">*</span>(n<span class="dv">-2</span>))<span class="op">/</span>((n<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>(n<span class="op">+</span><span class="dv">3</span>)))<span class="op">**</span><span class="fl">0.5</span>
+conf <span class="op">=</span> [ stats.norm.ppf(i, loc<span class="op">=</span>g1, scale<span class="op">=</span>SE_g1) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>] ]
+p <span class="op">=</span> stats.norm.cdf(<span class="dv">0</span>, g1, SE_g1)
+
+<span class="bu">print</span>(<span class="st">&quot;skośność:&quot;</span>,g1,<span class="st">&quot;, błąd:&quot;</span>,SE_g1)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: skew = 0 vs. H1: skew != 0&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## skośność: 0.043243631316632496 , błąd: 0.14001649284686388
+## 95% przedział ufności: [-0.23118365190483087, 0.3176709145380958]
+## 
+## H0: skew = 0 vs. H1: skew != 0
+## p-wartość: 0.7574381454853335</code></pre>
+<p>Warto dodać, że zostały opracowane również inne estymatory skośności <span class="citation">(Wright i Herrington <a href="#ref-kurt2011">2011</a>)</span> które są modyfikacjami parametru <span class="math inline">\(g1\)</span>. Ciekawe rozwiązanie na bazie
+transformacji skośności <span class="citation">(D’Agostino <a href="#ref-agos1970">1970</a>)</span> zostało zaimplementowane do funkcji <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skewtest.html"><code>scipy.stats.skewtest</code></a> i bada hipotezę zerową <span class="math inline">\(H_0:\;S= 0\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+<span class="bu">print</span>(stats.skewtest(y))</code></pre>
+<pre><code>## SkewtestResult(statistic=0.3128664753170487, pvalue=0.7543821086322899)</code></pre>
+</div>
+<div id="R77" class="section level2">
+<h2><span class="header-section-number">7.7</span> Kurtoza</h2>
+<p>Podstawowa wersja parametru kurtozy jest dana wzorem <span class="math inline">\(g2=m_4/m_2^2-3\)</span> i dla rozkładu normalnego przyjmuje wartość zero. Jeśli kurtoza jest większa od zera to rozkład jest spiczasty tzw. rozkład leptokurtyczny. Natomiast gdy kurtoza jest mniejsza od zera to rozkład jest spłaszczony tzw. platykurtyczny. Te określenia są formułowane w stosunku do rozkładu normalnego tzw. rozkładu mezokurtycznego. Błąd standardowy dla estymatora <span class="math inline">\(g2\)</span> można przedstawić za pomocą wzoru:</p>
+<p><span class="math display" id="eq:ku01">\[\begin{equation}
+SE_{g2}=\sqrt{\frac{24n(n-2)(n-3)}{(n+1)^2(n+3)(n+5)}}
+\tag{7.14}
+\end{equation}\]</span>
+gdzie: <span class="math inline">\(m_2\)</span> i <span class="math inline">\(m_4\)</span> to odpowiednio drugi i czwarty moment centralny, <span class="math inline">\(n\)</span> to liczebność próby.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+g2 <span class="op">=</span> stats.kurtosis(y)
+n <span class="op">=</span> <span class="bu">len</span>(y)
+SE_g2 <span class="op">=</span> ((<span class="dv">24</span><span class="op">*</span>n<span class="op">*</span>(n<span class="dv">-2</span>)<span class="op">*</span>(n<span class="dv">-3</span>))<span class="op">/</span>((n<span class="op">+</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span><span class="op">*</span>(n<span class="op">+</span><span class="dv">3</span>)<span class="op">*</span>(n<span class="op">+</span><span class="dv">5</span>)))<span class="op">**</span><span class="fl">0.5</span>
+conf <span class="op">=</span> [ stats.norm.ppf(i, loc<span class="op">=</span>g2, scale<span class="op">=</span>SE_g2) <span class="cf">for</span> i <span class="kw">in</span> [<span class="fl">0.025</span>,<span class="fl">0.975</span>] ]
+p <span class="op">=</span> stats.norm.cdf(<span class="dv">0</span>, g2, SE_g2)
+
+<span class="bu">print</span>(<span class="st">&quot;kurtoza:&quot;</span>,g2,<span class="st">&quot;, błąd:&quot;</span>,SE_g2)
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: kurt = 0 vs. H1: kurt != 0&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## kurtoza: 0.03206629047789944 , błąd: 0.27587660663283947
+## 95% przedział ufności: [-0.5086419226995899, 0.5727745036553886]
+## 
+## H0: kurt = 0 vs. H1: kurt != 0
+## p-wartość: 0.9074669505499613</code></pre>
+<p>Podobnie jak w przypadku parametru skośności (patrz podrozdział <a href="R7.html#R76">7.6</a>) zostały wprowadzone pewne modyfikacje parametru <span class="math inline">\(g2\)</span> <span class="citation">(Wright i Herrington <a href="#ref-kurt2011">2011</a>)</span>. Istotność statystyczną parametru <span class="math inline">\(g2+3\)</span> można badać za pomocą transformacji <span class="citation">(Anscombe i Glynn <a href="#ref-ansom1983">1983</a>)</span>. To rozwiązanie jest dostępne dzięki funkcji
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosistest.html"><code>scipy.stats.kurtosistest</code></a> i bada hipotezę zerową <span class="math inline">\(H_0:\;K= 3\)</span>.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> scipy <span class="im">import</span> stats
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+<span class="bu">print</span>(stats.kurtosistest(y))</code></pre>
+<pre><code>## KurtosistestResult(statistic=0.3158947534000299, pvalue=0.7520823943589993)</code></pre>
+</div>
+<div id="R78" class="section level2">
+<h2><span class="header-section-number">7.8</span> Bootstrap</h2>
+<p>Metoda bootstrap jest często stosowane gdy nie wiemy z jakiego rozkładu pochodzi zmienna losowa. Polega ona na wielokrotnym losowaniu ze zwracaniem z próby w celu wyznaczenia <span class="math inline">\(B\)</span> estymatorów <span class="math inline">\(\hat{\theta}\)</span> . Inaczej mówiąc, tworzymy wektor <span class="math inline">\(\hat{\theta}^*_{i}=[\hat{\theta}_1,\;\hat{\theta}_2,\;\dots,\;\hat{\theta}_B]\)</span>
+i na jego podstawie obliczamy średnią (szacunek estymatora) oraz odchylenie standardowe (błąd estymatora). Jednym z możliwych rozwiązań jest zastosowanie pętli <a href="https://wiki.python.org/moin/ForLoop"><code>for</code></a> w połączeniu z funkcją <a href="https://het.as.utexas.edu/HET/Software/Numpy/reference/generated/numpy.random.choice.html"><code>numpy.random.choice</code></a> a następnie obliczenie wartości estymatora i jego błąd standardowy odpowiednio z wykorzystaniem funkcji <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.mean.html"><code>numpy.mean</code></a> oraz <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.std.html"><code>numpy.std</code></a>.
+Poniżej przykład dla parametru skośności (patrz podrozdział <a href="R7.html#R76">7.6</a>) dla metody bootstrap.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+
+B <span class="op">=</span> <span class="dv">10000</span>
+S <span class="op">=</span> [stats.skew(np.random.choice(y,size<span class="op">=</span><span class="bu">len</span>(y))) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(B)]
+conf <span class="op">=</span> np.percentile(S, [<span class="fl">2.5</span>, <span class="fl">97.5</span>])
+p <span class="op">=</span> np.mean(np.less(S,[<span class="dv">0</span>]))
+
+<span class="bu">print</span>(<span class="st">&quot;skośność:&quot;</span>,np.mean(S),<span class="st">&quot;, błąd:&quot;</span>,np.std(S,ddof<span class="op">=</span><span class="dv">1</span>))
+<span class="bu">print</span>(<span class="st">&quot;95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: skew = 0 vs. H1: skew != 0&quot;</span>)
+<span class="bu">print</span>(<span class="st">&quot;p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## skośność: 0.03970207030436112 , błąd: 0.15212333211459894
+## 95% przedział ufności: [-0.23803258  0.35289731]
+## 
+## H0: skew = 0 vs. H1: skew != 0
+## p-wartość: 0.8242</code></pre>
+<p>Do wyznaczenia wektora <span class="math inline">\(\hat{\theta}^*_i\)</span> można wykorzystać funkcję <a href="http://docs.astropy.org/en/stable/api/astropy.stats.bootstrap.html#astropy.stats.bootstrap"><code>astropy.stats.bootstrap</code></a> która jest przeznaczona do generowania próbek bootstrap.
+Poniżej przykład dla wariancji (patrz podrozdział <a href="R7.html#R74">7.4</a>) oraz mediany (patrz podrozdzial <a href="R7.html#R73">7.3</a>).</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+<span class="im">from</span> astropy.stats <span class="im">import</span> bootstrap
+<span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt
+
+y <span class="op">=</span> stats.norm.rvs(size<span class="op">=</span><span class="dv">300</span>,scale<span class="op">=</span><span class="dv">3</span>,random_state<span class="op">=</span><span class="dv">4101</span>)
+B <span class="op">=</span> <span class="dv">10000</span>
+stat <span class="op">=</span> <span class="kw">lambda</span> x: (np.var(x,ddof<span class="op">=</span><span class="dv">1</span>), stats.mstats.hdquantiles(x,[<span class="fl">0.5</span>])[<span class="dv">0</span>])
+boot <span class="op">=</span> bootstrap(np.array(y), bootnum<span class="op">=</span>B, bootfunc<span class="op">=</span>stat)
+V  <span class="op">=</span> boot[:,<span class="dv">0</span>] <span class="co"># próbka bootstrap dla wariancji</span>
+MD <span class="op">=</span> boot[:,<span class="dv">1</span>] <span class="co"># próbka bootstrap dla mediany</span>
+
+fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">14</span>,<span class="dv">6</span>))
+ax1 <span class="op">=</span> fig.add_subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>)
+ax2 <span class="op">=</span> fig.add_subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>)
+
+ax1.hist(V, density<span class="op">=</span><span class="va">True</span>,alpha<span class="op">=</span><span class="fl">0.35</span>,bins<span class="op">=</span><span class="dv">60</span>,color<span class="op">=</span><span class="st">&quot;#ea9f2f&quot;</span>,label<span class="op">=</span><span class="st">&quot;empiryczny&quot;</span>)
+xV <span class="op">=</span> np.linspace(np.mean(V)<span class="op">-</span><span class="dv">4</span><span class="op">*</span>np.std(V,ddof<span class="op">=</span><span class="dv">1</span>),np.mean(V)<span class="op">+</span><span class="dv">4</span><span class="op">*</span>np.std(V,ddof<span class="op">=</span><span class="dv">1</span>),<span class="dv">100</span>)
+ax1.plot(xV,stats.norm.pdf(xV,loc<span class="op">=</span>np.mean(V),scale<span class="op">=</span>np.std(V,ddof<span class="op">=</span><span class="dv">1</span>)),
+         lw<span class="op">=</span><span class="dv">3</span>,color<span class="op">=</span><span class="st">&quot;#ea9f2f&quot;</span>,label<span class="op">=</span><span class="st">&quot;teoretyczny&quot;</span>)
+ax2.hist(MD, density<span class="op">=</span><span class="va">True</span>,alpha<span class="op">=</span><span class="fl">0.35</span>,bins<span class="op">=</span><span class="dv">60</span>,color<span class="op">=</span><span class="st">&quot;#ea9f2f&quot;</span>,label<span class="op">=</span><span class="st">&quot;empiryczny&quot;</span>)
+xMD <span class="op">=</span> np.linspace(np.mean(MD)<span class="op">-</span><span class="dv">4</span><span class="op">*</span>np.std(MD,ddof<span class="op">=</span><span class="dv">1</span>),np.mean(MD)<span class="op">+</span><span class="dv">4</span><span class="op">*</span>np.std(MD,ddof<span class="op">=</span><span class="dv">1</span>),<span class="dv">100</span>)
+ax2.plot(xMD,stats.norm.pdf(xMD,loc<span class="op">=</span>np.mean(MD),scale<span class="op">=</span>np.std(MD,ddof<span class="op">=</span><span class="dv">1</span>)),<span class="op">\</span>
+         lw<span class="op">=</span><span class="dv">3</span>,color<span class="op">=</span><span class="st">&quot;#ea9f2f&quot;</span>,label<span class="op">=</span><span class="st">&quot;teoretyczny&quot;</span>)
+ax1.set_title(<span class="st">&quot;Rozkład wariancji</span><span class="ch">\n</span><span class="st"> wariancja: </span><span class="sc">%.4f</span><span class="st">, błąd standardowy: </span><span class="sc">%.4f</span><span class="st">&quot;</span> \
+<span class="op">%</span> (np.mean(V),np.std(V,ddof<span class="op">=</span><span class="dv">1</span>)))
+ax2.set_title(<span class="st">&quot;Rozkład mediany</span><span class="ch">\n</span><span class="st"> mediana: </span><span class="sc">%.4f</span><span class="st">, błąd standardowy: </span><span class="sc">%.4f</span><span class="st">&quot;</span> \
+<span class="op">%</span> (np.mean(MD),np.std(MD,ddof<span class="op">=</span><span class="dv">1</span>)))
+ax1.legend()<span class="op">;</span> ax2.legend()
+fig.tight_layout()
+plt.savefig(<span class="st">&#39;boot01.png&#39;</span>)</code></pre>
+<div class="figure" style="text-align: center"><span id="fig:boot01"></span>
+<img src="boot01.png" alt="Rozkład empiryczny (bootstrap) vs rozkład teoretyczny (normalny)." width="100%" />
+<p class="caption">
+Rysunek 7.1: Rozkład empiryczny (bootstrap) vs rozkład teoretyczny (normalny).
+</p>
+</div>
+<p>W metodach symulacyjnych można również wykorzystać generatory liczb losowych jeśli wiemy z jakiego rozkładu pochodzi próba. Przykładowo dla proporcji będzie to rozkład dwumianowy o parametrach np. <span class="math inline">\(p=0,3\)</span> oraz <span class="math inline">\(n=50\)</span> (patrz podrozdział <a href="R7.html#R72">7.2</a>).</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> scipy.stats <span class="im">as</span> stats
+
+mc <span class="op">=</span> [np.mean(stats.binom.rvs(n<span class="op">=</span><span class="dv">1</span>, p<span class="op">=</span><span class="fl">0.3</span>, loc<span class="op">=</span><span class="dv">0</span>, size<span class="op">=</span><span class="dv">50</span>)) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>)]
+P_mc <span class="op">=</span> np.mean(mc)
+SE_p_mc <span class="op">=</span> np.std(mc,ddof<span class="op">=</span><span class="dv">1</span>)
+conf <span class="op">=</span> np.percentile(mc, [<span class="fl">2.5</span>, <span class="fl">97.5</span>])
+p <span class="op">=</span> np.mean(np.less(mc,[<span class="fl">0.5</span>]))
+
+<span class="bu">print</span>(<span class="st">&quot;proporcja:&quot;</span>,P_mc,<span class="st">&quot;, błąd:&quot;</span>,SE_p_mc,<span class="st">&quot;</span><span class="ch">\n</span><span class="st">95% przedział ufności:&quot;</span>,conf)
+<span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">H0: p = 0.5 vs. H1: p != 0.5&quot;</span>,<span class="st">&quot;</span><span class="ch">\n</span><span class="st">p-wartość:&quot;</span>,<span class="dv">2</span><span class="op">*</span><span class="bu">min</span>(p,<span class="dv">1</span><span class="op">-</span>p))</code></pre>
+<pre><code>## proporcja: 0.29929399999999995 , błąd: 0.06431574624865634 
+## 95% przedział ufności: [0.18 0.42]
+## 
+## H0: p = 0.5 vs. H1: p != 0.5 
+## p-wartość: 0.006199999999999983</code></pre>
+
+</div>
+</div>
+<h3>Bibliografia</h3>
+<div id="refs" class="references">
+<div id="ref-ansom1983">
+<p>Anscombe, F. J., i William J. Glynn. 1983. „Distribution of the kurtosis statistic b2 for normal samples”. <em>Biometrika</em> 70 (1): 227–34. <a href="https://doi.org/10.1093/biomet/70.1.227">https://doi.org/10.1093/biomet/70.1.227</a>.</p>
+</div>
+<div id="ref-asym2009">
+<p>Coeurjolly, J.-F., R. Drouilhet, P. Lafaye de Micheaux, i J.-F. Robineau. 2009. „asympTest: A Simple R Package for Classical Parametric Statistical Tests and Confidence Intervals in Large Samples”. <em>The R Journal</em> 1 (2): 26–30. <a href="https://journal.r-project.org/archive/2009/RJ-2009-015/index.html">https://journal.r-project.org/archive/2009/RJ-2009-015/index.html</a>.</p>
+</div>
+<div id="ref-agos1970">
+<p>D’Agostino, Ralph B. 1970. „Transformation to normality of the null distribution of g1”. <em>Biometrika</em> 57 (3): 679–81. <a href="https://doi.org/10.1093/biomet/57.3.679">https://doi.org/10.1093/biomet/57.3.679</a>.</p>
+</div>
+<div id="ref-FK2016">
+<p>Fuchs, Mathias, i Norbert Krautenbacher. 2016. „Minimization and estimation of the variance of prediction errors for cross-validation designs”. <em>Journal of Statistical Theory and Practice</em> 10 (2). Taylor &amp; Francis: 420–43. <a href="https://doi.org/10.1080/15598608.2016.1158675">https://doi.org/10.1080/15598608.2016.1158675</a>.</p>
+</div>
+<div id="ref-hd1982">
+<p>Harrel, F. E., i C. E. Davis. 1982. „A new distribution-free quantile estimator”. <em>Biometrika</em> 69 (3): 635–40. <a href="http://dx.doi.org/10.1093/biomet/69.3.635">http://dx.doi.org/10.1093/biomet/69.3.635</a>.</p>
+</div>
+<div id="ref-iwasaki2005">
+<p>Iwasaki Manabu. 2005. „Less Conservative Distribution-free Confidence Intervals and Tests for the Median”. <em>Japanese Journal of Biometrics</em> 26 (2): 65–80. <a href="https://doi.org/10.5691/jjb.26.65">https://doi.org/10.5691/jjb.26.65</a>.</p>
+</div>
+<div id="ref-ms1984">
+<p>McKean, J. W., i R. M. Schrader. 1984. „A comparison of methods for studentizing the sample median”. <em>Communications in Statistics - Simulation and Computation</em> 13 (6). Taylor &amp; Francis: 751–73. <a href=" https://doi.org/10.1080/03610918408812413 ">https://doi.org/10.1080/03610918408812413</a>.</p>
+</div>
+<div id="ref-tmc1963">
+<p>Tukey, J. W., i D. H. McLaughlin. 1963. „Less vulnerable confidence and significance procedures for location based on a single sample:trimming/Winsorization 1”. <em>Sankhya</em> 25: 331–52.</p>
+</div>
+<div id="ref-wilcox2017">
+<p>Wilcox Rand. 2017. <em>Introduction to Robust Estimation and Hypothesis Testing 4th Edition</em>. Elsevier. <a href="https://www.elsevier.com/books/introduction-to-robust-estimation-and-hypothesis-testing/wilcox/978-0-12-804733-0">https://www.elsevier.com/books/introduction-to-robust-estimation-and-hypothesis-testing/wilcox/978-0-12-804733-0</a>.</p>
+</div>
+<div id="ref-kurt2011">
+<p>Wright, Daniel B., i Joshua A. Herrington. 2011. „Problematic standard errors and confidence intervals for skewness and kurtosis”. <em>Behavior Research Methods</em> 43 (1): 8–17. <a href="https://doi.org/10.3758/s13428-010-0044-x">https://doi.org/10.3758/s13428-010-0044-x</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="R6.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="R8.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["PythonStat.pdf", "PythonStat.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

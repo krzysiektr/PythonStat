@@ -1,0 +1,372 @@
+# Porównanie zmiennych zależnych {#R9}
+
+---
+
+## Porównanie średnich {#R91}
+
+**Test t-Studenta**. Metoda do porównania dwóch zmiennych zależnych sprowadza się do przeprowadzenia testu t-Studenta dla jednej zmiennej tzn. różnic między obserwacjami.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pingouin as pg
+  
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+  
+print(pg.ttest(x,y,paired=True))
+```
+  
+**Dokładny test znaków**. Ta procedura sprowadza się do określenia liczby znaków dla różnic między obserwacjami. Inaczej mówiąc po pominięciu różnic równych zero zliczamy dodatnie (statystyka dokładnego testu $T_+$) i ujemne różnice. Na podstawie testu dwumianowego [`scipy.stats.binom_test`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binom_test.html#scipy.stats.binom_test) o argunentach: $x=T_+$,$n=T_++T_-$ oraz $p=0,5$ możemy określić dokładną p-wartość. Weryfikowana hipoteza zerowa ma postać:
+\begin{equation}
+H_0:\;p=0,5\quad\mbox{vs}\quad H_1:\;p\neq 0,5
+(\#eq:dep01)
+\end{equation}
+gdzie: $p$ to prawdopodobieństwo tego, że $P(x>y)=0,5$.
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+z = np.greater(x-y,[0]).astype(int)
+
+print("S:",sum(z),", p-value:",stats.binom_test(sum(z), len(z)))
+```
+  
+**RM-Anova / Greenhouse-Geisser**. Test Mauchly który został zaimplementowany do funkcji
+[`pingouin.sphericity`](https://pingouin-stats.org/generated/pingouin.sphericity.html#pingouin.sphericity) określa czy warunek sferyczności jest spełniony. W hipotezie zerowej zakładamy, że
+wariancje dla różnic pomiędzy parami powtarzanych pomiarów są takie same.
+\begin{equation}
+H_0:\;\sigma^2_{d1}=\sigma^2_{d2}=\ldots=\sigma^2_{di}\quad\mbox{vs}\quad H_1:\mbox{nie wszystkie wariancje są równe}
+(\#eq:dep02)
+\end{equation}
+gdzie: $\sigma^2_{di}$ to wariancja dla $i$-tej różnicy zmiennych.
+
+Jeśli analizowane zmienne nie spełniają tego założenia, to należy dostosować wyniki RM-ANOVA za pomocą jednej z korekt: Greenhouse-Geisser [1958] lub Huynh and
+Feldt [1976]. Funkcja [`pingouin.rm_anova`](https://pingouin-stats.org/generated/pingouin.rm_anova.html#pingouin.rm_anova) ma opcję `correction` dzięki której można wykonać test z korektą lub bez. Generalnie współczynnik korekcyjny HF jest używany częściej, ponieważ współczynnik GG jest zbyt konserwatywny tzn. nie zawsze udaje się wykryć prawdziwą różnicę między grupami. 
+Dzięki funkcji [`pingouin.epsilon`](https://pingouin-stats.org/generated/pingouin.epsilon.html#pingouin.epsilon) można otrzymać współczynniki $\epsilon-$epsilon. Określają one odstępstwo od symetrii
+złożonej dla każdej z dwóch procedur: GG i HF. Im mniejsza wartość $\epsilon$ tym większe
+jest odstępstwo od warunku sferyczności. 
+\begin{equation}
+\epsilon_{HF} = \frac{n(k-1)\epsilon_{GG}-2}{(k-1)(n-1-(k-1)\epsilon_{GG})}
+(\#eq:dep03)
+\end{equation}
+Wartości p-value są obliczane na podstawie rozkładu F po skorygowaniu stopni swobody:
+\begin{equation}
+df_1=(k-1)\cdot \epsilon_{HF} \quad\mbox{oraz}\quad df_2=(k-1)\cdot (n-1)\cdot \epsilon_{HF}
+(\#eq:dep04)
+\end{equation}
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+
+y = np.concatenate((stats.norm.rvs(0, 1, size=20, random_state=2305),
+                    stats.norm.rvs(1.5, 3, size=20, random_state=4101),
+                    stats.norm.rvs(1.5, 2, size=20, random_state=4026)))
+Dpaired = pd.DataFrame({'y': y,
+                        'g': np.repeat(np.linspace(1,3,3), [20,20,20], axis=0),
+                        'b': np.tile(np.linspace(1,20,20), 3)})
+
+print(pg.rm_anova(dv='y', within='g', subject='b', data=Dpaired,\
+                  correction=True).drop(['sphericity','np2'], axis=1),'\n')
+
+dat = Dpaired.pivot(index='b', columns='g', values='y')
+hf = pg.epsilon(dat, correction='hf')
+df1 = dat.shape[1]-1
+df2 = dat.shape[0]-1
+p = 1-stats.f.cdf(5.094, hf*df1, hf*df1*df2)
+
+print(pd.DataFrame({'HF':[hf],'df1':[df1],'df2':[df2],'p-HF-corr':[p]}))
+```
+  
+W większości przypadków lepiej zastosować wielowymiarową analize wariancji tj. MANOVA [@Obrien1985] lub liniowe modele mieszane [@ziel2010] ponieważ są one odporne na złamanie założenia kulistości. Ta procedura jest dostępna dzięki funkcji [`pingouin.mixed_anova`](https://pingouin-stats.org/generated/pingouin.mixed_anova.html#pingouin.mixed_anova).
+
+## Porównanie rang {#R93}
+    
+**Test Wilcoxona / metoda Pratta**. Procedura rangowanych znaków dla dwóch zmiennych zależnych polega na obliczeniu $d_i$ czyli różnic między obserwacjami a następnie porangowaniu ich wartości bezwzględnych tzn. $\mbox{rank}|d_i|$. W metodzie Pratta sumujemy tylko te rangi dla których różnica dwóch zmiennych $d_i$ była mniejsza od zera tzn.
+$V=\sum_{d_i<0}\mbox{rank}|d_i|$. 
+Według metody Wilcoxona zanim porangujemy wartości bezwzględnych różnic musimy usunąć różnice równe zero. Następnie obliczamy sumę rang według wzoru $V=\sum_{d_i>0}\mbox{rank}|d_i|$. Do funkcji
+[`scipy.stats.wilcoxon`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html#scipy.stats.wilcoxon) zostały zaimplementowane obie metody.
+
+Statystyka testowa dla metody Wilcoxona z poprawką na ciągłość:
+\begin{equation}
+Z=\frac{V-\frac{1}{4}\left[n(n+1)\right]-0,5}{\sqrt{\frac{1}{24}\left[n(n+1)(2n+1)\right]-\frac{1}{48}\sum_{i=1}^{c}(t_i^3-t_i)}}
+(\#eq:dep05)
+\end{equation}
+gdzie: $n$ to liczba różnic czyli par zmiennych, $V$ to suma rang dla różnic dodatnich, $0,5$ to poprawka na ciągłość, $c$ to liczba grup pomiarów wiązanych, $t_i$ to liczba pomiarów wiązanych w $i$-tej grupie pomiarów wiązanych.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+
+print(stats.wilcoxon(x, y, zero_method='wilcox', correction=True))
+```
+
+Statystyka testowa dla metody Pratta:
+\begin{equation}
+Z=\frac{V-\frac{1}{4}\left[n(n+1)-t_0(t_0+1)\right]}{\sqrt{\frac{1}{24}\left[n(n+1)(2n+1)-t_0(t_0+1)(2t_0+1)\right]-\frac{1}{48}\sum_{i=1}^{c}(t_i^3-t_i)}}
+(\#eq:dep06)
+\end{equation}
+gdzie: $n$ to liczba różnic czyli par zmiennych, $V$ to suma rang dla różnic ujemnych, $t_0$ to liczba zerowych różnic, $c$ to liczba grup pomiarów wiązanych, $t_i$ to liczba pomiarów wiązanych w $i$-tej grupie pomiarów wiązanych.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import scipy.stats as stats
+
+x = stats.norm.rvs(0, 1, size=20, random_state=2305)
+y = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+
+print(stats.wilcoxon(x, y, zero_method='pratt'))
+```
+  
+**Test Friedmana**. Rozszerzeniem testu znaków na kilka zmiennych sparowanych jest test Friedmana który został zaimplementowany do funkcji [`scipy.stats.friedmanchisquare`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html) oraz
+[`pingouin.friedman`](https://pingouin-stats.org/generated/pingouin.friedman.html#pingouin.friedman).
+
+Statystyka testowa:
+
+\begin{equation}
+\chi^2=\left(1-\frac{\sum_{i=1}^{c}(t^3_i-t_i)}{nk(k^2-1)}\right)^{-1}\left[\frac{12}{nk(k+1)}\sum_{j=1}^{k}R^2_j-3n(k+1)\right]
+(\#eq:dep07)
+\end{equation}
+gdzie: $k$ to liczebność grup, $n_j$ to liczebność obserwacji w $i$-tej grupie, $c$ to liczba grup pomiarów wiązanych, $t_i$ to liczba pomiarów wiązanych w $i$-tej grupie pomiarów wiązanych.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+  
+y = np.concatenate((stats.norm.rvs(0, 1, size=20, random_state=2305),
+                    stats.norm.rvs(1.5, 3, size=20, random_state=4101),
+                    stats.norm.rvs(1.5, 2, size=20, random_state=4026)))
+Dpaired = pd.DataFrame({'y': y,
+                        'g': np.repeat(np.linspace(1,3,3), [20,20,20], axis=0),
+                        'b': np.tile(np.linspace(1,20,20), 3)})
+                              
+print(pg.friedman(dv='y', within='g', subject='b', data=Dpaired))
+```
+
+**Test Imana-Davenporta**. Modyfikacją testu Friedmana jest metoda Imana-Davenporta która sprowadza się do przekształcenia statystyki $\chi^2$ według wzoru:
+\begin{equation}
+F=\frac{(n_j-1)\chi^2}{n_j(k-1)-\chi^2}
+(\#eq:dep08)
+\end{equation}
+gdzie: $k$ to liczebność grup, $n_j$ to liczebność obserwacji w $j$-tej grupie, $df_1=k-1$ oraz $df_2=(k-1)(n_j-1)$.
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+import pingouin as pg
+  
+y = np.concatenate((stats.norm.rvs(0, 1, size=20, random_state=2305),
+                    stats.norm.rvs(1.5, 3, size=20, random_state=4101),
+                    stats.norm.rvs(1.5, 2, size=20, random_state=4026)))
+Dpaired = pd.DataFrame({'y': y,
+                        'g': np.repeat(np.linspace(1,3,3), [20,20,20], axis=0),
+                        'b': np.tile(np.linspace(1,20,20), 3)})
+
+F = pg.friedman(dv='y', within='g', subject='b', data=Dpaired)['Q'][0]
+n = 20
+k = 3
+df1 = k-1
+df2 = (k-1)*(n-1)
+F = ((n-1)*F)/(n*(k-1)-F)
+p = 1-stats.f.cdf(F,df1,df2)
+print(pd.DataFrame({'F':[F],'df1':[df1],'df2':[df2],'p':[p]}))
+```
+
+**Test wyrównanych rang Friedmana**. W tej procedurze (ang. Friedman Aligned Ranks) obliczenia wykonujemy na przekształconych danych tj. $x_{ij}-\bar{x}_i$. Otrzymane w ten sposób wartości trzeba porangować bez podziału na grupy i obliczyć sumy kwadratów rang dla $k$ grup (kolumn) $\sum_{j=1}^{k}\hat{R^2_j}$ oraz dla $n$ obserwacji (wierszy) $\sum_{i=1}^{n}\hat{R^2_i}$ aby wyznaczyć statystykę testu.
+
+Statystyka testu:
+\begin{equation}
+T=\frac{(k-1)[\sum_{j=1}^{k}\hat{R^2_j}-(kn^2/4)(kn+1)^2]}{\left([kn(kn+1)(2kn+1)]/6\right)-(1/k)\sum_{i=1}^{n}\hat{R^2_i}}
+(\#eq:FAR01)
+\end{equation}
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+    
+df = pd.DataFrame()
+df['a1'] = stats.norm.rvs(0, 1, size=20, random_state=2305)
+df['a2'] = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+df['a3'] = stats.norm.rvs(1.5, 2, size=20, random_state=4026)
+
+mu = df.mean(axis=1)
+w = [ df[i]-mu for i in df.columns ]
+r = stats.rankdata(w)
+rdf = pd.DataFrame({'a1':r[:20],'a2':r[20:40],'a3':r[40:60]})
+Sk = sum(rdf.sum(axis=0)**2)
+Sn = sum(rdf.sum(axis=1)**2)
+n = df.shape[0]
+k = df.shape[1]
+T = ((k-1)*(Sk-((k*n**2)/4)*(k*n+1)**2))/(((k*n*(k*n+1)*(2*k*n+1))/6)-(1/k)*Sn)
+p = 1-stats.chi2.cdf(T,df=k-1)
+print(pd.DataFrame({'T':[T],'df':[k-1],'p':[p]}))
+```
+
+**Test Quade**. Dobrą alternatywą dla testu Friedmana może być również metoda Quade dostępna w funkcji [`stac.nonparametric_tests.quade_test`](http://tec.citius.usc.es/stac/doc/stac.nonparametric_tests.quade_test.html#stac.nonparametric_tests.quade_test). Jest to rozszerzenie testu rangowanych znaków Wilcoxona na więcej niż dwie sparaowane zmienne. 
+  
+Statystyka testu:
+\begin{equation}
+F_Q=\frac{(n-1)SS_{tre}}{SS_{tot}-SS_{tre}}
+(\#eq:dep09)
+\end{equation}
+gdzie: $n$ to liczba bloków, $k$ to liczba grup, $R_{ij}$ to rangi obliczone oddzielnie dla każdego bloku, $Q_i$ to rangi obliczone dla różnic $x_{max}-x_{min}$ obliczonych dla każdego bloku, $S_{ij}$ to macierz o postaci $S_{ij}=Q_i\left[R_{ij}-(k+1)/2\right]$, $SS_{tot}=\sum_{i=1}^{n}\sum_{j=1}^{k}S_{ij}^2$ to suma wszystkich elementów macierzy $S_{ij}$ które zostały podniesione do kwadratu, $SS_{tre}=\frac{1}{n}\sum_{j=1}^{k}S_i^2$ to suma
+elementów macierzy $S_{ij}$ dla każdej grupy i podniesionych do kwadratu a następnie te wartości są sumowane i podzielone przez liczbę bloków. Stopnie swobody są obliczane na podstawie wzorów $df_1=k-1$ oraz $df_2=(n-1)(k-1)$.
+  
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+
+df = pd.DataFrame()
+df['a1'] = stats.norm.rvs(0, 1, size=20, random_state=2305)
+df['a2'] = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+df['a3'] = stats.norm.rvs(1.5, 2, size=20, random_state=4026)
+
+def quade_test(x):
+    df = x
+    n = df.shape[0]
+    k = df.shape[1]
+    rdat = df.rank(axis=1)
+    minmax = df.apply(lambda x: max(x)-min(x),axis=1)
+    Q = pd.DataFrame(stats.rankdata(minmax), columns=['a'])
+    m = rdat-(k+1)/2
+    S = m.values * Q.values
+    SStot = sum(sum(S**2))
+    SStre = sum(sum(S)**2)/n
+    F = (n-1)*(SStre)/(SStot-SStre)
+    df1 = k-1
+    df2 = (n-1)*(k-1)
+    p = 1-stats.f.cdf(F,df1,df2)
+    DF = pd.DataFrame({'F':[F],'df1':[df1],'df2':[df2],'SStot':[SStot],'SStre':[SStre],'p':[p]})
+    return DF
+    
+print(quade_test(df))
+```
+
+**Dalsza analiza**. W pakiecie [`scikit-posthocs`](https://scikit-posthocs.readthedocs.io/en/latest/intro/) jest dostępnych wiele testów post hoc dla nieparametrycznej analizy wariancji z powtarzanymi pomiarami. Popularnym wyborem do porównań wielokrotnych po odrzuceniu hipotezy zerowej w teście Friedmana jest przeprowadzenie serii testów znaków lub test Nemenyi. W przypadku wyrównanych rang Friedmana błąd standardowy badanych różnic rang $\hat{R}_i-\hat{R}_j$ jest dany wzorem:
+\begin{equation}
+SE=\sqrt{\frac{k(kn+1)}{6}}
+(\#eq:FAR02)
+\end{equation}
+Poniżej przykład skryptu dla tego rozwiązania w języku Python:
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+from pingouin import multicomp
+import itertools
+
+df = pd.DataFrame()
+df['a1'] = stats.norm.rvs(0, 1, size=20, random_state=2305)
+df['a2'] = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+df['a3'] = stats.norm.rvs(1.5, 2, size=20, random_state=4026)
+
+def post_hoc_far(x):
+    df = x
+    n = df.shape[0]
+    k = df.shape[1]
+    mu = df.mean(axis=1)
+    w = [ df[i]-mu for i in df.columns ]
+    r = stats.rankdata(w)
+    rdat = pd.DataFrame(r.reshape((k,n)).T,columns=df.columns)
+    SS = rdat.mean(axis=0)
+    SE = np.sqrt((k * (n * k + 1))/6)
+    stat = SS/SE
+    res = list(itertools.combinations(stat, 2))
+    sol = [np.abs(np.diff(res[i])) for i in range(len(res))]
+    es = list(itertools.combinations(list(df.columns), 2))
+    f = pd.DataFrame({'stat':np.ravel(sol).tolist()},index=es)
+    f['p-val'] = [ 2*(1-stats.norm.cdf(i)) for i in f['stat']]
+    f['p-val_Holm'] = multicomp(f['p-val'].tolist(), method='holm')[1].tolist()
+    f['sign'] = multicomp(f['p-val'].tolist(), method='holm')[0].tolist()
+    return f
+    
+print(post_hoc_far(df))
+```
+Z kolei rozwiązaniem dedykowanym dla testu Quade jest seria testów rangowanych znaków Wilcoxona zaimplementowanych do funkcji [`scikit_posthocs.posthoc_wilcoxon`](https://scikit-posthocs.readthedocs.io/en/latest/generated/scikit_posthocs.posthoc_wilcoxon/) oraz metoda dostępna dzięki funkcji 
+[`scikit_posthocs.posthoc_quade`](https://scikit-posthocs.readthedocs.io/en/latest/generated/scikit_posthocs.posthoc_quade/) która działa z wykorzystaniem rozkładu t-Studenta lub normalnego. W tej metodzie badamy różnice wyznaczone w oparciu o sumy obliczone dla każdej grupy z wykorzystaniem macierzy $S_{ij}$ natomiast błąd standardowy można określić za pomocą wzoru:
+\begin{equation}
+SE=\sqrt{\frac{2n(SS_{tot}-SS_{tre})}{(n-1)(k-1)}}
+(\#eq:dep010)
+\end{equation}
+
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+from pingouin import multicomp
+import itertools
+
+df = pd.DataFrame()
+df['a1'] = stats.norm.rvs(0, 1, size=20, random_state=2305)
+df['a2'] = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+df['a3'] = stats.norm.rvs(1.5, 2, size=20, random_state=4026)
+
+def post_hoc_quade_test_1(x):
+    df = x
+    n = df.shape[0]
+    k = df.shape[1]
+    rdat = df.rank(axis=1)
+    minmax = df.apply(lambda x: max(x)-min(x),axis=1)
+    Q = pd.DataFrame(stats.rankdata(minmax), columns=['a'])
+    m = rdat-(k+1)/2
+    S = m.values * Q.values
+    SStot = sum(sum(S**2))
+    SStre = sum(sum(S)**2)/n
+    SS = S.sum(axis=0)
+    df2 = (n-1)*(k-1)
+    SE = np.sqrt((2*n*(SStot-SStre))/df2)
+    stat = SS/SE
+    res = list(itertools.combinations(stat, 2))
+    sol = [np.abs(np.diff(res[i])) for i in range(len(res))]
+    es = list(itertools.combinations(list(df.columns), 2))
+    f = pd.DataFrame({'stat':np.ravel(sol).tolist()},index=es)
+    f['p-val'] = [ 2*(1-stats.t.cdf(i,df=df2)) for i in f['stat']]
+    f['p-val_Holm'] = multicomp(f['p-val'].tolist(), method='holm')[1].tolist()
+    f['sign'] = multicomp(f['p-val'].tolist(), method='holm')[0].tolist()
+    return f
+    
+print(post_hoc_quade_test_1(df))
+```
+Alternatywą może być badanie różnic w oparciu o sumy elementów macierzy $R_{ij}Q_i$ obliczone dla każdej grupy tzn. $W_j=\frac{\sum_{i=1}^{n}R_{ij}Q_i}{n(n+1)/2}$ a błąd standardowy jest dany wzorem:
+\begin{equation}
+SE=\sqrt{\frac{k(k+1)(2n+1)(k-1)}{18n(n+1)}}
+(\#eq:dep011)
+\end{equation}
+```{r engine='python',engine.path='python3',python.reticulate=FALSE}
+import numpy as np
+import scipy.stats as stats
+import pandas as pd
+from pingouin import multicomp
+import itertools
+
+df = pd.DataFrame()
+df['a1'] = stats.norm.rvs(0, 1, size=20, random_state=2305)
+df['a2'] = stats.norm.rvs(1.5, 3, size=20, random_state=4101)
+df['a3'] = stats.norm.rvs(1.5, 2, size=20, random_state=4026)
+  
+def post_hoc_quade_test_2(x):
+    df = x; n = df.shape[0]; k = df.shape[1]
+    rdat = df.rank(axis=1)
+    minmax = df.apply(lambda x: max(x)-min(x),axis=1)
+    Q = pd.DataFrame(stats.rankdata(minmax), columns=['a'])
+    W = rdat.values * Q.values
+    SS = W.sum(axis=0)/(n*(n+1)/2)
+    SE = np.sqrt((k*(k+1)*(2*n+1)*(k-1))/(18*n*(n+1)))
+    stat = SS/SE
+    res = list(itertools.combinations(stat, 2))
+    sol = [np.abs(np.diff(res[i])) for i in range(len(res))]
+    es = list(itertools.combinations(list(df.columns), 2))
+    f = pd.DataFrame({'stat':np.ravel(sol).tolist()},index=es)
+    f['p-val'] = [ 2*(1-stats.norm.cdf(i)) for i in f['stat']]
+    f['p-val_Holm'] = multicomp(f['p-val'].tolist(), method='holm')[1].tolist()
+    f['sign'] = multicomp(f['p-val'].tolist(), method='holm')[0].tolist()
+    return f
+    
+print(post_hoc_quade_test_2(df))
+```

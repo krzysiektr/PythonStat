@@ -1,0 +1,12 @@
+book_filename: "PythonStat"
+delete_merged_file: true
+output_dir: docs 
+#rmd_files: ["index.Rmd","02-R2.Rmd","99-references.Rmd"]
+#rmd_files: ["index.Rmd","99-references.Rmd"]
+language: 
+  label:
+    fig: 'Rysunek '
+    tab: 'Tabela '
+    eq: 'Równanie '
+  ui:
+    chapter_name: "Rozdział "
